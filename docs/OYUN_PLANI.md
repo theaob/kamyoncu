@@ -145,6 +145,29 @@ bağımsız varlıklardır (ileride dorse değişimi / bırak-al).
 - Deneyim kazanır, seviye atlar, zam ister; morali düşükse istifa edebilir.
 - Şoför pazarı: her hafta yenilenen aday listesi.
 
+#### Oyuncu karakteri: ilk şoför
+Oyuncu ilk kamyoneti **kendisi sürer**. Oyun başında adını ve görünümünü
+seçer; karakteri, filodaki 0 numaralı şoför olarak simüle edilir.
+- **Kurallar aynı:** sürüş süresi limitleri, mola, yorgunluk oyuncu için de
+  geçerlidir. Maaş yoktur; kâr doğrudan firmaya kalır.
+- **Yoldaki fırsatlar:** oyuncu sürerken uğradığı tesislerde ve
+  lojistik merkezlerinde başka şoförler ve yük sahipleriyle tanışır
+  (“kahvede iş bulmak”): ilan panosunda olmayan özel işler, ilk müşteri
+  ilişkileri ve iyi şoför adayları buradan gelir.
+- **Kişisel gelişim:** oyuncunun sürüş becerileri (yakıt tasarrufu, güvenli
+  sürüş) seviye atlar. İleride “ustadan çırağa” ile işe alınan şoförlere
+  eğitim bonusu olarak aktarılır.
+- **Direksiyonu bırakmak:** ilk şoför işe alındıktan sonra oyuncu
+  istediği zaman tam zamanlı yöneticiliğe geçer; bu geçiş firma
+  tarihçesinde bir dönüm noktasıdır. Yöneticilikte otomasyon araçları
+  (dispeçer vb.) açılır.
+- **Geri dönmek:** oyuncu her zaman bir aracın direksiyonuna geçebilir.
+  Bu, kişisel başarımlar ve küçük itibar bonusları verir (“patron hâlâ yolda”);
+  yeni çağlarda ilk seferi kendisi yapmak (ilk Ro-Ro, ilk Ay seferi) özel
+  anlar olarak işlenir.
+- **Kayıp koşulu yok:** oyuncunun yorgunluk/kaza olayları yaralanma ve
+  zaman kaybı yaratır, ama karakter ölmez ve oyun bitmez.
+
 ### 3.5 Yükler ve İş Bulma
 - **Yük borsası:** her şehirde periyodik yenilenen ilanlar.
   - Alış/teslim şehri, yük türü, ağırlık, gereken dorse, teslim son tarihi,
@@ -554,6 +577,7 @@ Değerlendirilen yönler: **A** sade vektör, **B** diorama (2.5D),
 | Durum yönetimi | **Zustand** | Hafif; simülasyon çekirdeğini sarmalar |
 | Test | **Vitest** | Simülasyon çekirdeği için birim testleri |
 | Kayıt | **localStorage / IndexedDB** + JSON dışa aktarma | Sunucu gerektirmez |
+| Çoklu dil | **i18next + react-i18next**, `Intl` biçimlendirme | Türkçe ve İngilizce; çoğul ve değişken desteği |
 
 ### 5.2 Mimari ilke: Simülasyon çekirdeği UI'dan bağımsız
 ```
@@ -619,7 +643,30 @@ Wasm + WebGL'dir, ancak 10–40 MB indirme, yavaş açılış, tablo ağırlıkl
 yönetim arayüzlerinin zahmetli oluşu ve zayıf mobil tarayıcı performansı
 nedeniyle bu tür için uygun değil.
 
-### 5.4 Sonsuz oyun için teknik gereksinimler
+### 5.4 Çoklu dil (Türkçe + İngilizce)
+- **Varsayılan dil:** tarayıcı diline göre (Türkçe değilse İngilizce);
+  ayarlardan değiştirilebilir, seçim kaydedilir.
+- **Kodda sabit metin yok:** tüm arayüz metinleri `locales/tr.json` ve
+  `locales/en.json` dosyalarında, anahtar ile. Yeni metin eklenirken iki dil
+  birlikte eklenir; eksik anahtarları yakalayan bir test CI'da çalışır.
+- **Çekirdek metin üretmez:** simülasyon çekirdeği olayları ve bildirimleri
+  **kod + parametre** olarak üretir (ör. `{ code: 'delivery.late', hours: 3 }`);
+  metne çevirme işi arayüzdedir. Kayıt dosyaları dilden bağımsız kalır, dil
+  değiştirince eski bildirimler de yeni dilde görünür.
+- **Veriler kimlikle:** yük türleri, araç sınıfları, olaylar `id` ile tutulur;
+  görünen adları çeviri dosyalarındadır.
+- **Biçimlendirme:** para, sayı, tarih ve mesafe `Intl` ile yerel biçimde
+  (`1.250.000 ₺` / `₺1,250,000`).
+- **Türkçeye özgü tuzaklar:** büyük/küçük harf dönüşümü her zaman yerel
+  ayarla (`toLocaleUpperCase('tr')` → İ/ı doğru); sıralamada
+  `Intl.Collator('tr')`; yazı tiplerinde Türkçe karakter desteği şartı.
+- **Çevrilmeyenler:** şehir ve yer adları özgün hâliyle kalır (İstanbul,
+  Kapıkule). Kamyon arkası yazıları Türkçe kalır; İngilizcede çevirisi
+  ipucu olarak gösterilir — oyunun kimliğinin bir parçası.
+- **Metin uzunluğu:** arayüz, İngilizce ile Türkçe arasındaki uzunluk
+  farklarına göre esnek tasarlanır (Türkçe metinler çoğunlukla daha uzundur).
+
+### 5.5 Sonsuz oyun için teknik gereksinimler
 Kariyer aylarca/yıllarca (gerçek zaman) sürebileceği için:
 - **Kayıt sürümleme ve göç (migration):** her kayıtta `version` alanı;
   oyun güncellendiğinde eski kayıtlar otomatik dönüştürülür. Hiçbir
@@ -637,7 +684,7 @@ Kariyer aylarca/yıllarca (gerçek zaman) sürebileceği için:
   “50 oyun yılı” simülasyonu koşturulup ekonomi patlaması/çöküşü
   otomatik testlerle yakalanır.
 
-### 5.5 Klasör yapısı (taslak)
+### 5.6 Klasör yapısı (taslak)
 ```
 kamyoncu/
 ├─ docs/                 # tasarım belgeleri
@@ -656,6 +703,7 @@ kamyoncu/
 │  │  ├─ rng.ts
 │  │  └─ balance.ts      # denge sabitleri
 │  ├─ data/              # cities.json, roads.json, trucks.json, cargo.json
+│  ├─ locales/           # tr.json, en.json
 │  ├─ worker/            # simülasyonu çalıştıran Web Worker + mesaj protokolü
 │  ├─ store/             # Zustand köprüsü
 │  ├─ map/               # PixiJS harita: katmanlar, kamera, sprite'lar
@@ -665,7 +713,7 @@ kamyoncu/
 └─ package.json
 ```
 
-### 5.6 Temel veri modelleri (taslak)
+### 5.7 Temel veri modelleri (taslak)
 ```ts
 interface City   { id: string; name: string; x: number; y: number;
                    produces: CargoTypeId[]; demands: CargoTypeId[]; }
@@ -717,6 +765,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Simülasyon çekirdeği Web Worker'da; mesaj protokolü ve Zustand köprüsü.
 - PixiJS harita: şehirler, yollar, zoom/pan.
 - Oyun saati ve hız kontrolü.
+- Çoklu dil altyapısı (Türkçe + İngilizce), dil seçimi ve eksik çeviri testi.
 
 ### Faz 1 — Oynanabilir MVP 🎯
 - 15 şehir + yol ağı, rota bulma.
@@ -847,6 +896,8 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 | Uzun vadeli kapsam | Çağlar: Türkiye → uluslararası karayolu → kıtalar arası → uzay üssü → Ay → Mars → dış Güneş Sistemi → yıldızlararası → kara delikler → megayapılar → paralel evrenler |
 | Taşıma modları | Karayolu, Ro-Ro, demiryolu, hava kargo, konteyner gemisi, uzay, solucan deliği, kara delik; önce yer kiralama, sonra kendi filosu |
 | Ton | Başta gerçekçi; Ay/Mars yakın gelecek; sonra kademeli olarak tamamen bilimkurgu |
+| Arayüz dili | Türkçe ve İngilizce (baştan çoklu dil altyapısı) |
+| Oyuncu rolü | Oyuncu ilk kamyoneti kendisi sürer; sonra istediği zaman yöneticiliğe geçer, istediğinde direksiyona döner |
 | Veri modeli | Baştan çok dünyalı (`World`), Faz 1'de tek dünya |
 
 ## 9. Açık Sorular
@@ -855,8 +906,5 @@ interface GameState { time: number; seed: number; money: number; reputation: num
    çağlarını kapatan bir seçenek olsun mu?
 2. **Hikâye:** Çağ geçişleri yalnızca mekanik mi kalsın, yoksa her geçişte
    kısa bir anlatı olsun mu (ör. ilk uzay sözleşmesini getiren gizemli müşteri)?
-3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
-   sürer), yoksa doğrudan yönetici mi?
-4. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
+3. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
-5. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
