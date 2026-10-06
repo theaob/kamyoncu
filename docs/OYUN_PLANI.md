@@ -418,6 +418,14 @@ yük düzeni + firma boyası).
 Gemi, uçak ve tren ekipleri (kaptan/mürettebat, pilot/kokpit ekibi, makinist) şoförler gibi
 işe alınır; ancak ayrıntı seviyesi daha düşüktür (ekip olarak yönetilir).
 
+Çağ geçişleri **anlatısızdır**: hikâye ara sahnesi yoktur; yeni çağ, açılan
+mekanikler ve bir bildirimle başlar.
+
+**“Sadece Dünya” modu (açılabilir):** herhangi bir kariyer ilk kez uzay üssü
+çağına (Çağ 4) ulaştığında açılır. Bundan sonra yeni kariyer başlatırken
+seçilebilir; bu modda uzay çağları kapalıdır, Dünya çağları (1–3) ve geç oyun
+sistemleri sonsuza dek sürer.
+
 Çağ 8'den itibaren içerik **prosedüreldir**: yıldız sistemleri, gezegenler
 ve son çağda evrenlerin kendisi tohumlu üreteçle oluşturulur; böylece içerik
 gerçekten tükenmez.
@@ -897,14 +905,12 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 | Taşıma modları | Karayolu, Ro-Ro, demiryolu, hava kargo, konteyner gemisi, uzay, solucan deliği, kara delik; önce yer kiralama, sonra kendi filosu |
 | Ton | Başta gerçekçi; Ay/Mars yakın gelecek; sonra kademeli olarak tamamen bilimkurgu |
 | Arayüz dili | Türkçe ve İngilizce (baştan çoklu dil altyapısı) |
+| Sadece Dünya modu | Var; ilk kez Çağ 4'e ulaşınca açılır, yeni kariyerlerde seçilir |
+| Çağ geçişi hikâyesi | Yok; geçişler yalnızca mekanik ve bildirimle |
 | Oyuncu rolü | Oyuncu ilk kamyoneti kendisi sürer; sonra istediği zaman yöneticiliğe geçer, istediğinde direksiyona döner |
 | Veri modeli | Baştan çok dünyalı (`World`), Faz 1'de tek dünya |
 
 ## 9. Açık Sorular
 
-1. **Yalnız Dünya modu:** Uzayı hiç açmak istemeyen oyuncular için uzay
-   çağlarını kapatan bir seçenek olsun mu?
-2. **Hikâye:** Çağ geçişleri yalnızca mekanik mi kalsın, yoksa her geçişte
-   kısa bir anlatı olsun mu (ör. ilk uzay sözleşmesini getiren gizemli müşteri)?
-3. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
+1. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
