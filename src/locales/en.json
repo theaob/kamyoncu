@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "Kamyoncu",
+    "loading": "Loading…"
+  },
+  "clock": {
+    "paused": "Paused",
+    "day": "Day {{day}}"
+  },
+  "speed": {
+    "group": "Game speed",
+    "pause": "Pause",
+    "resume": "Resume",
+    "set": "Speed {{speed}}×",
+    "shortcuts": "Space: pause · 1–5: speed"
+  },
+  "language": {
+    "label": "Language",
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "map": {
+    "label": "Map of Türkiye",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Recenter map",
+    "legend": {
+      "otoyol": "Motorway",
+      "devlet": "State road",
+      "il": "Provincial road"
+    }
+  },
+  "log": {
+    "title": "Events",
+    "empty": "No events yet. They will appear here when a new day starts."
+  },
+  "events": {
+    "time": {
+      "newDay": "A new day has started: {{date}}"
+    }
+  }
+}

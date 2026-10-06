@@ -1,0 +1,18 @@
+[
+  { "id": "ist", "name": "İstanbul", "lon": 29.0, "lat": 41.01, "size": 3 },
+  { "id": "koc", "name": "Kocaeli", "lon": 29.92, "lat": 40.77, "size": 2 },
+  { "id": "bur", "name": "Bursa", "lon": 29.06, "lat": 40.19, "size": 2 },
+  { "id": "izm", "name": "İzmir", "lon": 27.14, "lat": 38.42, "size": 3 },
+  { "id": "esk", "name": "Eskişehir", "lon": 30.52, "lat": 39.78, "size": 2 },
+  { "id": "ank", "name": "Ankara", "lon": 32.85, "lat": 39.93, "size": 3 },
+  { "id": "kon", "name": "Konya", "lon": 32.48, "lat": 37.87, "size": 2 },
+  { "id": "ant", "name": "Antalya", "lon": 30.71, "lat": 36.89, "size": 2 },
+  { "id": "ada", "name": "Adana", "lon": 35.32, "lat": 37.0, "size": 2 },
+  { "id": "mer", "name": "Mersin", "lon": 34.64, "lat": 36.8, "size": 2 },
+  { "id": "gaz", "name": "Gaziantep", "lon": 37.38, "lat": 37.07, "size": 2 },
+  { "id": "kay", "name": "Kayseri", "lon": 35.49, "lat": 38.73, "size": 2 },
+  { "id": "sam", "name": "Samsun", "lon": 36.33, "lat": 41.29, "size": 2 },
+  { "id": "tra", "name": "Trabzon", "lon": 39.72, "lat": 41.0, "size": 2 },
+  { "id": "erz", "name": "Erzurum", "lon": 41.27, "lat": 39.9, "size": 2 },
+  { "id": "diy", "name": "Diyarbakır", "lon": 40.22, "lat": 37.91, "size": 2 }
+]

@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "Kamyoncu",
+    "loading": "Yükleniyor…"
+  },
+  "clock": {
+    "paused": "Duraklatıldı",
+    "day": "{{day}}. gün"
+  },
+  "speed": {
+    "group": "Oyun hızı",
+    "pause": "Duraklat",
+    "resume": "Devam et",
+    "set": "Hız {{speed}}×",
+    "shortcuts": "Boşluk: duraklat · 1–5: hız"
+  },
+  "language": {
+    "label": "Dil",
+    "tr": "Türkçe",
+    "en": "English"
+  },
+  "map": {
+    "label": "Türkiye haritası",
+    "zoomIn": "Yakınlaştır",
+    "zoomOut": "Uzaklaştır",
+    "reset": "Haritayı ortala",
+    "legend": {
+      "otoyol": "Otoyol",
+      "devlet": "Devlet yolu",
+      "il": "İl yolu"
+    }
+  },
+  "log": {
+    "title": "Olaylar",
+    "empty": "Henüz olay yok. Yeni gün başladığında burada görünecek."
+  },
+  "events": {
+    "time": {
+      "newDay": "Yeni gün başladı: {{date}}"
+    }
+  }
+}

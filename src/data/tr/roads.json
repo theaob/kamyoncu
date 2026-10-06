@@ -1,0 +1,23 @@
+[
+  { "from": "ist", "to": "koc", "km": 110, "kind": "otoyol" },
+  { "from": "koc", "to": "ank", "km": 340, "kind": "otoyol" },
+  { "from": "ist", "to": "bur", "km": 155, "kind": "otoyol" },
+  { "from": "bur", "to": "izm", "km": 330, "kind": "otoyol" },
+  { "from": "bur", "to": "esk", "km": 150, "kind": "devlet" },
+  { "from": "esk", "to": "ank", "km": 235, "kind": "devlet" },
+  { "from": "ank", "to": "kon", "km": 260, "kind": "devlet" },
+  { "from": "kon", "to": "ant", "km": 300, "kind": "devlet" },
+  { "from": "izm", "to": "ant", "km": 440, "kind": "devlet" },
+  { "from": "ank", "to": "kay", "km": 315, "kind": "devlet" },
+  { "from": "ank", "to": "ada", "km": 485, "kind": "otoyol" },
+  { "from": "kon", "to": "ada", "km": 350, "kind": "devlet" },
+  { "from": "ada", "to": "mer", "km": 70, "kind": "otoyol" },
+  { "from": "ada", "to": "gaz", "km": 220, "kind": "otoyol" },
+  { "from": "kay", "to": "gaz", "km": 335, "kind": "devlet" },
+  { "from": "gaz", "to": "diy", "km": 310, "kind": "devlet" },
+  { "from": "kay", "to": "erz", "km": 630, "kind": "devlet" },
+  { "from": "ank", "to": "sam", "km": 410, "kind": "devlet" },
+  { "from": "sam", "to": "tra", "km": 330, "kind": "devlet" },
+  { "from": "tra", "to": "erz", "km": 300, "kind": "devlet" },
+  { "from": "diy", "to": "erz", "km": 320, "kind": "devlet" }
+]

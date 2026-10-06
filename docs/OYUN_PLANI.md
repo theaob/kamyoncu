@@ -768,7 +768,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ## 6. Geliştirme Yol Haritası
 
-### Faz 0 — İskelet
+### Faz 0 — İskelet ✅
 - Vite + React + TS projesi, lint/format, Vitest.
 - Simülasyon çekirdeği Web Worker'da; mesaj protokolü ve Zustand köprüsü.
 - PixiJS harita: şehirler, yollar, zoom/pan.
