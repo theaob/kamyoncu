@@ -15,7 +15,9 @@ müşteri itibarı arasında denge kurarak ülkenin en büyük lojistik firması
 dönüşmeye çalışır. Oyun sonsuz olduğu için hikâye Türkiye'de bitmez: firma
 önce komşu ülkelere ve Avrupa'ya açılır, sonra gemi ve uçakla kıtalar arası
 taşımacılığa geçer; uzay çağı başladığında da Ay'a, Mars'a ve daha ötesine
-yük taşır (Bölüm 3.13).
+yük taşır. Ton başta gerçekçidir, çağlar ilerledikçe tamamen bilimkurguya
+döner: solucan delikleri, kara delik lojistiği, megayapılar ve paralel
+evrenler (Bölüm 3.13).
 
 - **Tür:** Tycoon / yönetim simülasyonu (sürüş simülasyonu **değil**).
 - **Bakış:** Üstten harita + yönetim panelleri.
@@ -284,20 +286,23 @@ kapanmaz: hepsi aynı anda çalışmaya devam eder ve birbirine yük sağlar.
 **ana hat** rolündedir; kapıdan kapıya işin ilk ve son ayağı her zaman
 karayoludur. Ana hatta oyuncu önce başka firmanın gemisinde/uçağında **yer
 kiralar** (taşeron), sonra kendi filosunu kurar. Bu kalıp her çağda tekrar
-eder: Ro-Ro → konteyner gemisi → kargo uçağı → uzay çekicisi (tır mantığının
+eder: Ro-Ro → blok tren → konteyner gemisi → kargo uçağı → uzay çekicisi (tır mantığının
 uzaydaki karşılığı: **çekici (itki modülü) + dorseler (kargo modülleri)**).
 
 #### Çağlar
 | Çağ | Kapsam | Yeni kural / mekanik | Açılma koşulu (öneri) |
 |---|---|---|---|
 | 1 | **Türkiye** | Temel oyun | Başlangıç |
-| 2 | **Uluslararası karayolu**: Avrupa, Balkanlar, Kafkasya, Orta Doğu, Orta Asya | Gümrük, sınır kapısı kuyrukları, TIR karnesi/CMR, geçiş belgesi kotaları, ülke kuralları, döviz kuru, **Ro-Ro** ve ilk **hava kargo** (yer kiralama) | Tır (sınıf 6) + firma seviyesi |
-| 3 | **Kıtalar arası**: Asya, Afrika, Amerika, Okyanusya | **Konteyner gemisi** ve **kargo uçağı**; kapıdan kapıya çok modlu işler; diğer kıtalarda yerel kara ağları ve şubeler; kendi gemi/uçak filosu | Uluslararası şube ağı + liman/havalimanı terminali yatırımı |
+| 2 | **Uluslararası karayolu**: Avrupa, Balkanlar, Kafkasya, Orta Doğu, Orta Asya | Gümrük, sınır kapısı kuyrukları, TIR karnesi/CMR, geçiş belgesi kotaları, ülke kuralları, döviz kuru, **Ro-Ro**, **blok tren** ve ilk **hava kargo** (yer kiralama) | Tır (sınıf 6) + firma seviyesi |
+| 3 | **Kıtalar arası**: Asya, Afrika, Amerika, Okyanusya | **Konteyner gemisi**, **kargo uçağı** ve kıtalar arası demiryolu (Çin–Avrupa); kapıdan kapıya çok modlu işler; diğer kıtalarda yerel kara ağları ve şubeler; kendi gemi/uçak/tren filosu | Uluslararası şube ağı + liman/havalimanı terminali yatırımı |
 | 4 | **Uzay üssü** (Dünya'da) | Roket kademesi taşıma: ağır nakliye, gemi ve uçağın en büyük işleri | Kıtalar arası ağ + “Uzay Üssü” mega sözleşmesi |
 | 5 | **Ay** | 1/6 yerçekimi, vakum, 14 günlük gece, regolit tozu aşınması, **yolları oyuncu inşa eder** | Uzay üssü işleri + elektrikli/hidrojen teknolojisi |
 | 6 | **Mars** | Toz fırtınaları, ince atmosfer, **4–24 dk iletişim gecikmesi → otonom araç zorunlu**, ~26 ayda bir fırlatma penceresi | Ay'da yerleşik şube + otonom teknolojisi |
 | 7 | **Dış Güneş Sistemi** (asteroit kuşağı, Europa, Titan) | Yolsuz yüzeyler, buz kabuğu, metan gölleri (amfibi araçlar), kendi uzay çekicilerin | Mars ağı + uzay çekicisi teknolojisi |
-| ∞ | **Ötegezegenler** (prosedürel) | Tohumdan üretilen gezegenler: yerçekimi, atmosfer, sıcaklık, kaynaklar rastgele | Yıldızlararası kapı teknolojisi |
+| 8 | **Yıldızlararası** (prosedürel yıldız sistemleri) | **Solucan deliği kapıları** ağı; kapılar ana hat, gezegen yüzeyleri yine kamyon işi; tohumdan üretilen gezegenler | Füzyon itki + ilk kapı mega projesi |
+| 9 | **Kara delik lojistiği** | **Zaman genişlemesi**, kara delik sapanı, olay ufku riski, kara delikten enerji (Penrose süreci) | Kapı ağı + kütle çekimi mühendisliği |
+| 10 | **Megayapılar**: Dyson sürüsü, halka dünyalar | Yıldızın çevresindeki dev inşaatlara malzeme; halka dünyanın iç yüzeyinde binlerce km'lik otoyollar | Kara delik enerjisi |
+| ∞ | **Paralel evrenler** (prosedürel) | Her evren farklı fizik sabitleriyle üretilir (yerçekimi, ışık hızı, zamanın akışı); evrenler arası nakliye | Boyut kapısı teknolojisi |
 
 #### Taşıma modları
 | Mod | Hız | Ton başı maliyet | Esneklik | Tipik yük | Açılış |
@@ -306,7 +311,10 @@ uzaydaki karşılığı: **çekici (itki modülü) + dorseler (kargo modülleri)
 | Ro-Ro (tır gemide) | Orta | Orta–düşük | Tarifeli liman–liman | Dorse; şoförlü veya şoförsüz | Çağ 2 |
 | Hava kargo | Çok hızlı (1–2 gün) | Çok yüksek | Tarifeli, ağırlık/hacim sınırlı | İlaç, elektronik, yedek parça, çiçek, acil işler | Çağ 2 (yer kiralama), Çağ 3 (kendi uçağı) |
 | Konteyner gemisi | Çok yavaş (2–6 hafta) | Çok düşük | Tarifeli, liman beklemesi | 20'/40' konteyner, frigorifik konteyner | Çağ 3 |
+| Demiryolu (blok tren) | Orta–yavaş | Düşük | Tarifeli terminal–terminal, hat kapasitesi sınırlı | Konteyner, maden, akaryakıt, otomotiv; Ro-La ile tır | Çağ 2 (yer kiralama), Çağ 3 (kendi treni) |
 | Uzay ana hattı | Aylar | Aşırı yüksek | Fırlatma penceresine bağlı | Koloni ihtiyaçları, değerli madenler | Çağ 4+ |
+| Solucan deliği kapısı | Anında (kuyruk hariç) | Kapı geçiş ücreti | Kapı kapasitesi ve slot | Her şey | Çağ 8 |
+| Kara delik sapanı | Gemi için kısa, dış dünya için uzun | Değişken | Yörünge hesabına bağlı | “Geleceğe teslim” yükleri, enerji | Çağ 9 |
 
 - **Çok modlu (intermodal) işler:** ör. Bursa'dan Şangay'a: kamyonla
   Gemlik limanına → konteyner gemisi → Şangay'da yerel kamyon. Oyuncu ayakları
@@ -324,6 +332,34 @@ uzaydaki karşılığı: **çekici (itki modülü) + dorseler (kargo modülleri)
 - **Hub yatırımları:** liman konteyner terminali, havalimanı kargo terminali,
   antrepo, gümrüklü depo; kendi hub'ı olan firma bekleme ve elleçleme
   maliyetinden kurtulur.
+
+#### Demiryolu
+- **Blok tren ve vagon kiralama:** önce demiryolu işletmesinden vagon veya
+  tren slotu kiralanır; sonra kendi lokomotif ve vagonları alınır.
+- **Hat kapasitesi:** demiryolu hatları paylaşımlıdır; günlük slot sayısı
+  sınırlıdır, yoğun hatlarda slot pahalıdır.
+- **Terminaller:** Halkalı, Köseköy, Kars gibi lojistik merkezlerinde
+  kamyon ↔ tren aktarması; kendi terminalini kurmak elleçleme maliyetini düşürür.
+- **Ray açıklığı değişimi:** Avrupa (1435 mm) ile Kafkasya/Orta Asya
+  (1520 mm) arasında aktarma veya aks değişimi gerekir (Kars–Ahılkelek);
+  zaman ve maliyet ekler.
+- **Orta Koridor:** Kars–Tiflis–Bakü treni → Hazar feribotu → Orta Asya
+  treni → Çin. Karayolu, demiryolu ve deniz modlarını birleştiren klasik
+  çok modlu güzergâh.
+- **Ro-La (yürüyen yol):** tırın kendisi trene yüklenir; şoför trende
+  dinlenir, sürüş süresi limitine sayılmaz.
+
+| Tren / vagon | Kapasite | Rol |
+|---|---|---|
+| Dizel ana hat lokomotifi | ~30–40 vagon çeker | Elektriksiz hatlar |
+| Elektrikli lokomotif | ~40–50 vagon çeker | Elektrikli ana hatlar, düşük işletme maliyeti |
+| Konteyner vagonu | 2 × 40' veya 3 × 20' | Çok modlu işler |
+| Tanker / açık / kapalı vagon | Akaryakıt, maden, tahıl | Dökme yük sözleşmeleri |
+| Ro-La vagonu | 1 tır | Dorse + çekici taşıma |
+
+Demiryolu geç oyunda da sürer: hiper hızlı vakum tüp hatlar (Dünya),
+Ay'da **elektromanyetik fırlatıcı** (kütle sürücüsü), Mars'ta maglev
+hatları, halka dünyalarda kıtalar boyu tren ağları.
 
 #### Uluslararası kurallar (Çağ 2–3)
 - **Gümrük ve sınır kapıları:** Kapıkule, Sarp, Habur gibi kapılarda
@@ -356,11 +392,12 @@ yük düzeni + firma boyası).
 | Büyük geniş gövde | ~100–130 t | Ana hat, yüksek hacim |
 | Süper ağır | ~120–150 t, gabari dışı | Türbin, uzay üssü parçaları |
 
-Gemi ve uçak ekipleri (kaptan/mürettebat, pilot/kokpit ekibi) şoförler gibi
+Gemi, uçak ve tren ekipleri (kaptan/mürettebat, pilot/kokpit ekibi, makinist) şoförler gibi
 işe alınır; ancak ayrıntı seviyesi daha düşüktür (ekip olarak yönetilir).
 
-Son çağ **prosedüreldir**: her yeni gezegen tohumlu üreteçle oluşturulur;
-böylece içerik gerçekten tükenmez.
+Çağ 8'den itibaren içerik **prosedüreldir**: yıldız sistemleri, gezegenler
+ve son çağda evrenlerin kendisi tohumlu üreteçle oluşturulur; böylece içerik
+gerçekten tükenmez.
 
 #### Gezegene özgü kurallar (değiştiriciler)
 Her dünya, çekirdek simülasyona bir **değiştirici seti** olarak eklenir; yeni
@@ -374,7 +411,9 @@ kod değil, çoğunlukla yeni veri:
 | Sıcaklık | Akü verimi, frigorifik yerine “ısıtmalı” yük ihtiyacı |
 | Yüzey | Yol yoksa düşük hız ve yüksek aşınma; yol inşası mümkün mü |
 | İletişim gecikmesi | Uzaktan sürüş imkânsız → otonom araç gereksinimi |
-| Tehlikeler | Toz fırtınası, meteor, radyasyon fırtınası, buz çatlağı |
+| Tehlikeler | Toz fırtınası, meteor, radyasyon fırtınası, buz çatlağı, gelgit kuvvetleri, olay ufku |
+| Zaman akışı | Kara delik yakınında zaman genişlemesi; paralel evrenlerde farklı zaman hızı |
+| Fizik sabitleri | Yalnızca paralel evrenlerde: yerçekimi sabiti, ışık hızı, sürtünme |
 
 #### Yeni mekanikler
 - **Yol inşası:** Dünya'da yollar hazırdır; Ay'dan itibaren oyuncu (veya
@@ -397,10 +436,43 @@ kod değil, çoğunlukla yeni veri:
   (roket parçaları, üs malzemesi); Dünya operasyonları bölge müdürleriyle
   otomatik yönetilir.
 
-#### Ton
-Gerçekçi bilimden ilham alır ama oyunun samimi, yerel havası korunur:
-koloni adları (“Yeni Kayseri”, “Ay Ankara Lojistik Merkezi”), Mars
-kamyonlarının arkasında da yazılar (“Ana duası — 225 milyon km”).
+#### Ton: gerçekçiden bilimkurguya
+Ton çağlar boyunca kademeli olarak değişir. Oyuncu, gerçekçi bir nakliye
+firmasından başlayıp farkına varmadan evrenler arası bir lojistik devine
+dönüşür.
+
+| Çağlar | Ton | Bilim seviyesi |
+|---|---|---|
+| 1–4 | **Gerçekçi** | Bugünün teknolojisi, gerçek kurallar ve gerçek coğrafya |
+| 5–6 (Ay, Mars) | **Yakın gelecek** | Bugünün uzay programlarının planları: yörünge pencereleri, iletişim gecikmesi, yaşam desteği |
+| 7 (Dış Güneş Sistemi) | **Sert bilimkurgu** | Fiziğe aykırı olmayan ama henüz var olmayan teknolojiler: füzyon itki, uzay asansörü |
+| 8–9 (Yıldızlararası, kara delikler) | **Bilimkurgu** | Spekülatif fizik: solucan delikleri, zaman genişlemesini iş modeline çevirmek |
+| 10–∞ (Megayapılar, paralel evrenler) | **Tamamen bilimkurgu** | Dyson sürüleri, halka dünyalar, başka fizik kurallarıyla evrenler |
+
+Bilimkurgu kısmı da mümkün olduğunca **gerçek fizik kavramlarından** beslenir
+(zaman genişlemesi, Penrose süreci, gelgit kuvvetleri); oyuncu oynarken bir
+şey de öğrenir.
+
+**Kara delik lojistiği (Çağ 9) örnek mekanikleri:**
+- **Zaman genişlemesi:** kara deliğe yakın yörüngeden geçen gemide birkaç
+  gün geçerken dış evrende yıllar geçer. Bu, yeni bir iş türü yaratır:
+  **“geleceğe teslim”** yükleri (zaman kapsülü kargo, uzun vadeli yatırım
+  malları). Mürettebat az yaşlanır, ama döndüklerinde pazar değişmiştir.
+- **Kara delik sapanı:** kütle çekimiyle hızlanıp yakıtsız uzak sistemlere
+  fırlatma; yörünge hesabı hatalıysa yük kaybedilir.
+- **Penrose süreci:** dönen kara delikten enerji çekmek; megayapı çağının
+  enerji kaynağı ve en pahalı yatırım.
+- **Olay ufku riski:** gelgit kuvvetleri ve dönüşü olmayan sınır; sigorta
+  primleri astronomik.
+
+Samimi, yerel hava hiç kaybolmaz: koloni adları (“Yeni Kayseri”, “Ay Ankara
+Lojistik Merkezi”), Mars kamyonlarının arkasında “Ana duası — 225 milyon km”,
+kara delik gemisinde “Olay ufkunda sollama yapılmaz”.
+
+**Görsel karşılığı:** hibrit stil korunur, ama palet ve arayüz ayrıntıları
+çağla birlikte değişir. Dünya'da otoyol tabelası yeşili ve sarısı, uzayda
+daha soğuk tonlar ve ışıma efektleri, kara delik çağında kütleçekimsel
+mercek gibi WebGL efektleri.
 
 #### Araçlar
 Hibrit stilin parçalı çizim sistemi doğrudan genişler: basınçlı kabin,
@@ -417,7 +489,9 @@ Uzay araç sınıfları her dünyanın kendi sınıf tablosuyla tanımlanır
 | Uzay üssü çağı | 45–60 saat |
 | Ay | 60–80 saat |
 | Mars | 100–140 saat |
-| Prosedürel ötegezegenler | 180+ saat |
+| Yıldızlararası (solucan delikleri) | 180–250 saat |
+| Kara delik lojistiği | 250–350 saat |
+| Megayapılar ve paralel evrenler | 350+ saat |
 
 > Not: 1× hızda “1 sn = 1 oyun dakikası” ile bir oyun yılı ~146 gerçek saat
 > eder; teknoloji takvimi (yıllar) bu tempoya uymaz. Saat kalibrasyonu ve
@@ -612,14 +686,19 @@ interface World  { id: string; name: string; era: number; modifiers: WorldModifi
                    cities: City[]; roads: Road[]; generatorSeed?: number; }
 interface WorldModifiers { gravity: number; atmosphere: 'yok' | 'ince' | 'normal' | 'yoğun';
                    dayLengthH: number; tempC: number; commsDelayMin: number;
-                   hazards: HazardId[]; roadsPrebuilt: boolean; }
-// Tarifeli ana hat: Ro-Ro, konteyner gemisi, hava kargo ve uzay aynı modelle.
-// Düğümler liman/havalimanı/uzay üssü olabilir; dünyalar arası da olabilir.
-interface ScheduledLink { id: string; mode: 'roro' | 'konteyner' | 'hava' | 'uzay';
+                   hazards: HazardId[]; roadsPrebuilt: boolean;
+                   timeRate?: number;              // dış evrene göre zaman akışı (1 = normal)
+                   physics?: PhysicsConstants; }   // yalnızca paralel evrenler
+// Tarifeli ana hat: Ro-Ro, tren, konteyner gemisi, hava kargo, uzay, solucan
+// deliği ve kara delik aynı modelle. Düğümler liman/terminal/havalimanı/üs/kapı
+// olabilir; dünyalar arası da olabilir.
+interface ScheduledLink { id: string;
+                   mode: 'roro' | 'demiryolu' | 'konteyner' | 'hava' | 'uzay' | 'solucan' | 'karadelik';
                    from: NodeRef; to: NodeRef; operator: 'taşeron' | 'oyuncu';
                    periodDays: number;   // sefer sıklığı veya fırlatma penceresi döngüsü
                    windowDays: number;   // kalkış penceresi (gemi/uçak için ~0)
                    cutoffHours: number; transitDays: number;
+                   properTimeDays?: number; // aracın/mürettebatın yaşadığı süre (zaman genişlemesi)
                    capacity: number; costPerUnit: number; vehicleIds?: string[]; }
 interface Region { id: string; worldId: string; name: string; era: number;
                    currency: 'TRY' | 'EUR' | 'USD' | string; rules: CountryRules; }
@@ -688,11 +767,13 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Gümrük, sınır kuyrukları, belgeler, geçiş belgesi kotaları, ülke kuralları.
 - Döviz ve kur dalgalanması; yabancı şubeler.
 - Ro-Ro hatları (yer kiralama), hava kargoda yer kiralama.
+- Demiryolu: vagon/slot kiralama, terminaller, Ro-La, ray açıklığı değişimi.
 
-### Faz 8 — Kıtalar Arası: Gemi ve Uçak
+### Faz 8 — Kıtalar Arası: Gemi, Uçak ve Tren
 - Tarifeli ana hat modeli (`ScheduledLink`), çok modlu kapıdan kapıya işler.
 - Konteyner sistemi (20'/40', frigorifik).
-- Kendi gemi ve uçak filosu, hat yönetimi, ekipler.
+- Kendi gemi, uçak ve tren filosu, hat yönetimi, ekipler.
+- Orta Koridor ve Çin–Avrupa demiryolu güzergâhları.
 - Liman/havalimanı terminali ve gümrüklü depo yatırımları.
 - Diğer kıtaların yerel kara ağları.
 - Olaylar: kanal tıkanması, liman grevi, fırtına, hava sahası kapanması.
@@ -712,10 +793,20 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Performans: çok dünyalı simülasyon için profil ölçümü; gerekirse
   sıcak noktaların Rust/WebAssembly'ye taşınması (bkz. 5.3).
 
-### Faz 11 — Sonsuz Evren
-- Prosedürel ötegezegen üreteci (tohumlu): yüzey, şehir/koloni yerleşimi,
-  kaynaklar, değiştiriciler.
-- Gezegenler arası 50+ oyun yılı bot denge testleri.
+### Faz 11 — Yıldızlararası
+- Füzyon itki, solucan deliği kapı ağı, kapı slotları ve geçiş ücretleri.
+- Prosedürel yıldız sistemi ve ötegezegen üreteci (tohumlu): yüzey,
+  koloni yerleşimi, kaynaklar, değiştiriciler.
+
+### Faz 12 — Kara Delik Lojistiği
+- Zaman genişlemesi (`properTimeDays`), “geleceğe teslim” iş türü,
+  kara delik sapanı, Penrose enerjisi, olay ufku riski.
+- Kütleçekimsel mercek gibi WebGL efektleri.
+
+### Faz 13 — Megayapılar ve Paralel Evrenler
+- Dyson sürüsü ve halka dünya inşaat zincirleri; halka dünya haritaları.
+- Fizik sabitleri farklı prosedürel evrenler; evrenler arası nakliye.
+- Tüm çağları kapsayan 50+ oyun yılı bot denge testleri.
 
 ### İleride (fikir havuzu)
 - Çok oyunculu ortak pazar.
@@ -753,21 +844,19 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 | İflas | Varsayılan: yeniden yapılanma (kariyer devam eder) |
 | Zor mod | Var — isteğe bağlı; iflas gerçek oyun sonudur |
 | Görsel stil | Hibrit: sade vektör harita + parçalı yan görünüm araç çizimleri |
-| Uzun vadeli kapsam | Çağlar: Türkiye → uluslararası karayolu → kıtalar arası (gemi + uçak) → uzay üssü → Ay → Mars → dış Güneş Sistemi → prosedürel ötegezegenler |
-| Taşıma modları | Karayolu, Ro-Ro, hava kargo, konteyner gemisi, uzay; önce yer kiralama, sonra kendi filosu |
+| Uzun vadeli kapsam | Çağlar: Türkiye → uluslararası karayolu → kıtalar arası → uzay üssü → Ay → Mars → dış Güneş Sistemi → yıldızlararası → kara delikler → megayapılar → paralel evrenler |
+| Taşıma modları | Karayolu, Ro-Ro, demiryolu, hava kargo, konteyner gemisi, uzay, solucan deliği, kara delik; önce yer kiralama, sonra kendi filosu |
+| Ton | Başta gerçekçi; Ay/Mars yakın gelecek; sonra kademeli olarak tamamen bilimkurgu |
 | Veri modeli | Baştan çok dünyalı (`World`), Faz 1'de tek dünya |
 
 ## 9. Açık Sorular
 
-1. **Demiryolu:** Orta Koridor (Kars–Tiflis–Bakü) ve Avrupa blok trenleri
-   gibi demiryolu taşımacılığı da bir mod olarak eklensin mi?
-2. **Uzay tonu:** Gerçekçi bilime yakın mı (yörünge pencereleri, delta-v),
-   yoksa daha serbest bilimkurgu mu? (Öneri: gerçekçiden ilham alan sade
-   kurallar.)
-3. **Yalnız Dünya modu:** Uzayı hiç açmak istemeyen oyuncular için uzay
+1. **Yalnız Dünya modu:** Uzayı hiç açmak istemeyen oyuncular için uzay
    çağlarını kapatan bir seçenek olsun mu?
-4. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
+2. **Hikâye:** Çağ geçişleri yalnızca mekanik mi kalsın, yoksa her geçişte
+   kısa bir anlatı olsun mu (ör. ilk uzay sözleşmesini getiren gizemli müşteri)?
+3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
    sürer), yoksa doğrudan yönetici mi?
-5. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
+4. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
-6. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
+5. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
