@@ -12,7 +12,8 @@ Oyuncu, tek bir ikinci el kamyonet ve birikmiş az bir sermayeyle Türkiye'de bi
 nakliye şirketi kurar. Yük ilanlarından iş alır, şoför işe alır, filosunu ve
 şube ağını büyütür; yakıt fiyatları, bakım masrafları, teslim süreleri ve
 müşteri itibarı arasında denge kurarak ülkenin en büyük lojistik firmasına
-dönüşmeye çalışır.
+dönüşmeye çalışır. Oyun sonsuz olduğu için hikâye Türkiye'de bitmez: uzay
+çağı başladığında firma Ay'a, Mars'a ve daha ötesine yük taşır (Bölüm 3.13).
 
 - **Tür:** Tycoon / yönetim simülasyonu (sürüş simülasyonu **değil**).
 - **Bakış:** Üstten harita + yönetim panelleri.
@@ -267,9 +268,96 @@ anlamsızlaşır ve oyun sıkıcılaşır. Önlemler:
 | Nakliyeci | 4–20 | Şoför yönetimi, rota planlama |
 | Lojistik firması | 20–100 | Şubeler, sözleşmeler, dispeçer kuralları |
 | Holding | 100+ | Bölge müdürleri, satın almalar, yatırım stratejisi |
+| Gezegenlerarası | Çok dünyalı | Gezegen müdürleri, fırlatma pencereleri, tedarik zincirleri |
 
 Otomasyon araçları (dispeçer, bölge müdürleri, otomatik bakım/filo yenileme
 kuralları) her aşamada bir önceki aşamanın mikro yönetimini devralır.
+
+### 3.13 Çağlar: Gezegenlerarası Genişleme
+Sonsuz oyunun uzun vadeli ufku. Oyun, birbirini izleyen **çağlardan** oluşur;
+her çağ yeni bir **dünya** (ayrı harita) ve yeni kurallar ekler. Önceki dünyalar
+kapanmaz: hepsi aynı anda çalışmaya devam eder ve birbirine yük sağlar.
+
+**Temel ilke: oyun her yerde kamyonculuktur.** Uzay gemileri “ana hat”
+(feribot/liman gibi) rolündedir; oyuncunun asıl işi her gezegende yine yüzeyde
+yük toplamak ve dağıtmaktır. Ana hat sonradan oyuncunun kendi “uzay
+çekicilerine” geçer — tır mantığının uzaydaki karşılığı: **çekici (itki
+modülü) + dorseler (kargo modülleri)**.
+
+#### Çağlar
+| Çağ | Dünya | Yeni kural / mekanik | Açılma koşulu (öneri) |
+|---|---|---|---|
+| 1 | Türkiye | Temel oyun | Başlangıç |
+| 1.5 | Komşu ülkeler (isteğe bağlı ara çağ) | Gümrük, sınır bekleme, döviz | Tır + firma seviyesi |
+| 2 | **Uzay üssü** (Dünya'da) | Roket kademesi taşıma: ağır nakliyenin (sınıf 7) en büyük işleri | Ağır nakliye + “Anadolu Uzay Üssü” mega sözleşmesi |
+| 3 | **Ay** | 1/6 yerçekimi, vakum, 14 günlük gece, regolit tozu aşınması, **yolları oyuncu inşa eder** | Uzay üssü işleri + elektrikli/hidrojen teknolojisi |
+| 4 | **Mars** | Toz fırtınaları, ince atmosfer, **4–24 dk iletişim gecikmesi → otonom araç zorunlu**, ~26 ayda bir fırlatma penceresi | Ay'da yerleşik şube + otonom teknolojisi |
+| 5 | **Dış Güneş Sistemi** (asteroit kuşağı, Europa, Titan) | Yolsuz yüzeyler, buz kabuğu, metan gölleri (amfibi araçlar), kendi uzay çekicilerin | Mars ağı + uzay çekicisi teknolojisi |
+| ∞ | **Ötegezegenler** (prosedürel) | Tohumdan üretilen gezegenler: yerçekimi, atmosfer, sıcaklık, kaynaklar rastgele | Yıldızlararası kapı teknolojisi |
+
+Son çağ **prosedüreldir**: her yeni gezegen tohumlu üreteçle oluşturulur;
+böylece içerik gerçekten tükenmez.
+
+#### Gezegene özgü kurallar (değiştiriciler)
+Her dünya, çekirdek simülasyona bir **değiştirici seti** olarak eklenir; yeni
+kod değil, çoğunlukla yeni veri:
+
+| Değiştirici | Etkisi |
+|---|---|
+| Yerçekimi | Taşıma kapasitesi ↑, fren/tutuş ve devrilme riski |
+| Atmosfer | Basınçlı kabin, içten yanmalı motor kullanılamaz |
+| Gün uzunluğu | Güneş enerjili araçların gece duruşu, şoför vardiyaları |
+| Sıcaklık | Akü verimi, frigorifik yerine “ısıtmalı” yük ihtiyacı |
+| Yüzey | Yol yoksa düşük hız ve yüksek aşınma; yol inşası mümkün mü |
+| İletişim gecikmesi | Uzaktan sürüş imkânsız → otonom araç gereksinimi |
+| Tehlikeler | Toz fırtınası, meteor, radyasyon fırtınası, buz çatlağı |
+
+#### Yeni mekanikler
+- **Yol inşası:** Dünya'da yollar hazırdır; Ay'dan itibaren oyuncu (veya
+  konsorsiyum ortaklarıyla) yol, şarj istasyonu ve depo inşa eder. Yol ağının
+  kendisi stratejik bir yatırım olur.
+- **Fırlatma pencereleri:** gezegenler basit dairesel yörüngelerde döner;
+  ucuz transfer yalnızca belirli aralıklarla mümkündür (Mars ~26 ay).
+  Pencere dışı fırlatma çok pahalıdır. Yükü pencereye yetiştirmek yeni tip
+  bir teslim süresi baskısıdır.
+- **Gezegenlerarası tedarik zincirleri:** koloniler Dünya'dan yüksek
+  teknoloji, ilaç, gıda ister; Dünya'ya Ay helyum-3'ü, asteroit metalleri
+  gibi değerli ürünler gelir. Kıtlık yüksek navlun demektir.
+- **Taşeron → kendi filosu:** önce ana hat için başka firmanın gemisinden yer
+  kiralanır (feribot gibi); sonra kendi uzay çekicileri ve kargo modülleri
+  alınır.
+- **Astronot şoförler:** yeni ehliyet/belge sınıfları (yüzey aracı, uzay
+  çekicisi); eğitim akademisi yatırımının geç oyun karşılığı. Mars'ta
+  şoförlerin yerini otonom araç operatörleri alır.
+- **Dünya'nın önemi sürer:** uzay endüstrisi Dünya'da da yeni talep yaratır
+  (roket parçaları, üs malzemesi); Dünya operasyonları bölge müdürleriyle
+  otomatik yönetilir.
+
+#### Ton
+Gerçekçi bilimden ilham alır ama oyunun samimi, yerel havası korunur:
+koloni adları (“Yeni Kayseri”, “Ay Ankara Lojistik Merkezi”), Mars
+kamyonlarının arkasında da yazılar (“Ana duası — 225 milyon km”).
+
+#### Araçlar
+Hibrit stilin parçalı çizim sistemi doğrudan genişler: basınçlı kabin,
+tel örgü tekerler, güneş paneli, RTG, palet, amfibi gövde gibi yeni parçalar.
+Uzay araç sınıfları her dünyanın kendi sınıf tablosuyla tanımlanır
+(ör. Ay: hafif rover → basınçlı kamyon → regolit damperi → modül taşıyıcı).
+
+#### Tempo hedefi (gerçek oyun saati, ayarlanacak)
+| Hedef | Yaklaşık süre |
+|---|---|
+| İlk tır | 5–10 saat |
+| Uzay üssü çağı | 25–40 saat |
+| Ay | 40–60 saat |
+| Mars | 80–120 saat |
+| Prosedürel ötegezegenler | 150+ saat |
+
+> Not: 1× hızda “1 sn = 1 oyun dakikası” ile bir oyun yılı ~146 gerçek saat
+> eder; teknoloji takvimi (yıllar) bu tempoya uymaz. Saat kalibrasyonu ve
+> teknoloji takvimi Faz 1 denge testlerinde birlikte ayarlanacak (ör.
+> 1 sn = 5 oyun dakikası veya teknoloji ilerlemesini takvim yerine firma
+> gelişimine bağlamak).
 
 ---
 
@@ -452,7 +540,17 @@ interface Job    { id: string; from: string; to: string; cargo: CargoTypeId;
                    pay: number; penaltyPerHour: number; }
 interface Trip   { id: string; truckId: string; jobId?: string; route: string[];
                    progressKm: number; phase: 'yüklemeye' | 'yolda' | 'mola' | 'boşaltma'; }
+// Çok dünyalı yapı: şehir/yol/ilan/sefer her zaman bir dünyaya aittir.
+// Faz 1'de tek dünya ('tr') olsa da model baştan böyle kurulur.
+interface World  { id: string; name: string; era: number; modifiers: WorldModifiers;
+                   cities: City[]; roads: Road[]; generatorSeed?: number; }
+interface WorldModifiers { gravity: number; atmosphere: 'yok' | 'ince' | 'normal' | 'yoğun';
+                   dayLengthH: number; tempC: number; commsDelayMin: number;
+                   hazards: HazardId[]; roadsPrebuilt: boolean; }
+interface InterWorldLink { from: string; to: string; periodDays: number; // fırlatma penceresi döngüsü
+                   windowDays: number; transitDays: number; costPerTon: number; }
 interface GameState { time: number; seed: number; money: number; reputation: number;
+                      worlds: World[]; links: InterWorldLink[];
                       trucks: Truck[]; drivers: Driver[]; jobs: Job[]; trips: Trip[];
                       branches: Branch[]; loans: Loan[]; ledger: LedgerEntry[]; }
 ```
@@ -510,8 +608,26 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 ### Faz 6 — Cila
 - Ses/müzik, animasyonlar, eğitim (tutorial), mobil uyumluluk, denge ayarı.
 
+### Faz 7 — Uzay Çağı I: Uzay Üssü ve Ay
+- Çok dünyalı harita geçişi (dünya seçici, her dünyanın kendi haritası).
+- Uzay üssü mega sözleşmesi; ağır nakliye ile roket kademeleri.
+- Ay: değiştiriciler, yol/şarj istasyonu inşası, Ay araç sınıfları.
+- Ana hat: taşeron gemide yer kiralama.
+
+### Faz 8 — Uzay Çağı II: Mars ve Ötesi
+- Fırlatma pencereleri ve yörünge modeli.
+- Mars: toz fırtınaları, iletişim gecikmesi, otonom zorunluluğu.
+- Kendi uzay çekicileri + kargo modülleri; gezegenlerarası tedarik zincirleri.
+- Dış Güneş Sistemi dünyaları.
+- Performans: çok dünyalı simülasyon için profil ölçümü; gerekirse
+  sıcak noktaların Rust/WebAssembly'ye taşınması (bkz. 5.3).
+
+### Faz 9 — Sonsuz Evren
+- Prosedürel ötegezegen üreteci (tohumlu): yüzey, şehir/koloni yerleşimi,
+  kaynaklar, değiştiriciler.
+- Gezegenler arası 50+ oyun yılı bot denge testleri.
+
 ### İleride (fikir havuzu)
-- Uluslararası seferler (Avrupa, Orta Doğu) — gümrük, vize, döviz.
 - Çok oyunculu ortak pazar.
 
 ---
@@ -546,13 +662,21 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 | Enflasyon | Yok — fiyatlar ekonomik döngülerle dalgalanır, sürekli artmaz |
 | İflas | Varsayılan: yeniden yapılanma (kariyer devam eder) |
 | Zor mod | Var — isteğe bağlı; iflas gerçek oyun sonudur |
+| Görsel stil | Hibrit: sade vektör harita + parçalı yan görünüm araç çizimleri |
+| Uzun vadeli kapsam | Çağlar: Türkiye → uzay üssü → Ay → Mars → dış Güneş Sistemi → prosedürel ötegezegenler |
+| Veri modeli | Baştan çok dünyalı (`World`), Faz 1'de tek dünya |
 
 ## 9. Açık Sorular
 
-1. **Görsel stil:** Hibrit öneri (bkz. 4.1) onaylanıyor mu?
-2. **Kapsam:** Yalnızca Türkiye mi, yoksa ileride uluslararası mı?
-3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
+1. **Komşu ülkeler ara çağı:** Uzaya geçmeden önce uluslararası seferler
+   (gümrük, döviz) olsun mu, yoksa doğrudan uzay üssüne mi geçilsin?
+2. **Uzay tonu:** Gerçekçi bilime yakın mı (yörünge pencereleri, delta-v),
+   yoksa daha serbest bilimkurgu mu? (Öneri: gerçekçiden ilham alan sade
+   kurallar.)
+3. **Yalnız Dünya modu:** Uzayı hiç açmak istemeyen oyuncular için uzay
+   çağlarını kapatan bir seçenek olsun mu?
+4. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
    sürer), yoksa doğrudan yönetici mi?
-4. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
+5. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
-5. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
+6. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
