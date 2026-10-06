@@ -17,7 +17,8 @@ dönüşmeye çalışır.
 - **Tür:** Tycoon / yönetim simülasyonu (sürüş simülasyonu **değil**).
 - **Bakış:** Üstten harita + yönetim panelleri.
 - **Platform:** Tarayıcı (masaüstü öncelikli, mobilde oynanabilir).
-- **Oturum süresi:** 15–60 dk; kayıt/yükleme ile uzun kariyer.
+- **Yapı:** **Sonsuz (endless) oyun.** Kazanma ekranı ya da bitiş tarihi yok;
+  tek, sürekli büyüyen bir kariyer. Oturumlar 15–60 dk, kariyer aylarca sürebilir.
 - **Ton:** Yerel ve samimi — gerçek Türk şehirleri, otoyollar, köprüler,
   “Hayırlı yolculuklar” havası.
 
@@ -29,6 +30,9 @@ dönüşmeye çalışır.
    filo büyüdükçe açılır.
 4. **Mikro yönetimi otomasyonla ödüllendir.** Büyüyünce rota/iş atama
    otomatikleştirilebilmeli (dispeçer).
+5. **Dünya durmaz.** Sonsuz oyunun canlı kalması için ekonomi, şehirler, yollar
+   ve teknoloji zamanla değişir; oyuncu hiçbir zaman “çözülmüş” bir oyunda
+   kalmamalı (bkz. Bölüm 3.12).
 
 ---
 
@@ -50,6 +54,9 @@ dönüşmeye çalışır.
 filoyu doğru konumlandırma.
 **Uzun döngü (oyun yılları):** şube ağı, büyük sözleşmeler, pazar payı,
 filonun yenilenmesi.
+**Sonsuz döngü (oyun on yılları):** değişen dünyaya uyum — yeni sanayi
+bölgeleri, yeni otoyollar, yeni kamyon teknolojileri, ekonomik krizler ve
+yükselişler; operasyon yöneticiliğinden holding stratejisine geçiş.
 
 ---
 
@@ -146,20 +153,82 @@ Arıza, lastik patlaması, trafik kazası, kar nedeniyle yol kapanması
 (“Yolda tamir et — pahalı ama hızlı / Çekici çağır — ucuz ama yavaş”).
 
 ### 3.10 Zaman
-- Oyun içi saat; hız: **Duraklat / 1× / 2× / 4× / 8×**.
+- Oyun içi saat; hız: **Duraklat / 1× / 2× / 4× / 8× / 16×**.
+- **“Sonraki olaya atla”**: büyük filoda sakin dönemleri hızla geçmek için.
 - 1× hızda 1 gerçek saniye ≈ 1 oyun dakikası (ayarlanacak).
 - Sabit adımlı (fixed timestep) simülasyon — kare hızından bağımsız.
 - Önemli olaylarda otomatik duraklatma (ayarlanabilir).
 
 ### 3.11 İlerleme ve Hedefler
-- Firma seviyesi (toplam teslimat/ciro) yeni dorse türlerini, şehirleri,
-  sözleşmeleri açar.
-- Başarımlar / görevler: “İlk 10 teslimat”, “5 kamyonluk filo”,
-  “Soğuk zincirde 50 hatasız teslimat”.
-- **Senaryo modu (ileride):** belirli koşullarla hedef (ör. 2 yılda 1M ₺ net
-  değer).
-- **Serbest mod:** sonsuz kariyer.
-- Kaybetme koşulu: iflas (uzun süre negatif nakit + kredi temerrüdü).
+Oyunun sonu yoktur; ilerleme **sınırsız** ve **katmanlı** tasarlanır.
+
+- **Firma seviyesi — sınırsız.** Seviye eşikleri artarak büyür
+  (ör. `eşik(n) = taban × n^1.6`). İlk seviyeler içerik açar (dorse türleri,
+  şehirler, sözleşmeler, ihaleler); sonraki seviyeler unvan, kozmetik
+  (firma logosu/renkleri) ve küçük kalıcı bonuslar verir.
+- **Kilometre taşları (milestone).** “İlk 10 teslimat”, “50 kamyon”,
+  “81 ilin hepsine teslimat”, “10 yıl iflassız” — sayısal olanlar kademeli
+  ve sonsuz tekrarlanabilir (100 → 1.000 → 10.000 teslimat…).
+- **Prosedürel görevler.** Müşterilerden, şehirlerden ve olaylardan sürekli
+  üretilen hedefler: “Bu kış Doğu Anadolu'ya 20 sefer yakacak taşı”,
+  “Yeni açılan OSB'nin ilk lojistik ortağı ol”. Ödül: para, itibar, özel
+  sözleşme.
+- **Bölgesel pazar payı.** Her bölgede (Marmara, Ege, İç Anadolu…) rakiplere
+  karşı pazar payı; liderlik bölgesel bonuslar verir ve korunmalıdır.
+- **Firma tarihçesi / şeref kürsüsü.** Kronoloji (ilk kamyon, ilk şube, en
+  büyük sözleşme), rekorlar ve istatistik grafikleri — uzun kariyerin
+  hikâyesini görünür kılar.
+
+#### İflas: oyun sonu değil, geri dönüş
+Sonsuz oyunda iflas kariyeri silmemeli. Varsayılan davranış:
+- Uzun süre negatif nakit + kredi temerrüdü → **konkordato / yeniden
+  yapılanma**: banka varlıkların bir kısmına el koyar, firma 1–2 kamyon ve
+  ağır itibar kaybıyla ayakta kalır; tarihçe ve kilometre taşları korunur.
+- **İsteğe bağlı “Zor mod”:** iflas gerçek oyun sonudur.
+
+### 3.12 Sonsuz Oyunu Canlı Tutmak
+Tycoon oyunlarının bilinen sorunu: oyuncu bir noktada “her şeyi çözer”, para
+anlamsızlaşır ve oyun sıkıcılaşır. Önlemler:
+
+**a) Değişen dünya**
+- **Ekonomik döngüler:** büyüme → durgunluk → kriz → toparlanma. Talep,
+  navlun fiyatları ve faiz oranları dönemsel olarak değişir.
+- **Şehirlerin evrimi:** yeni fabrikalar ve organize sanayi bölgeleri açılır,
+  bazı sektörler küçülür; yük haritası yıllar içinde yeniden şekillenir.
+- **Altyapı projeleri:** yeni otoyollar, köprüler, tüneller açılır
+  (rotalar ve stratejik konumlar değişir).
+- **Teknoloji ağacı (zamana bağlı):** daha verimli motorlar → LNG/elektrikli →
+  hidrojen kamyonlar; telematik, filo yönetim yazılımı; ileride otonom sürüş.
+  Eski filo yavaş yavaş rekabet gücünü kaybeder.
+- **Mevzuat değişiklikleri:** emisyon bölgeleri, yeni sürüş süresi kuralları,
+  vergi değişiklikleri.
+
+**b) Ölçekle artan zorluk (kartopu etkisini frenleme)**
+- **Yönetim ek yükü:** filo/şube sayısı arttıkça genel gider oranı artar;
+  yönetici (bölge müdürü) işe almak gerekir.
+- **Rakip firmalar:** yapay zekâ rakipler büyür, fiyat kırar, şoför ve müşteri
+  kapar; bazıları batar, bazıları satın alınabilir.
+- **Müşteri beklentisi:** büyük müşteriler daha sıkı teslim süreleri ve
+  kalite şartları ister.
+- **Azalan getiri:** aynı bölgede aşırı yoğunlaşmak navlunları düşürür;
+  çeşitlendirme ödüllendirilir.
+
+**c) Paranın anlamlı kalması (para harcama alanları)**
+- Pahalı geç oyun yatırımları: lojistik merkezleri, soğuk hava depoları,
+  kendi akaryakıt istasyonları, bakım atölyeleri, eğitim akademisi.
+- Rakip firma satın alma / birleşme.
+- Filo yenileme baskısı (teknoloji + yaşlanma).
+
+**d) Oyuncunun rolünün evrimi**
+| Aşama | Filo | Oyuncunun odağı |
+|---|---|---|
+| Kamyoncu | 1–3 | Tek tek sefer seçimi |
+| Nakliyeci | 4–20 | Şoför yönetimi, rota planlama |
+| Lojistik firması | 20–100 | Şubeler, sözleşmeler, dispeçer kuralları |
+| Holding | 100+ | Bölge müdürleri, satın almalar, yatırım stratejisi |
+
+Otomasyon araçları (dispeçer, bölge müdürleri, otomatik bakım/filo yenileme
+kuralları) her aşamada bir önceki aşamanın mikro yönetimini devralır.
 
 ---
 
@@ -218,7 +287,25 @@ Arıza, lastik patlaması, trafik kazası, kar nedeniyle yol kapanması
 - Tohumlu (seeded) RNG → hatalar tekrarlanabilir, testler deterministik.
 - Tüm denge değerleri tek bir `balance` yapılandırmasında.
 
-### 5.3 Klasör yapısı (taslak)
+### 5.3 Sonsuz oyun için teknik gereksinimler
+Kariyer aylarca/yıllarca (gerçek zaman) sürebileceği için:
+- **Kayıt sürümleme ve göç (migration):** her kayıtta `version` alanı;
+  oyun güncellendiğinde eski kayıtlar otomatik dönüştürülür. Hiçbir
+  güncelleme mevcut kariyeri bozmamalı.
+- **Sınırlı veri büyümesi:** muhasebe kayıtları kademeli özetlenir
+  (günlük → aylık → yıllık); tamamlanan seferler, süresi geçen ilanlar ve
+  eski bildirimler budanır. Kayıt boyutu oyun süresinden bağımsız kalmalı.
+- **Para birimi:** tamsayı kuruş (kayan nokta hatası birikmesin). Değerler
+  `Number.MAX_SAFE_INTEGER` (~90 trilyon ₺) sınırının çok altında kalacak;
+  gerekirse `BigInt`.
+- **Otomatik kayıt** + birden fazla kayıt yuvası + dışa/içe aktarma (yedek).
+- **Uzun süreli performans:** 100+ kamyon ve rakiplerle 16× hızda akıcı
+  çalışmalı; simülasyon çekirdeği gerekirse Web Worker'da koşar.
+- **Uzun süreli denge testi:** çekirdek UI'sız çalıştığı için botla
+  “50 oyun yılı” simülasyonu koşturulup ekonomi patlaması/çöküşü
+  otomatik testlerle yakalanır.
+
+### 5.4 Klasör yapısı (taslak)
 ```
 kamyoncu/
 ├─ docs/                 # tasarım belgeleri
@@ -232,6 +319,8 @@ kamyoncu/
 │  │  ├─ jobs.ts         # yük ilanı üretimi
 │  │  ├─ drivers.ts
 │  │  ├─ events.ts       # rastgele olaylar
+│  │  ├─ world.ts        # ekonomik döngüler, şehir evrimi, altyapı, teknoloji
+│  │  ├─ save.ts         # serileştirme, sürümleme, göç, budama
 │  │  ├─ rng.ts
 │  │  └─ balance.ts      # denge sabitleri
 │  ├─ data/              # cities.json, roads.json, trucks.json, cargo.json
@@ -242,7 +331,7 @@ kamyoncu/
 └─ package.json
 ```
 
-### 5.4 Temel veri modelleri (taslak)
+### 5.5 Temel veri modelleri (taslak)
 ```ts
 interface City   { id: string; name: string; x: number; y: number;
                    produces: CargoTypeId[]; demands: CargoTypeId[]; }
@@ -275,7 +364,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - 1 kamyon, 1 şoför (oyuncunun kendisi), tek dorse türü (tenteli).
 - Yük borsası → kabul et → kamyon haritada ilerler → teslim → para.
 - Yakıt ve otoyol gideri, basit gelir-gider dökümü.
-- Kayıt/yükleme.
+- Sürümlü kayıt/yükleme + otomatik kayıt (sonsuz kariyerin temeli baştan).
 - **Başarı ölçütü:** 10 dakika oynanınca “bir sefer daha” hissi.
 
 ### Faz 2 — Filo ve Şoförler
@@ -296,16 +385,23 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Bildirim sistemi, otomatik duraklatma.
 
 ### Faz 5 — Otomasyon ve Geç Oyun
-- Dispeçer: kurallara göre otomatik iş atama.
+- Dispeçer: kurallara göre otomatik iş atama; bölge müdürleri.
 - İhaleler, 81 ile genişleme.
-- Başarımlar, senaryo modu.
+- Sınırsız firma seviyesi, kademeli kilometre taşları, prosedürel görevler.
+- Firma tarihçesi ve istatistikler.
+
+### Faz 5.5 — Sonsuz Dünya
+- Ekonomik döngüler, şehir evrimi, altyapı projeleri.
+- Zamana bağlı teknoloji ilerlemesi ve mevzuat değişiklikleri.
+- Rakip firmalar, satın alma/birleşme.
+- Geç oyun yatırımları (lojistik merkezi, depo, istasyon).
+- 50 oyun yılı bot simülasyonuyla uzun vadeli denge testleri.
 
 ### Faz 6 — Cila
 - Ses/müzik, animasyonlar, eğitim (tutorial), mobil uyumluluk, denge ayarı.
 
 ### İleride (fikir havuzu)
 - Uluslararası seferler (Avrupa, Orta Doğu) — gümrük, vize, döviz.
-- Rakip firmalar (yapay zekâ).
 - Çok oyunculu ortak pazar.
 
 ---
@@ -339,3 +435,9 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 5. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
 6. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
+7. **Çevrimdışı ilerleme:** Oyun kapalıyken zaman işlesin mi (idle tarzı),
+   yoksa yalnızca oyun açıkken mi? (Öneri: hayır — yönetim oyununda
+   oyuncunun yokluğunda kriz yaşanması sinir bozucu olur.)
+8. **Enflasyon:** Fiyatlar zamanla gerçekçi biçimde artsın mı? (Öneri:
+   hayır — sayılar anlamsızlaşır; bunun yerine döngüsel dalgalanma.)
+9. **Zor mod:** Gerçek iflas = oyun sonu seçeneği olsun mu?
