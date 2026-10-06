@@ -257,37 +257,78 @@ kuralları) her aşamada bir önceki aşamanın mikro yönetimini devralır.
 | Dil | **TypeScript** | Tip güvenliği; simülasyon modelleri için ideal |
 | Derleme | **Vite** | Hızlı geliştirme sunucusu, basit kurulum |
 | UI | **React** | Çok sayıda panel/tablo içeren yönetim arayüzü |
-| Harita | **SVG** (başta), gerekirse **PixiJS/Canvas** | Basit başla, performans gerekirse geç |
+| Harita | **PixiJS (WebGL, WebGPU destekli)** | Yüzlerce hareketli kamyon, zoom/pan, katmanlar akıcı çizilir |
+| Simülasyon çalıştırma | **Web Worker** | Ağır simülasyon UI'ı kilitlemez |
+| Yüksek performanslı modüller | **Rust → WebAssembly** (yalnızca ölçümle gerekirse) | Bkz. 5.3 |
 | Durum yönetimi | **Zustand** | Hafif; simülasyon çekirdeğini sarmalar |
 | Test | **Vitest** | Simülasyon çekirdeği için birim testleri |
 | Kayıt | **localStorage / IndexedDB** + JSON dışa aktarma | Sunucu gerektirmez |
 
 ### 5.2 Mimari ilke: Simülasyon çekirdeği UI'dan bağımsız
 ```
-┌──────────────────────────────────────────────┐
-│ UI (React)  — paneller, harita, girdiler      │
-└───────────────▲──────────────────┬───────────┘
-                │ durum okur        │ komut gönderir
-┌───────────────┴──────────────────▼───────────┐
-│ Oyun köprüsü (store) — tick döngüsü, hız      │
-└───────────────▲──────────────────┬───────────┘
-                │                  │
-┌───────────────┴──────────────────▼───────────┐
-│ Simülasyon çekirdeği (saf TypeScript)         │
-│  - deterministik (tohumlu RNG)                │
-│  - step(state, dt) → state + olaylar          │
-│  - komutlar: acceptJob, assignTruck, buy…     │
-└──────────────────────────────────────────────┘
+┌─────────────────────────────┐  ┌────────────────────────────┐
+│ React (DOM)                 │  │ PixiJS (WebGL canvas)      │
+│ paneller, tablolar, menüler │  │ harita, kamyonlar, katmanlar│
+└──────────────▲──────┬───────┘  └──────────────▲─────────────┘
+               │      │ komutlar                │ konumlar
+┌──────────────┴──────▼─────────────────────────┴─────────────┐
+│ Oyun köprüsü (Zustand store) — hız, anlık görüntü, olaylar   │
+└──────────────▲──────────────────────────┬───────────────────┘
+               │ postMessage (durum farkı) │ postMessage (komut)
+┌──────────────┴──────────────────────────▼───────────────────┐
+│ Web Worker: Simülasyon çekirdeği (saf TypeScript)            │
+│  - deterministik (tohumlu RNG), sabit adımlı                 │
+│  - step(state, dt) → state + olaylar                         │
+│  - komutlar: acceptJob, assignTruck, buy…                    │
+│  - [ileride] sıcak noktalar → Rust/WebAssembly modülleri     │
+└─────────────────────────────────────────────────────────────┘
                 ▲
        Statik veri (JSON): şehirler, yollar,
        kamyon modelleri, yük türleri
 ```
-- Çekirdek DOM/React bilmez → kolay test, ileride Web Worker'a taşınabilir,
+- Çekirdek DOM/React/PixiJS bilmez → kolay test (Node'da Vitest ile),
   kayıt dosyası sadece serileştirilmiş `GameState`'tir.
+- Çekirdek **Faz 0'dan itibaren Web Worker'da** çalışır; UI'a her karede
+  tüm durum değil, yalnızca **değişiklikler** (kamyon konumları, nakit,
+  olaylar) gönderilir.
+- Harita katmanı, kamyon konumlarını iki simülasyon adımı arasında
+  **interpolasyonla** çizer → 60 FPS akıcı hareket, simülasyon adımı
+  bundan bağımsız.
 - Tohumlu (seeded) RNG → hatalar tekrarlanabilir, testler deterministik.
 - Tüm denge değerleri tek bir `balance` yapılandırmasında.
 
-### 5.3 Sonsuz oyun için teknik gereksinimler
+### 5.3 Render ve performans kararları
+
+**WebGL (PixiJS) — evet, baştan.**
+- Harita: şehirler, yol ağı, kamyon ikonları, rota vurgusu, hava durumu
+  (kar/kapalı yol) ve trafik yoğunluğu katmanları.
+- Kamera: zoom/pan, mobilde dokunma (pinch) desteği; zoom seviyesine göre
+  ayrıntı (uzakta bölge özetleri, yakında tek tek kamyonlar).
+- Kamyon ve şehir ikonları **sprite atlas** üzerinden toplu (batched) çizilir.
+- Ham WebGL yazılmaz; PixiJS soyutlaması kullanılır.
+- **Paneller WebGL'e taşınmaz:** metin/tablo ağırlıklı yönetim ekranları
+  React/DOM'da kalır (metin kalitesi, erişilebilirlik, geliştirme hızı).
+
+**WebAssembly — şimdilik hayır, kapı açık.**
+- Mevcut iş yükü (81 düğümlü grafta rota bulma, birkaç yüz kamyonun
+  güncellenmesi) TypeScript'te milisaniyenin altındadır.
+- Wasm'ın maliyeti: ikinci dil ve derleme zinciri, JS↔Wasm veri aktarım
+  yükü, daha zor hata ayıklama.
+- **Ne zaman devreye girer:** profil ölçümünde 16× hızda adım süresi bütçeyi
+  (ör. 4 ms) aşarsa; tipik adaylar: binlerce ajanlı trafik simülasyonu,
+  rakip yapay zekâların filo/rota optimizasyonu, çok oyunculu modda
+  sunucuyla paylaşılan oyun mantığı.
+- **Nasıl:** yalnızca ilgili modül Rust ile yazılıp `wasm-pack` ile
+  derlenir ve Worker içinde aynı TypeScript arayüzünün arkasına konur;
+  veri, kopyalamayı önlemek için düz dizilerle (typed array) aktarılır.
+  Aynı testler her iki uygulamaya da koşulur.
+
+**Neden tam oyun motoru (Unity/Godot/Bevy) değil?** Web çıktıları da
+Wasm + WebGL'dir, ancak 10–40 MB indirme, yavaş açılış, tablo ağırlıklı
+yönetim arayüzlerinin zahmetli oluşu ve zayıf mobil tarayıcı performansı
+nedeniyle bu tür için uygun değil.
+
+### 5.4 Sonsuz oyun için teknik gereksinimler
 Kariyer aylarca/yıllarca (gerçek zaman) sürebileceği için:
 - **Kayıt sürümleme ve göç (migration):** her kayıtta `version` alanı;
   oyun güncellendiğinde eski kayıtlar otomatik dönüştürülür. Hiçbir
@@ -300,12 +341,12 @@ Kariyer aylarca/yıllarca (gerçek zaman) sürebileceği için:
   gerekirse `BigInt`.
 - **Otomatik kayıt** + birden fazla kayıt yuvası + dışa/içe aktarma (yedek).
 - **Uzun süreli performans:** 100+ kamyon ve rakiplerle 16× hızda akıcı
-  çalışmalı; simülasyon çekirdeği gerekirse Web Worker'da koşar.
+  çalışmalı (Web Worker + WebGL harita sayesinde UI akıcı kalır).
 - **Uzun süreli denge testi:** çekirdek UI'sız çalıştığı için botla
   “50 oyun yılı” simülasyonu koşturulup ekonomi patlaması/çöküşü
   otomatik testlerle yakalanır.
 
-### 5.4 Klasör yapısı (taslak)
+### 5.5 Klasör yapısı (taslak)
 ```
 kamyoncu/
 ├─ docs/                 # tasarım belgeleri
@@ -324,14 +365,16 @@ kamyoncu/
 │  │  ├─ rng.ts
 │  │  └─ balance.ts      # denge sabitleri
 │  ├─ data/              # cities.json, roads.json, trucks.json, cargo.json
+│  ├─ worker/            # simülasyonu çalıştıran Web Worker + mesaj protokolü
 │  ├─ store/             # Zustand köprüsü
-│  ├─ ui/                # React bileşenleri (map, panels, …)
+│  ├─ map/               # PixiJS harita: katmanlar, kamera, sprite'lar
+│  ├─ ui/                # React bileşenleri (paneller, menüler, …)
 │  └─ main.tsx
 ├─ tests/
 └─ package.json
 ```
 
-### 5.5 Temel veri modelleri (taslak)
+### 5.6 Temel veri modelleri (taslak)
 ```ts
 interface City   { id: string; name: string; x: number; y: number;
                    produces: CargoTypeId[]; demands: CargoTypeId[]; }
@@ -357,7 +400,9 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ### Faz 0 — İskelet
 - Vite + React + TS projesi, lint/format, Vitest.
-- Boş harita ekranı, oyun saati ve hız kontrolü.
+- Simülasyon çekirdeği Web Worker'da; mesaj protokolü ve Zustand köprüsü.
+- PixiJS harita: şehirler, yollar, zoom/pan.
+- Oyun saati ve hız kontrolü.
 
 ### Faz 1 — Oynanabilir MVP 🎯
 - 15 şehir + yol ağı, rota bulma.
@@ -423,21 +468,27 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ---
 
-## 8. Açık Sorular
+## 8. Alınan Kararlar
 
-1. **Platform:** Tarayıcı tabanlı TypeScript yığını uygun mu, yoksa Unity /
-   Godot gibi bir oyun motoru mu tercih edilir?
-2. **Görsel stil:** Sade/minimal vektör harita mı, yoksa daha detaylı,
+| Konu | Karar |
+|---|---|
+| Oyun yapısı | Sonsuz (endless) kariyer; kazanma/bitiş yok |
+| Platform | Tarayıcı: TypeScript + Vite + React |
+| Harita render | WebGL (PixiJS) |
+| Simülasyon | Saf TypeScript, Web Worker içinde |
+| WebAssembly | Şimdilik yok; profil ölçümü gerektirirse modül bazında Rust/Wasm |
+| Çevrimdışı ilerleme | Yok — zaman yalnızca oyun açıkken işler |
+| Enflasyon | Yok — fiyatlar ekonomik döngülerle dalgalanır, sürekli artmaz |
+| İflas | Varsayılan: yeniden yapılanma (kariyer devam eder) |
+| Zor mod | Var — isteğe bağlı; iflas gerçek oyun sonudur |
+
+## 9. Açık Sorular
+
+1. **Görsel stil:** Sade/minimal vektör harita mı, yoksa daha detaylı,
    piksel-art / illüstrasyon tarzı mı?
-3. **Kapsam:** Yalnızca Türkiye mi, yoksa ileride uluslararası mı?
-4. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyonu kendisi
+2. **Kapsam:** Yalnızca Türkiye mi, yoksa ileride uluslararası mı?
+3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyonu kendisi
    sürer), yoksa doğrudan yönetici mi?
-5. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
+4. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?
-6. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
-7. **Çevrimdışı ilerleme:** Oyun kapalıyken zaman işlesin mi (idle tarzı),
-   yoksa yalnızca oyun açıkken mi? (Öneri: hayır — yönetim oyununda
-   oyuncunun yokluğunda kriz yaşanması sinir bozucu olur.)
-8. **Enflasyon:** Fiyatlar zamanla gerçekçi biçimde artsın mı? (Öneri:
-   hayır — sayılar anlamsızlaşır; bunun yerine döngüsel dalgalanma.)
-9. **Zor mod:** Gerçek iflas = oyun sonu seçeneği olsun mu?
+5. **Dil:** Arayüz yalnızca Türkçe mi, yoksa Türkçe + İngilizce mi?
