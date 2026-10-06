@@ -59,7 +59,16 @@ export class MapRenderer {
       this.app.destroy(true, { children: true });
       return;
     }
-    await document.fonts?.ready;
+    // Canvas metni yazı tipini kendisi yüklemez; etiketlerden önce açıkça yükle.
+    await Promise.all(
+      ['500 12px "IBM Plex Sans"', '600 14px "IBM Plex Sans"'].map((f) =>
+        document.fonts.load(f, 'İstanbulığüşöç').catch(() => []),
+      ),
+    );
+    if (this.destroyed) {
+      this.app.destroy(true, { children: true });
+      return;
+    }
     const canvas = this.app.canvas;
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', this.ariaLabel);

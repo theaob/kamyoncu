@@ -5,6 +5,7 @@ import { currentLanguage, setLanguage } from '../i18n';
 import { formatGameDate, formatGameTime } from '../i18n/format';
 import { isLang, LANGUAGES } from '../i18n/languages';
 import { useGameStore } from '../store/gameStore';
+import { APP_VERSION } from '../version';
 
 export function TopBar() {
   const { t } = useTranslation();
@@ -15,7 +16,9 @@ export function TopBar() {
 
   return (
     <header className="topbar">
-      <span className="brand">{t('app.title')}</span>
+      <span className="brand" title={`${t('app.title')} ${APP_VERSION}`}>
+        {t('app.title')}
+      </span>
 
       <div className="clock" aria-live="off">
         <span className="clock-time">{formatGameTime(clock.time, lang)}</span>

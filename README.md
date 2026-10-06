@@ -4,6 +4,7 @@ Kamyon yönetimi simülasyonu oyunu. Tarayıcıda çalışır; TypeScript, React
 
 - [Oyun Planı](docs/OYUN_PLANI.md)
 - [Görsel stil önerileri](docs/gorsel-stil.html)
+- [Yayınlama: CI/CD, itch.io, Android](docs/YAYINLAMA.md)
 
 ## Geliştirme
 
@@ -17,6 +18,7 @@ npm run lint         # ESLint
 npm run typecheck    # TypeScript
 npm run format       # Prettier
 npm run build        # üretim derlemesi (dist/)
+npx cap sync android # web derlemesini Android projesine kopyalar
 ```
 
 ## Yapı
@@ -32,6 +34,7 @@ src/
 ├─ i18n/      Çoklu dil altyapısı ve biçimlendirme
 └─ locales/   tr.json, en.json
 tests/        Vitest testleri
+android/      Capacitor Android projesi (APK)
 ```
 
 Kurallar:

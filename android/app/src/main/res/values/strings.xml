@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kamyoncu</string>
+    <string name="title_activity_main">Kamyoncu</string>
+    <string name="package_name">io.github.theaob.kamyoncu</string>
+    <string name="custom_url_scheme">io.github.theaob.kamyoncu</string>
+</resources>

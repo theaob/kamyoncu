@@ -1,7 +1,7 @@
 {
   "name": "kamyoncu",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,6 +15,11 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "i18next": "^26.4.2",
     "pixi.js": "^8.22.0",
     "react": "^19.3.0",
@@ -23,6 +28,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
