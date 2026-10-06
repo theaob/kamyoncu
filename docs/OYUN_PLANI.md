@@ -912,5 +912,6 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ## 9. Açık Sorular
 
-1. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
-   ayrıntılı olmalı?
+1. **Sürüş süresi kuralları ve gerçekçilik seviyesi** (vergi vb.):
+   ertelendi; Faz 2'de (şoför sistemi) birlikte belirlenecek. O zamana kadar
+   Bölüm 3.4'teki değerler yer tutucudur ve `balance.ts` üzerinden ayarlanır.
