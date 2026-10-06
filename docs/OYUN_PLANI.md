@@ -8,7 +8,7 @@
 
 ## 1. Vizyon
 
-Oyuncu, tek bir ikinci el kamyon ve birikmiş az bir sermayeyle Türkiye'de bir
+Oyuncu, tek bir ikinci el kamyonet ve birikmiş az bir sermayeyle Türkiye'de bir
 nakliye şirketi kurar. Yük ilanlarından iş alır, şoför işe alır, filosunu ve
 şube ağını büyütür; yakıt fiyatları, bakım masrafları, teslim süreleri ve
 müşteri itibarı arasında denge kurarak ülkenin en büyük lojistik firmasına
@@ -74,16 +74,57 @@ yükselişler; operasyon yöneticiliğinden holding stratejisine geçiş.
   kimyasal, Gaziantep → tekstil, Mersin → liman konteyneri).
 - **MVP:** ~15 büyük şehir. **Tam oyun:** 81 il.
 
-### 3.2 Kamyonlar (Çekiciler)
+### 3.2 Araç Sınıfları
+Oyunda hafif ticari araçtan ağır nakliyeye **7 araç sınıfı** vardır. Sınıf;
+taşınabilecek yükü, gereken ehliyeti, otoyol ücret sınıfını ve erişilebilir
+yolları belirler. Oyuncu firma büyüdükçe üst sınıfları açar.
+
+| # | Sınıf | Düzen | Azami ağırlık | Yük | Ehliyet | Otoyol | Tipik iş |
+|---|---|---|---|---|---|---|---|
+| 1 | Kamyonet | 4×2 | 3,5 t | ~1,5 t | B | 1. sınıf | Şehir içi dağıtım, parsiyel, e-ticaret |
+| 2 | Hafif kamyon | 4×2 | 7,5 t | ~4 t | C1 | 2. sınıf | Bölgesel dağıtım, beyaz eşya |
+| 3 | Orta kamyon | 4×2 | 18 t | ~10 t | C | 2. sınıf | Küçük partiler, soğuk zincir dağıtımı |
+| 4 | On teker | 6×2 | 26 t | ~17 t | C | 3. sınıf | Tahıl, mobilya, inşaat malzemesi |
+| 5 | Kırkayak (damper) | 8×4 | 32 t | ~20 t | C | 4. sınıf | Hafriyat, kum-çakıl, maden |
+| 6 | Tır | çekici + 3 akslı dorse | 40 t | ~25 t | CE | 4. sınıf | Komple yük, uzun yol |
+| 7 | Ağır nakliye | 8×4 çekici + lowbed | 60 t+ | ~40 t (izinli) | CE + özel izin | 5. sınıf | İş makinesi, trafo, rüzgâr kanadı |
+
+- **Ehliyet:** şoförlerin ehliyet sınıfı (B, C1, C, CE) hangi araca
+  atanabileceklerini belirler. Ticari taşımacılık için SRC belgesi, tehlikeli
+  madde için ADR belgesi gerekir. Şoförler eğitimle sınıf atlayabilir.
+- **Kısıtlar:** büyük sınıflar şehir merkezlerine gündüz giremez
+  (aktarma için küçük araç gerekir); ağır nakliye güzergâh izni ve refakat
+  aracı ister; bazı dağ yolları ve köprüler tonaj sınırlıdır.
+- **Başlangıç:** oyuncu ikinci el bir kamyonetle başlar. İsteğe bağlı daha
+  zor başlangıç: eski bir on teker ve kredi borcu.
+- Tır (6. sınıf) çekici ve dorse ayrı varlıklardır; diğer sınıflarda kasa
+  araca sabittir.
+
+#### Sınıf içi seviyeler
+Her sınıfta üç donanım seviyesi bulunur:
+
+| Seviye | Fiyat | Yakıt | Arıza riski | Şoför morali | İkinci el değeri |
+|---|---|---|---|---|---|
+| Ekonomik (eski model, çoğu ikinci el) | Düşük | +15% | Yüksek | − | Hızla düşer |
+| Standart | Orta | Referans | Orta | Nötr | Normal |
+| Premium (geniş kabin, yardımcı sistemler) | Yüksek | −10% | Düşük | + | Korunur |
+
+#### Teknoloji nesilleri (sonsuz oyun)
+Euro 6 dizel (başlangıç) → LNG (~3. yıl; tır ve on teker) → elektrikli
+(~6. yıl; önce kamyonet ve hafif kamyon, şube şarj altyapısı gerekir) →
+hidrojen (~10. yıl; uzun yol tır) → otonom (~14. yıl; yalnızca otoyolda).
+
+#### Her aracın ortak özellikleri
 | Özellik | Açıklama |
 |---|---|
-| Model / marka sınıfı | Kurgusal markalar (lisans sorunu olmaması için) |
+| Model / marka | Kurgusal markalar (lisans sorunu olmaması için) |
 | Fiyat | Sıfır / ikinci el pazarı |
 | Yakıt tüketimi | L/100 km, yük oranıyla artar |
 | Güvenilirlik | Arıza olasılığını etkiler |
 | Durum (%) | Kilometreyle düşer; bakımla yükselir |
 | Kilometre / yaş | İkinci el değerini ve arıza riskini etkiler |
-| Emisyon sınıfı | İleride: bazı şehir/ihale kısıtları |
+| Emisyon sınıfı | Bazı şehir ve ihale kısıtları |
+| Görünüm | Firma rengi, logo, kabin süsü, arka yazısı, araç adı |
 
 ### 3.3 Dorseler
 Tenteli, frigorifik (soğuk zincir), tanker, damperli, lowbed (ağır/gabari dışı),
@@ -247,6 +288,28 @@ kuralları) her aşamada bir önceki aşamanın mikro yönetimini devralır.
 9. **Bildirimler / olay günlüğü**
 10. **Ana menü / kayıt-yükleme / ayarlar**
 
+## 4.1 Görsel Stil
+
+Örnek sayfa: `docs/gorsel-stil.html` (dört stilin harita örnekleri ve araç
+sınıflarının aynı ölçekte çizimleri).
+
+Değerlendirilen yönler: **A** sade vektör, **B** diorama (2.5D),
+**C** piksel-art, **D** hibrit. **Öneri: D — hibrit.**
+
+- **Harita:** sade vektör. Otoyollar yeşil (tabela rengi), devlet yolları gri;
+  şehirler büyüklüğe göre noktalar. Kamyonlar firma renginde, gidiş yönünü
+  gösteren çipler; boyları sınıfla büyür. WebGL'de tek sprite atlasından
+  çizilir.
+- **Garaj, pazar ve sefer ekranları:** detaylı yan görünüm çizimleri.
+  Gerçek ölçekte (metre) çizilir, böylece sınıflar arası boy farkı görünür.
+- **Parçalı (modüler) çizim sistemi:** kabin + şasi/aks düzeni + kasa/dorse
+  + yük parçaları kodla birleştirilir; firma rengi ve logosu otomatik boyanır.
+  Yeni teknoloji nesli veya seviye için yalnızca yeni parça çizilir.
+- **Kişiselleştirme ödülleri:** firma rengi/logosu, kabin süsleri, korna
+  sesi, çamurluk ve arka yazıları (“Ana duası”, “Yolun açık olsun”…).
+- **Tipografi:** başlıklarda otoyol tabelası hissi veren dar yazı tipi,
+  tablolarda okunaklı sans-serif ve sayılar için eş aralıklı yazı tipi.
+
 ---
 
 ## 5. Teknik Mimari
@@ -406,16 +469,17 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ### Faz 1 — Oynanabilir MVP 🎯
 - 15 şehir + yol ağı, rota bulma.
-- 1 kamyon, 1 şoför (oyuncunun kendisi), tek dorse türü (tenteli).
+- 1 araç (ikinci el kamyonet), 1 şoför (oyuncunun kendisi).
 - Yük borsası → kabul et → kamyon haritada ilerler → teslim → para.
 - Yakıt ve otoyol gideri, basit gelir-gider dökümü.
 - Sürümlü kayıt/yükleme + otomatik kayıt (sonsuz kariyerin temeli baştan).
 - **Başarı ölçütü:** 10 dakika oynanınca “bir sefer daha” hissi.
 
 ### Faz 2 — Filo ve Şoförler
-- Kamyon pazarı (sıfır/ikinci el), birden fazla kamyon.
+- Araç pazarı (sıfır/ikinci el), birden fazla araç; sınıf 1–4 ve seviyeler.
+- Hibrit görsel stilin parçalı kamyon çizim sistemi (garaj ekranı).
 - Şoför işe alma, maaş, sürüş süresi/mola kuralları, yorgunluk.
-- Dorse türleri (frigorifik, tanker, lowbed).
+- Tır (sınıf 6) ve dorse türleri (tenteli, frigorifik, tanker, konteyner); ehliyet sınıfları.
 - Bakım ve kamyon durumu.
 
 ### Faz 3 — Ekonomi Derinliği
@@ -432,6 +496,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 ### Faz 5 — Otomasyon ve Geç Oyun
 - Dispeçer: kurallara göre otomatik iş atama; bölge müdürleri.
 - İhaleler, 81 ile genişleme.
+- Kırkayak (sınıf 5) ve ağır nakliye (sınıf 7): şantiye sözleşmeleri, güzergâh izni, refakat.
 - Sınırsız firma seviyesi, kademeli kilometre taşları, prosedürel görevler.
 - Firma tarihçesi ve istatistikler.
 
@@ -455,7 +520,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 | Değer | Başlangıç tahmini |
 |---|---|
-| Başlangıç sermayesi | 250.000 ₺ + ikinci el kamyon |
+| Başlangıç sermayesi | 250.000 ₺ + ikinci el kamyonet |
 | İkinci el kamyon | 1,5 – 3 M₺ |
 | Sıfır kamyon | 4 – 6 M₺ |
 | Motorin | ~45 ₺/L (dalgalanır) |
@@ -484,10 +549,9 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 ## 9. Açık Sorular
 
-1. **Görsel stil:** Sade/minimal vektör harita mı, yoksa daha detaylı,
-   piksel-art / illüstrasyon tarzı mı?
+1. **Görsel stil:** Hibrit öneri (bkz. 4.1) onaylanıyor mu?
 2. **Kapsam:** Yalnızca Türkiye mi, yoksa ileride uluslararası mı?
-3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyonu kendisi
+3. **Oyuncu rolü:** Oyuncu başta kendisi de şoför mü (ilk kamyoneti kendisi
    sürer), yoksa doğrudan yönetici mi?
 4. **Gerçekçilik seviyesi:** Sürüş süresi kuralları, vergi vb. ne kadar
    ayrıntılı olmalı?

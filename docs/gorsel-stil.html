@@ -1,0 +1,466 @@
+<title>Kamyoncu Görsel Stil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Düzen: tek sütun okuma akışı; üstte stil karşılaştırması (2×2), altta aynı ölçekte araç dizisi */
+:root {
+  --bg: #eceeec;
+  --surface: #f8f9f8;
+  --fg: #1d2224;
+  --muted: #5d6669;
+  --line: #cfd4d3;
+  --otoyol: #1f7a4d;      /* otoyol tabelası yeşili */
+  --plaka: #f2c230;       /* km plakası sarısı */
+  --livery: #c8372d;
+  --livery-2: #f2f2ee;
+  --f-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191a; --surface: #1d2223; --fg: #e4e8e7; --muted: #9aa4a6;
+    --line: #313a3b; --otoyol: #3fae75; --plaka: #f2c230; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191a; --surface: #1d2223; --fg: #e4e8e7; --muted: #9aa4a6;
+  --line: #313a3b; --otoyol: #3fae75; --plaka: #f2c230; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: .01em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(40px, 7vw, 64px); text-transform: uppercase; }
+h2 { font-size: 30px; text-transform: uppercase; }
+h3 { font-size: 22px; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); font-size: 17px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 14px; }
+.sign { display: inline-flex; align-items: center; gap: 10px; background: var(--otoyol); color: #fff; font-family: var(--f-display); font-weight: 600; font-size: 18px; padding: 4px 12px; border-radius: 4px; width: fit-content; border: 2px solid #fff; outline: 2px solid var(--otoyol); }
+.sign b { background: var(--plaka); color: #1d2224; padding: 0 6px; border-radius: 2px; }
+section { display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 8px; }
+
+.styles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 470px), 1fr)); gap: 20px; }
+.style { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.style.rec { border: 2px solid var(--otoyol); }
+.mock { position: relative; aspect-ratio: 940 / 410; max-width: 100%; background: #dfe7ec; }
+.mock svg, .mock canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.mock canvas { image-rendering: pixelated; }
+.style-body { padding: 18px; display: grid; gap: 12px; align-content: start; }
+.style-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.tag { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; background: var(--otoyol); color: #fff; padding: 2px 8px; border-radius: 3px; }
+.inspo { color: var(--muted); font-size: 13.5px; }
+.pc { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 14px; }
+.pc li { padding-left: 20px; position: relative; }
+.pc li::before { position: absolute; left: 0; font-family: var(--f-mono); font-weight: 500; }
+.pc .p::before { content: "+"; color: var(--otoyol); }
+.pc .c::before { content: "−"; color: #c0503f; }
+.ratings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+.r { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.r span:first-child { color: var(--muted); }
+.r span:last-child { font-family: var(--f-mono); font-size: 12px; }
+.lvl-good { color: var(--otoyol); }
+.lvl-mid { color: #b8860b; }
+.lvl-bad { color: #c0503f; }
+
+.verdict { background: var(--surface); border-left: 6px solid var(--otoyol); padding: 18px 20px; display: grid; gap: 10px; border-radius: 0 6px 6px 0; }
+.verdict ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; max-width: 72ch; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { outline: 3px solid var(--fg); outline-offset: 2px; }
+.swatch:focus-visible { outline: 3px solid var(--otoyol); outline-offset: 2px; }
+.fleet { display: grid; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+.ruler, .rig svg { width: 100%; height: auto; display: block; }
+.rig { display: grid; gap: 4px; padding-block: 12px; border-top: 1px dashed var(--line); }
+.rig-head { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+.rig-head h3 { font-size: 21px; }
+.tier { font-family: var(--f-mono); font-size: 12px; background: var(--plaka); color: #1d2224; padding: 1px 7px; border-radius: 2px; }
+.specs { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.specs b { color: var(--fg); font-weight: 500; font-family: var(--f-mono); font-size: 12.5px; }
+.use { font-size: 13.5px; }
+.ruler text, .rig text { font-family: var(--f-mono); fill: var(--muted); }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+.gens { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.gen { padding: 14px; border-right: 1px solid var(--line); display: grid; gap: 4px; align-content: start; }
+.gen:last-child { border-right: 0; }
+.gen .eyebrow { color: var(--otoyol); }
+.gen p { font-size: 13.5px; color: var(--muted); }
+.mudguards { display: flex; flex-wrap: wrap; gap: 12px; }
+.mudguard { background: #1d2224; color: #f2f2ee; font-family: var(--f-display); font-weight: 600; font-size: 19px; padding: 10px 16px; border-radius: 3px; border-bottom: 5px solid var(--livery); letter-spacing: .02em; }
+@media (prefers-reduced-motion: no-preference) { .rig svg .body-fill, .mock .livery { transition: fill .25s ease; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="sign">KAMYONCU <b>E-80</b></span>
+    <h1>Görsel stil önerileri</h1>
+    <p class="lede">Dört stil yönü, aynı Türkiye haritası üzerinde yan yana. Altta oyundaki yedi araç sınıfı aynı ölçekte (metre cinsinden) çizildi. Firma rengini değiştirerek kamyonların nasıl boyandığını görebilirsiniz.</p>
+  </header>
+
+  <section aria-labelledby="s-styles">
+    <div class="sec-head">
+      <span class="eyebrow">Harita ve genel görünüm</span>
+      <h2 id="s-styles">Dört stil yönü</h2>
+    </div>
+    <div class="styles">
+      <article class="style">
+        <div class="mock"><svg id="mA" viewBox="0 0 940 410" role="img" aria-label="Sade vektör stilinde Türkiye haritası"></svg></div>
+        <div class="style-body">
+          <div class="style-title"><h3>A · Sade vektör</h3></div>
+          <p class="inspo">Metro haritası ve infografik dili. Her şey kodla çizilir.</p>
+          <ul class="pc">
+            <li class="p">Yüzlerce kamyonda bile çok okunur; mobilde hafif.</li>
+            <li class="p">Neredeyse hiç çizim gerektirmez.</li>
+            <li class="c">Kamyonlara karşı duygusal bağ zayıf; sınıflar yalnızca ikonla ayrışır.</li>
+          </ul>
+          <div class="ratings">
+            <div class="r"><span>Üretim maliyeti</span><span class="lvl-good">Düşük</span></div>
+            <div class="r"><span>Büyük filoda okunurluk</span><span class="lvl-good">Çok iyi</span></div>
+            <div class="r"><span>Karakter</span><span class="lvl-bad">Zayıf</span></div>
+            <div class="r"><span>Mobil performans</span><span class="lvl-good">Çok iyi</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="style">
+        <div class="mock"><svg id="mB" viewBox="0 0 940 410" role="img" aria-label="Diorama stilinde eğik Türkiye haritası"></svg></div>
+        <div class="style-body">
+          <div class="style-title"><h3>B · Diorama (2.5D)</h3></div>
+          <p class="inspo">Masa üstü maket hissi: eğik kamera, kalınlığı olan arazi, minyatür binalar.</p>
+          <ul class="pc">
+            <li class="p">En çekici ekran görüntüleri; sınıflar boyutla hemen ayrışır.</li>
+            <li class="c">En pahalı üretim: her model × 8 yön × firma rengi.</li>
+            <li class="c">Filo büyüdükçe harita kalabalıklaşır, okunurluk düşer.</li>
+          </ul>
+          <div class="ratings">
+            <div class="r"><span>Üretim maliyeti</span><span class="lvl-bad">Yüksek</span></div>
+            <div class="r"><span>Büyük filoda okunurluk</span><span class="lvl-mid">Orta</span></div>
+            <div class="r"><span>Karakter</span><span class="lvl-good">Güçlü</span></div>
+            <div class="r"><span>Mobil performans</span><span class="lvl-mid">Orta</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="style">
+        <div class="mock"><canvas id="mC" width="235" height="103" role="img" aria-label="Piksel-art stilinde Türkiye haritası"></canvas></div>
+        <div class="style-body">
+          <div class="style-title"><h3>C · Piksel-art</h3></div>
+          <p class="inspo">Transport Tycoon ve OpenTTD nostaljisi.</p>
+          <ul class="pc">
+            <li class="p">Güçlü karakter, küçük dosyalar, sadık bir oyuncu kitlesi.</li>
+            <li class="c">Zoom yalnızca tam sayı katlarında temiz görünür.</li>
+            <li class="c">Nitelikli piksel sanatçısı ister; panellerle uyum zor.</li>
+          </ul>
+          <div class="ratings">
+            <div class="r"><span>Üretim maliyeti</span><span class="lvl-mid">Orta–yüksek</span></div>
+            <div class="r"><span>Büyük filoda okunurluk</span><span class="lvl-mid">İyi</span></div>
+            <div class="r"><span>Karakter</span><span class="lvl-good">Güçlü</span></div>
+            <div class="r"><span>Mobil performans</span><span class="lvl-good">İyi</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="style rec">
+        <div class="mock"><svg id="mD" viewBox="0 0 940 410" role="img" aria-label="Hibrit stilde harita ve garaj kartı"></svg></div>
+        <div class="style-body">
+          <div class="style-title"><h3>D · Hibrit</h3><span class="tag">Öneri</span></div>
+          <p class="inspo">Harita sade ve okunur; kamyonların karakteri garaj, pazar ve sefer ekranlarındaki yan görünüm çizimlerinde.</p>
+          <ul class="pc">
+            <li class="p">A kadar okunur, C kadar karakterli.</li>
+            <li class="p">Kamyonlar parçalardan (kabin + şasi + kasa/dorse) kodla birleştirilir; renk ve logo otomatik boyanır.</li>
+            <li class="p">Sonsuz oyunda yeni teknoloji = yeni bir kabin parçası; sıfırdan çizim gerekmez.</li>
+            <li class="c">İki ayrı görsel dilin uyumu için iyi bir stil rehberi gerekir.</li>
+          </ul>
+          <div class="ratings">
+            <div class="r"><span>Üretim maliyeti</span><span class="lvl-mid">Orta</span></div>
+            <div class="r"><span>Büyük filoda okunurluk</span><span class="lvl-good">Çok iyi</span></div>
+            <div class="r"><span>Karakter</span><span class="lvl-good">Güçlü</span></div>
+            <div class="r"><span>Mobil performans</span><span class="lvl-good">Çok iyi</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="verdict">
+      <h3>Neden hibrit?</h3>
+      <ul>
+        <li>Oyuncunun zamanının çoğu haritada ve tablolarda geçer; orada netlik karakterden önemlidir.</li>
+        <li>Kamyona bağlılık garajda kurulur: satın alma, boyama, isim verme ve yükseltme anlarında.</li>
+        <li>Parçalı çizim sistemi 7 sınıf × 3 seviye × teknoloji nesli × firma rengi kombinasyonunu birkaç düzine parçayla üretir.</li>
+        <li>WebGL haritada kamyonlar tek bir sprite atlasından çizilen yönlü çiplerdir; 16× hızda yüzlerce araç sorun olmaz.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-fleet">
+    <div class="sec-head">
+      <span class="eyebrow">Hibrit stilde, gerçek ölçekte</span>
+      <h2 id="s-fleet">Araç sınıfları</h2>
+      <p>Hafif ticari araçtan ağır nakliyeye yedi sınıf. Her sınıf farklı ehliyet, otoyol ücret sınıfı ve yük türü demek; oyuncu filoyu büyüttükçe bir üst sınıfı açar.</p>
+    </div>
+    <div class="toolbar" role="group" aria-label="Firma rengi">
+      <span class="eyebrow">Firma rengi</span>
+      <button class="swatch" id="sw-red" data-c="#c8372d" aria-pressed="true" aria-label="Kırmızı" style="background:#c8372d"></button>
+      <button class="swatch" id="sw-blue" data-c="#1f5fa8" aria-pressed="false" aria-label="Lacivert" style="background:#1f5fa8"></button>
+      <button class="swatch" id="sw-orange" data-c="#e07b1a" aria-pressed="false" aria-label="Turuncu" style="background:#e07b1a"></button>
+      <button class="swatch" id="sw-green" data-c="#2e7d4f" aria-pressed="false" aria-label="Yeşil" style="background:#2e7d4f"></button>
+      <button class="swatch" id="sw-white" data-c="#ecebe6" aria-pressed="false" aria-label="Beyaz" style="background:#ecebe6"></button>
+    </div>
+    <div class="fleet" id="fleet"></div>
+  </section>
+
+  <section aria-labelledby="s-levels">
+    <div class="sec-head">
+      <span class="eyebrow">Her sınıfın içinde</span>
+      <h2 id="s-levels">Seviyeler ve nesiller</h2>
+      <p>Aynı sınıfta üç donanım seviyesi bulunur. Zamanla yeni teknoloji nesilleri çıkar ve eski filo yavaş yavaş rekabet gücünü kaybeder.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Seviye</th><th>Fiyat</th><th>Yakıt</th><th>Arıza riski</th><th>Şoför morali</th><th>İkinci el değeri</th></tr></thead>
+        <tbody>
+          <tr><td><b>Ekonomik</b> · eski model, çoğu ikinci el</td><td>Düşük</td><td>+15%</td><td>Yüksek</td><td>−</td><td>Hızla düşer</td></tr>
+          <tr><td><b>Standart</b></td><td>Orta</td><td>Referans</td><td>Orta</td><td>Nötr</td><td>Normal</td></tr>
+          <tr><td><b>Premium</b> · geniş kabin, yardımcı sistemler</td><td>Yüksek</td><td>−10%</td><td>Düşük</td><td>+</td><td>Korunur</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="gens">
+      <div class="gen"><span class="eyebrow">Başlangıç</span><h3>Euro 6 dizel</h3><p>Tüm sınıflar.</p></div>
+      <div class="gen"><span class="eyebrow">~3. yıl</span><h3>LNG</h3><p>Tır ve on teker; az istasyon, ucuz yakıt.</p></div>
+      <div class="gen"><span class="eyebrow">~6. yıl</span><h3>Elektrikli</h3><p>Önce kamyonet ve hafif kamyon; şarj altyapısı şube yatırımı ister.</p></div>
+      <div class="gen"><span class="eyebrow">~10. yıl</span><h3>Hidrojen</h3><p>Uzun yol tır; pahalı ama sıfır emisyon ihaleleri açar.</p></div>
+      <div class="gen"><span class="eyebrow">~14. yıl</span><h3>Otonom</h3><p>Yalnızca otoyolda; şoför maliyetini düşürür.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-cos">
+    <div class="sec-head">
+      <span class="eyebrow">Sonsuz oyunda ödül</span>
+      <h2 id="s-cos">Kişiselleştirme</h2>
+      <p>Firma seviyesi ilerledikçe açılan kozmetikler: firma rengi ve logosu, kabin süsleri, korna sesi ve çamurluk/arka yazıları. Oyuncu her kamyona isim de verebilir.</p>
+    </div>
+    <div class="mudguards">
+      <span class="mudguard">ANA DUASI</span>
+      <span class="mudguard">YOLUN AÇIK OLSUN</span>
+      <span class="mudguard">GÜLME KOMŞUNA GELİR BAŞINA</span>
+      <span class="mudguard">HAYIRLI YOLCULUKLAR</span>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  // ---------- Coğrafya ----------
+  const P = (lon, lat) => [(lon - 25.6) * 48, (42.4 - lat) * 60];
+  const LAND = [[26.3,41.9],[28.0,42.0],[29.1,41.25],[30.5,41.15],[31.5,41.35],[32.5,41.8],[33.5,42.0],[35.0,42.05],[35.2,41.7],[36.0,41.6],[36.4,41.25],[37.5,41.1],[38.5,40.95],[39.7,41.0],[40.5,41.0],[41.5,41.5],[42.5,41.4],[43.5,41.1],[43.7,40.7],[44.8,39.7],[44.4,39.4],[44.2,38.4],[44.4,37.8],[44.8,37.2],[43.5,37.25],[42.4,37.1],[41.2,37.1],[40.0,36.9],[38.5,36.8],[37.5,36.65],[36.7,36.8],[36.5,36.3],[36.2,35.85],[35.9,36.3],[36.15,36.6],[35.6,36.6],[34.6,36.8],[33.6,36.2],[32.8,36.05],[32.0,36.5],[30.6,36.85],[30.4,36.3],[29.6,36.2],[28.9,36.6],[28.0,36.65],[27.4,37.05],[27.2,37.4],[27.0,38.0],[26.3,38.3],[26.8,38.5],[26.9,39.0],[26.2,39.5],[26.3,40.0],[26.2,40.6],[26.0,40.75],[26.6,41.3],[26.35,41.7]].map(([a,b]) => P(a,b));
+  const MARMARA = [[26.7,40.45],[27.5,40.35],[28.6,40.35],[29.3,40.75],[29.0,41.0],[28.0,41.0],[27.0,40.9],[26.7,40.6]].map(([a,b]) => P(a,b));
+  const CITIES = {
+    ist:["İstanbul",29.0,41.05,3], koc:["Kocaeli",29.92,40.77,1], bur:["Bursa",29.06,40.19,2], izm:["İzmir",27.14,38.42,3],
+    esk:["Eskişehir",30.52,39.78,1], bol:["Bolu",31.6,40.73,1], ank:["Ankara",32.85,39.93,3], kon:["Konya",32.48,37.87,2],
+    ant:["Antalya",30.71,36.89,2], ada:["Adana",35.32,37.0,2], mer:["Mersin",34.64,36.8,2], gaz:["Gaziantep",37.38,37.07,2],
+    kay:["Kayseri",35.49,38.73,2], sam:["Samsun",36.33,41.29,2], tra:["Trabzon",39.72,41.0,2], siv:["Sivas",37.0,39.75,1],
+    mal:["Malatya",38.31,38.35,1], erz:["Erzurum",41.27,39.9,2], diy:["Diyarbakır",40.2,37.91,2], van:["Van",43.38,38.5,1]
+  };
+  for (const k in CITIES) { const c = CITIES[k]; CITIES[k] = { name: c[0], p: P(c[1], c[2]), s: c[3] }; }
+  const ROADS = [["ist","koc","o"],["koc","bol","o"],["bol","ank","o"],["ist","bur","o"],["bur","izm","o"],["ank","ada","o"],["ada","mer","o"],["ada","gaz","o"],
+    ["ank","kon","d"],["ank","kay","d"],["kay","siv","d"],["siv","erz","d"],["sam","tra","d"],["ank","sam","d"],["tra","erz","d"],["kon","ant","d"],
+    ["ant","izm","d"],["kon","ada","d"],["gaz","diy","d"],["diy","van","d"],["erz","van","d"],["mal","kay","d"],["mal","diy","d"],["mal","gaz","d"],["bur","esk","d"],["esk","ank","d"]];
+  // [yol indeksi, konum 0..1, sınıf 1..7]
+  const TRUCKS = [[0,.5,6],[2,.3,6],[2,.75,4],[4,.4,6],[5,.25,6],[5,.7,5],[7,.5,6],[9,.4,3],[11,.55,6],[13,.35,4],[15,.6,2],[16,.4,6],[17,.5,7],[18,.45,6],[20,.6,4],[25,.5,1],[3,.6,3],[12,.5,6]];
+  const roadXY = (r, t) => { const a = CITIES[r[0]].p, b = CITIES[r[1]].p; return [a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t, Math.atan2(b[1]-a[1], b[0]-a[0])]; };
+  const pts = (arr, f = p => p) => arr.map(p => f(p).map(v => v.toFixed(1)).join(",")).join(" ");
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  // ---------- A: Sade vektör ----------
+  (() => {
+    let s = `<rect width="940" height="410" fill="#dde7ee"/>`;
+    s += `<polygon points="${pts(LAND)}" fill="#fbfbf8" stroke="#c9d3d8" stroke-width="2"/>`;
+    s += `<polygon points="${pts(MARMARA)}" fill="#dde7ee"/>`;
+    for (const r of ROADS) { const a = CITIES[r[0]].p, b = CITIES[r[1]].p;
+      s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${r[2]==="o" ? "#1f8a5b" : "#9aa5ad"}" stroke-width="${r[2]==="o" ? 7 : 4}" stroke-linecap="round"/>`; }
+    for (const k in CITIES) { const c = CITIES[k];
+      s += `<circle cx="${c.p[0]}" cy="${c.p[1]}" r="${4 + c.s * 3}" fill="#fff" stroke="#23292c" stroke-width="3"/>`;
+      if (c.s >= 2) s += `<text x="${c.p[0] + 12}" y="${c.p[1] - 10}" font-family="IBM Plex Sans, sans-serif" font-size="17" font-weight="600" fill="#23292c">${c.name}</text>`; }
+    for (const [i, t, tier] of TRUCKS) { const [x, y] = roadXY(ROADS[i], t);
+      s += `<g transform="translate(${x},${y})"><rect x="-11" y="-9" width="22" height="18" rx="5" fill="#23292c"/><text y="5.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" font-weight="500" fill="#fff">${tier}</text></g>`; }
+    document.getElementById("mA").innerHTML = s;
+  })();
+
+  // ---------- B: Diorama ----------
+  (() => {
+    const pb = ([x, y]) => [x * 0.9 + 46, y * 0.58 + 92];
+    let s = `<defs><linearGradient id="bSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f7f97"/><stop offset="1" stop-color="#245a70"/></linearGradient>
+      <linearGradient id="bLand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a9cf7f"/><stop offset=".6" stop-color="#b9c47a"/><stop offset="1" stop-color="#c6aa74"/></linearGradient></defs>
+      <rect width="940" height="410" fill="url(#bSea)"/>`;
+    s += `<polygon points="${pts(LAND, p => { const q = pb(p); return [q[0], q[1] + 22]; })}" fill="#6d5536"/>`;
+    s += `<polygon points="${pts(LAND, pb)}" fill="url(#bLand)" stroke="#e9e1c6" stroke-width="1.5"/>`;
+    s += `<polygon points="${pts(MARMARA, pb)}" fill="#3a7891"/>`;
+    for (const r of ROADS) { const a = pb(CITIES[r[0]].p), b = pb(CITIES[r[1]].p);
+      s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#7d6b4c" stroke-width="${r[2]==="o" ? 9 : 6}" stroke-linecap="round"/>`;
+      s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#e8dcbc" stroke-width="${r[2]==="o" ? 6 : 3.5}" stroke-linecap="round"/>`; }
+    const box = (x, y, w, h, top, front, side) => {
+      const d = w * 0.45;
+      return `<polygon points="${x},${y} ${x+w},${y} ${x+w},${y-h} ${x},${y-h}" fill="${front}"/>` +
+        `<polygon points="${x+w},${y} ${x+w+d},${y-d*0.6} ${x+w+d},${y-h-d*0.6} ${x+w},${y-h}" fill="${side}"/>` +
+        `<polygon points="${x},${y-h} ${x+w},${y-h} ${x+w+d},${y-h-d*0.6} ${x+d},${y-h-d*0.6}" fill="${top}"/>`; };
+    for (const k in CITIES) { const c = CITIES[k]; const [x, y] = pb(c.p);
+      s += `<ellipse cx="${x + 4}" cy="${y + 2}" rx="${10 + c.s * 6}" ry="${5 + c.s * 2.5}" fill="#000" opacity=".18"/>`;
+      const n = 1 + c.s * 2;
+      for (let i = 0; i < n; i++) { const bx = x - 10 - c.s * 3 + (i % 3) * 9 + rnd() * 3, by = y + 4 - Math.floor(i / 3) * 6, h = 8 + rnd() * (6 + c.s * 7);
+        s += box(bx, by, 8, h, "#f4efe4", "#d9cfbd", "#b7aa94"); }
+      if (c.s >= 3) s += `<text x="${x}" y="${y + 26}" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="17" font-weight="700" fill="#fff" stroke="#2b3a2a" stroke-width="3" paint-order="stroke">${c.name.toUpperCase()}</text>`; }
+    for (const [i, t, tier] of TRUCKS) { const [x0, y0] = roadXY(ROADS[i], t); const [x, y] = pb([x0, y0]); const w = 6 + tier * 1.6;
+      s += `<ellipse cx="${x + 2}" cy="${y + 2}" rx="${w * .7}" ry="3" fill="#000" opacity=".25"/>`;
+      s += box(x - w / 2, y, w, 6, "#ffffff", "var(--livery)", "#7b1f18"); }
+    document.getElementById("mB").innerHTML = s;
+  })();
+
+  // ---------- C: Piksel-art ----------
+  (() => {
+    const cv = document.getElementById("mC"), W = cv.width, H = cv.height, ctx = cv.getContext("2d");
+    const k = W / 940;
+    ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff"; ctx.beginPath(); LAND.forEach(([x, y], i) => i ? ctx.lineTo(x * k, y * k) : ctx.moveTo(x * k, y * k)); ctx.fill();
+    ctx.fillStyle = "#000"; ctx.beginPath(); MARMARA.forEach(([x, y], i) => i ? ctx.lineTo(x * k, y * k) : ctx.moveTo(x * k, y * k)); ctx.fill();
+    const mask = ctx.getImageData(0, 0, W, H), img = ctx.createImageData(W, H);
+    const set = (x, y, c) => { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= W || y >= H) return; const o = (y * W + x) * 4; img.data[o] = c[0]; img.data[o+1] = c[1]; img.data[o+2] = c[2]; img.data[o+3] = 255; };
+    const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    const SEA = hex("#2b5d9c"), SEA2 = hex("#3770b0"), G1 = hex("#5c9c3c"), G2 = hex("#4e8a33"), M1 = hex("#8a7a4a"), M2 = hex("#a08f5a"), ROAD = hex("#5a5a5a"), ROADO = hex("#d8d8d8"), CITY = hex("#e8e0d0"), ROOF = hex("#b5462e");
+    let sd = 3; const r2 = () => (sd = (sd * 48271) % 2147483647) / 2147483647;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const land = mask.data[(y * W + x) * 4] > 127;
+      if (!land) set(x, y, (x + y * 3) % 11 === 0 ? SEA2 : SEA);
+      else { const east = x / W > 0.62 - (y / H) * 0.1; const v = r2();
+        set(x, y, east ? (v < .3 ? M2 : M1) : (v < .25 ? G2 : G1)); }
+    }
+    const line = (a, b, c) => { let [x0, y0] = a.map(v => Math.round(v * k)), [x1, y1] = b.map(v => Math.round(v * k));
+      const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let e = dx + dy;
+      for (;;) { set(x0, y0, c); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } } };
+    for (const r of ROADS) line(CITIES[r[0]].p, CITIES[r[1]].p, r[2] === "o" ? ROADO : ROAD);
+    for (const kk in CITIES) { const c = CITIES[kk], cx = Math.round(c.p[0] * k), cy = Math.round(c.p[1] * k), n = c.s;
+      for (let dy = -n; dy <= n - 1; dy++) for (let dx = -n; dx <= n; dx++) set(cx + dx, cy + dy, (dx + dy) % 2 ? ROOF : CITY); }
+    const LIV = hex(getComputedStyle(document.documentElement).getPropertyValue("--livery").trim() || "#c8372d");
+    for (const [i, t] of TRUCKS) { const [x, y] = roadXY(ROADS[i], t); const px = Math.round(x * k), py = Math.round(y * k) - 1;
+      set(px, py, LIV); set(px + 1, py, LIV); set(px - 1, py, [255, 255, 255]); }
+    ctx.putImageData(img, 0, 0);
+  })();
+
+  // ---------- Kamyon parça sistemi (yan görünüm, metre) ----------
+  const L = "var(--livery)", L2 = "var(--livery-2)", DARK = "#24292b", STEEL = "#8d979b", ALU = "#d3d8da";
+  const wheel = (x, r) => `<circle cx="${x}" cy="${-r}" r="${r}" fill="#1b1e1f"/><circle cx="${x}" cy="${-r}" r="${r * .48}" fill="#9ca5a8"/><circle cx="${x}" cy="${-r}" r="${r * .14}" fill="#1b1e1f"/>`;
+  const chassis = (x0, x1, y) => `<rect x="${x0}" y="${-y}" width="${x1 - x0}" height=".22" fill="${DARK}"/>`;
+  function cab(xf, len, h, base, sleeper) {
+    const x0 = xf - len, top = -h, bot = -base;
+    let s = `<path class="body-fill" d="M${x0},${bot} L${x0},${top} L${xf - .35},${top} Q${xf - .05},${top} ${xf - .02},${top + .35} L${xf},${bot} Z" fill="${L}"/>`;
+    s += `<rect x="${x0}" y="${bot - (h - base) * .28}" width="${len}" height="${(h - base) * .12}" fill="${L2}" opacity=".9"/>`;
+    const wTop = top + (sleeper ? .55 : .3), wBot = top + (h - base) * .45;
+    s += `<path d="M${xf - (sleeper ? 1.25 : 1.0)},${wTop} L${xf - .22},${wTop} L${xf - .08},${wBot} L${xf - (sleeper ? 1.25 : 1.0)},${wBot} Z" fill="#2f4752"/>`;
+    if (sleeper) s += `<rect x="${x0 + .2}" y="${top + .5}" width=".55" height=".3" rx=".05" fill="#2f4752"/>`;
+    s += `<line x1="${xf - (sleeper ? 1.35 : 1.1)}" y1="${wTop - .05}" x2="${xf - (sleeper ? 1.35 : 1.1)}" y2="${bot}" stroke="${DARK}" stroke-width=".03" opacity=".5"/>`;
+    s += `<rect x="${xf - .12}" y="${bot - .05}" width=".16" height=".35" fill="${DARK}"/><rect x="${xf - .1}" y="${bot - .32}" width=".12" height=".12" fill="#f2c230"/>`;
+    return s; }
+  function cargo(x0, x1, yb, yt, kind) {
+    const w = x1 - x0, h = yt - yb; let s = "";
+    if (kind === "kasa" || kind === "frigo") {
+      s += `<rect x="${x0}" y="${-yt}" width="${w}" height="${h}" fill="${kind === "frigo" ? "#f4f6f6" : ALU}" stroke="#9aa3a6" stroke-width=".03"/>`;
+      for (let x = x0 + .6; x < x1 - .2; x += .6) s += `<line x1="${x}" y1="${-yt}" x2="${x}" y2="${-yb}" stroke="#aab2b5" stroke-width=".025"/>`;
+      if (kind === "frigo") s += `<rect x="${x1 - .1}" y="${-yt + .25}" width=".22" height=".9" fill="#5d686c"/><rect class="body-fill" x="${x0}" y="${-yb - .45}" width="${w}" height=".2" fill="${L}"/>`;
+      else s += `<rect class="body-fill" x="${x0 + w * .08}" y="${-yt + h * .35}" width="${w * .5}" height="${h * .22}" fill="${L}"/>`;
+    } else if (kind === "tente") {
+      s += `<rect x="${x0}" y="${-yb - .18}" width="${w}" height=".18" fill="${STEEL}"/>`;
+      s += `<rect class="body-fill" x="${x0}" y="${-yt}" width="${w}" height="${h - .18}" fill="${L}"/>`;
+      for (let x = x0 + 1.2; x < x1 - .3; x += 1.2) s += `<line x1="${x}" y1="${-yt}" x2="${x}" y2="${-yb - .18}" stroke="#000" stroke-width=".04" opacity=".22"/>`;
+      s += `<rect x="${x0 + w * .1}" y="${-yt + h * .3}" width="${w * .45}" height="${h * .2}" fill="${L2}" opacity=".95"/>`;
+    } else if (kind === "damper") {
+      s += `<path d="M${x0},${-yb} L${x0 - .15},${-yt} L${x1},${-yt} L${x1 - .35},${-yb} Z" fill="#6f7a7e"/>`;
+      for (let x = x0 + .8; x < x1 - .4; x += .8) s += `<line x1="${x}" y1="${-yb}" x2="${x}" y2="${-yt}" stroke="#596366" stroke-width=".08"/>`;
+      s += `<path d="M${x0 - .15},${-yt} Q${(x0 + x1) / 2},${-yt - .55} ${x1},${-yt}" fill="#a8916b"/>`;
+    }
+    return s; }
+  function excavator(x0) {
+    return `<rect x="${x0}" y="-1.95" width="4.2" height=".55" rx=".27" fill="#3a3f41"/>` +
+      `<rect x="${x0 + .4}" y="-3.0" width="3.0" height="1.05" fill="#e7b416"/><rect x="${x0 + 2.4}" y="-3.75" width="1.0" height=".8" fill="#e7b416"/>` +
+      `<rect x="${x0 + 2.5}" y="-3.62" width=".75" height=".45" fill="#2f4752"/>` +
+      `<path d="M${x0 + 3.3},-2.8 L${x0 + 5.0},-3.9 L${x0 + 6.0},-2.4" fill="none" stroke="#e7b416" stroke-width=".28" stroke-linejoin="round"/>` +
+      `<path d="M${x0 + 5.8},-2.55 l.5,.5 l-.6,.35 z" fill="#3a3f41"/>`; }
+
+  const RIGS = [
+    { tier: 1, name: "Kamyonet", spec: { cfg: "4×2", gvw: "3,5 t", cap: "~1,5 t", lic: "B", toll: "1. sınıf", len: "6,0 m" }, use: "Şehir içi dağıtım, parsiyel ve e-ticaret yükleri. Oyunun başlangıç aracı.",
+      draw: () => chassis(.3, 5.9, .75) + cargo(.2, 4.15, .78, 2.55, "kasa") + cab(6.0, 1.75, 2.35, .78) + wheel(1.6, .36) + wheel(5.1, .36) },
+    { tier: 2, name: "Hafif kamyon", spec: { cfg: "4×2", gvw: "7,5 t", cap: "~4 t", lic: "C1", toll: "2. sınıf", len: "7,4 m" }, use: "Bölgesel dağıtım, beyaz eşya, market lojistiği.",
+      draw: () => chassis(.3, 7.3, .85) + cargo(.2, 5.35, .9, 2.95, "tente") + cab(7.4, 1.9, 2.65, .9) + wheel(2.2, .42) + wheel(6.4, .42) },
+    { tier: 3, name: "Orta kamyon", spec: { cfg: "4×2", gvw: "18 t", cap: "~10 t", lic: "C", toll: "2. sınıf", len: "9,0 m" }, use: "Şehirlerarası küçük partiler, soğuk zincir dağıtımı.",
+      draw: () => chassis(.3, 8.9, 1.0) + cargo(.2, 6.75, 1.05, 3.55, "frigo") + cab(9.0, 2.1, 3.0, 1.05) + wheel(2.5, .5) + wheel(7.8, .5) },
+    { tier: 4, name: "On teker", spec: { cfg: "6×2", gvw: "26 t", cap: "~17 t", lic: "C", toll: "3. sınıf", len: "10,0 m" }, use: "Anadolu'nun klasiği: tahıl, mobilya, inşaat malzemesi.",
+      draw: () => chassis(.3, 9.9, 1.05) + cargo(.2, 7.7, 1.1, 3.65, "tente") + cab(10.0, 2.2, 3.05, 1.1) + wheel(2.0, .5) + wheel(3.35, .5) + wheel(8.8, .5) },
+    { tier: 5, name: "Kırkayak", spec: { cfg: "8×4", gvw: "32 t", cap: "~20 t", lic: "C", toll: "4. sınıf", len: "10,0 m" }, use: "Damperli: hafriyat, kum-çakıl, maden. Şantiye sözleşmeleri.",
+      draw: () => chassis(.3, 9.9, 1.1) + cargo(.4, 7.45, 1.2, 2.95, "damper") + cab(10.0, 2.2, 3.1, 1.15) + wheel(1.8, .5) + wheel(3.15, .5) + wheel(7.35, .5) + wheel(8.75, .5) },
+    { tier: 6, name: "Tır", spec: { cfg: "4×2 çekici + 3 akslı dorse", gvw: "40 t", cap: "~25 t", lic: "CE", toll: "4. sınıf", len: "16,5 m" }, use: "Komple yük, uzun yol. Dorse değişimiyle tenteli, frigorifik, tanker, konteyner.",
+      draw: () => chassis(11.0, 16.4, 1.05) + `<rect x="11.6" y="-1.35" width="1.1" height=".18" fill="${DARK}"/>` +
+        cargo(.3, 13.75, 1.3, 4.0, "tente") + `<rect x=".3" y="-1.3" width="13.45" height=".22" fill="${DARK}"/>` +
+        `<path class="body-fill" d="M14.1,-3.85 L14.1,-4.0 L15.0,-4.0 L15.1,-3.85 Z" fill="${L}"/>` +
+        cab(16.5, 2.4, 3.85, 1.15, true) + wheel(1.8, .5) + wheel(3.1, .5) + wheel(4.4, .5) + wheel(12.1, .5) + wheel(15.35, .5) },
+    { tier: 7, name: "Ağır nakliye", spec: { cfg: "8×4 çekici + lowbed", gvw: "60 t+", cap: "~40 t (izinli)", lic: "CE + özel izin", toll: "5. sınıf", len: "22 m" }, use: "İş makinesi, trafo, rüzgâr kanadı. Refakat aracı ve güzergâh izni gerektirir.",
+      draw: () => chassis(14.6, 21.9, 1.15) + `<path d="M14.0,-1.0 L14.6,-1.65 L17.6,-1.65 L17.6,-1.35 L14.9,-1.35 L14.3,-.95 Z" fill="${DARK}"/>` +
+        `<rect x="5.0" y="-1.0" width="9.2" height=".3" fill="#4a5255"/><rect x="0" y="-1.35" width="5.2" height=".4" fill="#4a5255"/>` +
+        `<path d="M0,-1.35 l-.1,.3 h.25 z" fill="#e7b416"/>` + excavator(6.0) +
+        cab(22.0, 2.5, 3.6, 1.2) + wheel(15.4, .5) + wheel(16.8, .5) + wheel(19.5, .5) + wheel(20.9, .5) +
+        wheel(.8, .42) + wheel(1.85, .42) + wheel(2.9, .42) + wheel(3.95, .42) },
+  ];
+  const VB = "-0.5 -4.4 23.4 4.65";
+  const fleet = document.getElementById("fleet");
+  let ruler = `<svg class="ruler" viewBox="-0.5 -0.5 23.4 1.1" aria-hidden="true"><line x1="0" y1="0" x2="22" y2="0" stroke="currentColor" stroke-width=".03" opacity=".5"/>`;
+  for (let m = 0; m <= 22; m++) ruler += `<line x1="${m}" y1="0" x2="${m}" y2="${m % 5 ? .15 : .3}" stroke="currentColor" stroke-width=".03" opacity=".5"/>` + (m % 5 === 0 ? `<text x="${m}" y=".6" font-size=".32" text-anchor="middle">${m} m</text>` : "");
+  fleet.insertAdjacentHTML("beforeend", ruler + `</svg>`);
+  for (const r of RIGS) {
+    const sp = r.spec;
+    fleet.insertAdjacentHTML("beforeend", `<div class="rig">
+      <svg viewBox="${VB}" role="img" aria-label="${r.name} yan görünüm"><line x1="-0.5" y1="0" x2="23" y2="0" stroke="currentColor" stroke-width=".02" opacity=".3"/>${r.draw()}</svg>
+      <div class="rig-head"><span class="tier">SINIF ${r.tier}</span><h3>${r.name}</h3></div>
+      <div class="specs"><span>Düzen <b>${sp.cfg}</b></span><span>Azami ağırlık <b>${sp.gvw}</b></span><span>Yük <b>${sp.cap}</b></span><span>Ehliyet <b>${sp.lic}</b></span><span>Otoyol <b>${sp.toll}</b></span><span>Boy <b>${sp.len}</b></span></div>
+      <p class="use">${r.use}</p></div>`);
+  }
+
+  // ---------- D: Hibrit ----------
+  (() => {
+    let s = `<defs><linearGradient id="dLand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f6f5f0"/><stop offset=".55" stop-color="#efece3"/><stop offset="1" stop-color="#e4ddcd"/></linearGradient></defs>
+      <rect width="940" height="410" fill="#cfe0ea"/>`;
+    s += `<polygon points="${pts(LAND)}" fill="url(#dLand)" stroke="#a9bfcb" stroke-width="2.5"/>`;
+    s += `<polygon points="${pts(MARMARA)}" fill="#cfe0ea" stroke="#a9bfcb" stroke-width="2"/>`;
+    for (const r of ROADS) { const a = CITIES[r[0]].p, b = CITIES[r[1]].p, o = r[2] === "o";
+      if (o) s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>`;
+      s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${o ? "#1f7a4d" : "#8f8a7e"}" stroke-width="${o ? 5 : 2.5}" stroke-linecap="round"/>`; }
+    for (const k in CITIES) { const c = CITIES[k];
+      s += `<circle cx="${c.p[0]}" cy="${c.p[1]}" r="${3 + c.s * 2.2}" fill="#2a3134"/><circle cx="${c.p[0]}" cy="${c.p[1]}" r="${1 + c.s}" fill="#fff"/>`;
+      if (c.s >= 2) s += `<text x="${c.p[0]}" y="${c.p[1] - 13}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="14" font-weight="500" fill="#2a3134" stroke="#f6f5f0" stroke-width="4" paint-order="stroke">${c.name}</text>`; }
+    for (const [i, t, tier] of TRUCKS) { const [x, y, ang] = roadXY(ROADS[i], t); const w = 8 + tier * 1.5, deg = ang * 180 / Math.PI;
+      s += `<g transform="translate(${x},${y}) rotate(${deg})"><path class="livery" d="M${-w},-6 L${w - 4},-6 L${w + 3},0 L${w - 4},6 L${-w},6 Z" fill="var(--livery)" stroke="#fff" stroke-width="2"/></g>`; }
+    // Garaj kartı (aynı parça sistemiyle çizilmiş tır)
+    s += `<g transform="translate(18,262)"><rect width="300" height="132" rx="8" fill="#ffffff" stroke="#d7dcdc"/>
+      <text x="16" y="28" font-family="Barlow Condensed, sans-serif" font-size="22" font-weight="700" fill="#1d2224">TIR · 34 KMY 06</text>
+      <text x="16" y="47" font-family="IBM Plex Mono, monospace" font-size="12" fill="#5d6669">Ankara → Adana · %62 · Şoför: Hasan U.</text>
+      <svg x="10" y="52" width="280" height="74" viewBox="-0.3 -4.3 17.1 4.5">${RIGS[5].draw()}</svg></g>`;
+    document.getElementById("mD").innerHTML = s;
+  })();
+
+  // ---------- Firma rengi ----------
+  const sws = document.querySelectorAll(".swatch");
+  const apply = c => {
+    document.documentElement.style.setProperty("--livery", c);
+    document.documentElement.style.setProperty("--livery-2", c === "#ecebe6" ? "#c8372d" : "#f2f2ee");
+    sws.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === c)));
+  };
+  sws.forEach(b => b.addEventListener("click", () => { apply(b.dataset.c); try { localStorage.setItem("kmy-livery", b.dataset.c); } catch (e) {} }));
+  try { const saved = localStorage.getItem("kmy-livery"); if (saved && [...sws].some(b => b.dataset.c === saved)) apply(saved); } catch (e) {}
+})();
+</script>
