@@ -106,7 +106,8 @@ jobs:
 
       - name: İmzalama anahtarını hazırla
         run: |
-          # Dört sırrın hepsi varsa release imzası; hiçbiri yoksa debug; eksikse uyarı + debug.
+          # Dört sırrın hepsi varsa release imzası, hiçbiri yoksa debug. Eksik sır hatadır:
+          # release beklenirken sessizce debug APK yayınlanmasın.
           set=0
           for v in KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
             [ -n "${!v}" ] && set=$((set + 1))
@@ -117,7 +118,8 @@ jobs:
             echo "İmza: release anahtarı" >> "$GITHUB_STEP_SUMMARY"
           else
             if [ "$set" -gt 0 ]; then
-              echo "::warning::Android imzalama sırlarının yalnızca $set/4 tanesi tanımlı; debug APK derleniyor. Bkz. docs/YAYINLAMA.md"
+              echo "::error::Android imzalama sırlarının yalnızca $set/4 tanesi tanımlı. Hepsini ekle ya da hepsini kaldır. Bkz. docs/YAYINLAMA.md"
+              exit 1
             fi
             echo "İmza: debug anahtarı (release sırları tanımlı değil)" >> "$GITHUB_STEP_SUMMARY"
           fi

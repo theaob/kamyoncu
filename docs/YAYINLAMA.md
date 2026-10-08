@@ -65,8 +65,8 @@ GitHub → Settings → Secrets and variables → Actions → **Secrets**:
 | `ANDROID_KEY_PASSWORD` | Anahtar parolası |
 
 Dört sırrın **hepsi** tanımlıysa CI imzalı bir `-release.apk` üretir; hiçbiri
-yoksa `-debug.apk` üretir. Yalnızca bir kısmı tanımlıysa uyarı verip debug APK
-derler. Her çalıştırmanın özetinde APK'nın türü ve imza sertifikasının SHA-256
+yoksa `-debug.apk` üretir. Yalnızca bir kısmı tanımlıysa Android işi hata
+verir; böylece release beklenirken yanlışlıkla debug APK yayınlanmaz. Her çalıştırmanın özetinde APK'nın türü ve imza sertifikasının SHA-256
 parmak izi yazar; release derlemelerinde bu parmak izi hep aynı olmalıdır.
 Fork'lardan gelen PR'larda sırlar paylaşılmadığı için APK debug imzalıdır.
 
