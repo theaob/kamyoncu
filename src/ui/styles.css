@@ -14,6 +14,10 @@
   --f-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --f-body: 'IBM Plex Sans', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  /* Firma rengi: garaj çizimlerinde kabin ve tente boyası. */
+  --livery: #c8372d;
+  --livery-2: #f2f2ee;
+  --warn: #b7791f;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -236,13 +240,13 @@ select:focus-visible {
 }
 .tabs button {
   flex: 1;
-  padding: 10px 8px;
+  padding: 10px 4px;
   border: 0;
   border-bottom: 3px solid transparent;
   background: none;
   cursor: pointer;
   font-family: var(--f-display);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -446,6 +450,11 @@ select:focus-visible {
   font-weight: 600;
   border-bottom: 0;
 }
+.finance tfoot .aside th,
+.finance tfoot .aside td {
+  font-weight: 400;
+  color: var(--muted);
+}
 .finance h3 {
   margin: 16px 0 6px;
   font-family: var(--f-display);
@@ -486,6 +495,148 @@ select:focus-visible {
 }
 .bar.neg {
   background: var(--neg);
+}
+.bar.warn {
+  background: var(--warn);
+}
+
+/* Filo, şoförler, pazar */
+.truck-picker {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.truck-picker select,
+.card select,
+.facts select {
+  height: 30px;
+  max-width: 100%;
+  color: var(--fg);
+}
+.body-tag {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+}
+.body-tag.frigorifik {
+  border-color: #6aa6d6;
+}
+.body-tag.tanker {
+  border-color: #d69a3a;
+}
+.body-tag.konteyner {
+  border-color: #3d6f8e;
+}
+.fleet-list,
+.rows,
+.cards {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.fleet-list button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+}
+.fleet-list button[aria-pressed='true'] {
+  border-color: var(--otoyol);
+  box-shadow: inset 3px 0 0 var(--otoyol);
+}
+.fleet-item,
+.rows li > span:first-child {
+  display: grid;
+  min-width: 0;
+}
+.fleet-item small,
+.rows small,
+.card small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.condition {
+  display: inline-grid;
+  grid-template-columns: 56px auto;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+}
+.truck-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  margin-bottom: 8px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.secondary {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+}
+.secondary:disabled,
+.primary:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.fleet-section {
+  margin-top: 16px;
+}
+.fleet-section h3 {
+  margin: 0 0 8px;
+  font-family: var(--f-display);
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rows li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.card {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.card .truck-art {
+  max-height: 72px;
+}
+.card button {
+  justify-self: start;
+  margin-top: 4px;
 }
 .loading {
   padding: 24px;

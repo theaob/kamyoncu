@@ -775,7 +775,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Oyun saati ve hız kontrolü.
 - Çoklu dil altyapısı (Türkçe + İngilizce), dil seçimi ve eksik çeviri testi.
 
-### Faz 1 — Oynanabilir MVP 🎯
+### Faz 1 — Oynanabilir MVP ✅
 - 15 şehir + yol ağı, rota bulma.
 - 1 araç (ikinci el kamyonet), 1 şoför (oyuncunun kendisi).
 - Yük borsası → kabul et → kamyon haritada ilerler → teslim → para.
@@ -783,12 +783,15 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 - Sürümlü kayıt/yükleme + otomatik kayıt (sonsuz kariyerin temeli baştan).
 - **Başarı ölçütü:** 10 dakika oynanınca “bir sefer daha” hissi.
 
-### Faz 2 — Filo ve Şoförler
+### Faz 2 — Filo ve Şoförler 🎯
 - Araç pazarı (sıfır/ikinci el), birden fazla araç; sınıf 1–4 ve seviyeler.
 - Hibrit görsel stilin parçalı kamyon çizim sistemi (garaj ekranı).
-- Şoför işe alma, maaş, sürüş süresi/mola kuralları, yorgunluk.
-- Tır (sınıf 6) ve dorse türleri (tenteli, frigorifik, tanker, konteyner); ehliyet sınıfları.
+- Şoför işe alma, maaş; ehliyet sınıfları.
+- Tır (sınıf 6) ve dorse türleri (tenteli, frigorifik, tanker, konteyner).
 - Bakım ve kamyon durumu.
+- **Ertelendi:** sürüş süresi/mola kuralları ve yorgunluk (oyuncu kararı, sonraki
+  bir fazda); şoförün şehirler arası yer değiştirmesi (şubelerle, Faz 3); arıza
+  (Faz 4). Şimdilik atanan şoför aracın bulunduğu şehre kendiliğinden ulaşır.
 
 ### Faz 3 — Ekonomi Derinliği
 - Kredi, sigorta, dalgalanan yakıt fiyatı.
@@ -913,5 +916,6 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 ## 9. Açık Sorular
 
 1. **Sürüş süresi kuralları ve gerçekçilik seviyesi** (vergi vb.):
-   ertelendi; Faz 2'de (şoför sistemi) birlikte belirlenecek. O zamana kadar
+   Faz 2'de yeniden ertelendi (oyuncu kararı); şoför sistemi kuruldu, kurallar
+   sonraki bir fazda eklenecek. O zamana kadar
    Bölüm 3.4'teki değerler yer tutucudur ve `balance.ts` üzerinden ayarlanır.

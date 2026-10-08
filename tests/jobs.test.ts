@@ -4,7 +4,7 @@ import { refreshJobs } from '../src/core/jobs';
 import { Rng } from '../src/core/rng';
 import { createInitialState } from '../src/core/sim';
 import { CARGO_TYPES } from '../src/data/cargo';
-import { getVehicleModel } from '../src/data/vehicles';
+import { VEHICLE_MODELS } from '../src/data/vehicles';
 import { getWorld } from '../src/data/worlds';
 
 const world = getWorld('tr');
@@ -19,14 +19,15 @@ describe('yük borsası', () => {
     }
   });
 
-  it('ilanlar geçerli: kamyonete sığar, mesafe ve süreler tutarlı, kimlikler benzersiz', () => {
+  it('ilanlar geçerli: bir araca sığar, kasa yükle uyumlu, süreler tutarlı, kimlikler benzersiz', () => {
     const s = createInitialState(7);
-    const cap = getVehicleModel('van-used').capacityTons;
+    const cap = Math.max(...VEHICLE_MODELS.map((m) => m.capacityTons));
     const cargoIds = new Set(CARGO_TYPES.map((c) => c.id));
     expect(new Set(s.jobs.map((j) => j.id)).size).toBe(s.jobs.length);
     for (const j of s.jobs) {
       expect(j.from).not.toBe(j.to);
       expect(cargoIds.has(j.cargo)).toBe(true);
+      expect(j.body).toBe(CARGO_TYPES.find((c) => c.id === j.cargo)!.body);
       expect(j.tons).toBeLessThanOrEqual(cap);
       expect(j.km).toBeGreaterThanOrEqual(BALANCE.minJobKm);
       expect(j.pay).toBeGreaterThan(0);

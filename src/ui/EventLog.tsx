@@ -26,17 +26,26 @@ function describe(
       return [
         key,
         {
+          plate: event.params.plate,
           cargo: cargo(event.params.cargo),
           from: city(event.params.from),
           to: city(event.params.to),
         },
       ];
     case 'job.loaded':
-      return [key, { city: city(event.params.city), cargo: cargo(event.params.cargo) }];
+      return [
+        key,
+        {
+          plate: event.params.plate,
+          city: city(event.params.city),
+          cargo: cargo(event.params.cargo),
+        },
+      ];
     case 'job.delivered':
       return [
         key,
         {
+          plate: event.params.plate,
           city: city(event.params.city),
           cargo: cargo(event.params.cargo),
           pay: money(event.params.pay),
@@ -47,6 +56,7 @@ function describe(
       return [
         key,
         {
+          plate: event.params.plate,
           city: city(event.params.city),
           cargo: cargo(event.params.cargo),
           pay: money(event.params.pay),
@@ -56,6 +66,39 @@ function describe(
       ];
     case 'job.rejected':
       return [key, { reason: t(`acceptError.${event.params.reason}`) }];
+    case 'fleet.bought':
+      return [
+        key,
+        {
+          plate: event.params.plate,
+          model: event.params.model,
+          city: city(event.params.city),
+          price: money(event.params.price),
+        },
+      ];
+    case 'fleet.sold':
+      return [key, { plate: event.params.plate, price: money(event.params.price) }];
+    case 'fleet.trailerBought':
+      return [
+        key,
+        {
+          kind: t(`body.${event.params.kind}`),
+          city: city(event.params.city),
+          price: money(event.params.price),
+        },
+      ];
+    case 'fleet.trailerSold':
+      return [key, { kind: t(`body.${event.params.kind}`), price: money(event.params.price) }];
+    case 'fleet.serviceDone':
+    case 'fleet.needsService':
+      return [key, { plate: event.params.plate }];
+    case 'driver.hired':
+    case 'driver.fired':
+      return [key, { name: event.params.name }];
+    case 'market.refreshed':
+      return [key, {}];
+    case 'command.failed':
+      return [key, { reason: t(`commandError.${event.params.reason}`) }];
   }
 }
 

@@ -26,3 +26,21 @@ export class Rng {
     return min + Math.floor(this.next() * (max - min + 1));
   }
 }
+
+/** RNG durumunu oyun durumunda tutar; böylece kayıttan devam eden oyun aynı sırayı izler. */
+export function withRng<T>(state: { rngState: number }, fn: (rng: Rng) => T): T {
+  const rng = new Rng(state.rngState);
+  const result = fn(rng);
+  state.rngState = rng.state;
+  return result;
+}
+
+export function pickWeighted<T>(rng: Rng, items: readonly T[], weight: (item: T) => number): T {
+  const total = items.reduce((sum, item) => sum + weight(item), 0);
+  let r = rng.next() * total;
+  for (const item of items) {
+    r -= weight(item);
+    if (r < 0) return item;
+  }
+  return items[items.length - 1]!;
+}

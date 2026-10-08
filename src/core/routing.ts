@@ -1,5 +1,5 @@
 import { BALANCE } from './balance';
-import type { Money, Road, WorldDef } from './types';
+import type { Money, Road, VehicleModel, WorldDef } from './types';
 
 export interface Route {
   /** Şehir dizisi; ilk eleman çıkış, son eleman varış. */
@@ -7,9 +7,10 @@ export interface Route {
   /** `cities[i] → cities[i + 1]` yolları. */
   roads: Road[];
   km: number;
-  /** Tahmini sürüş süresi, oyun dakikası. */
+  /** Kamyonetle tahmini sürüş süresi, oyun dakikası; ağır araçta hız çarpanına bölünür. */
   minutes: number;
-  tolls: Money;
+  /** Ücretli (otoyol) km; geçiş ücreti araç sınıfına göre hesaplanır. */
+  motorwayKm: number;
 }
 
 interface Edge {
@@ -32,12 +33,17 @@ function graphOf(world: WorldDef): Map<string, Edge[]> {
 }
 
 /** Bir yolun sürüş süresi, oyun dakikası. */
-export function roadMinutes(road: Road): number {
-  return (road.km / BALANCE.roadSpeedKmh[road.kind]) * 60;
+export function roadMinutes(road: Road, speedFactor = 1): number {
+  return (road.km / (BALANCE.roadSpeedKmh[road.kind] * speedFactor)) * 60;
 }
 
-export function roadToll(road: Road): Money {
-  return Math.round(road.km * BALANCE.tollPerKm[road.kind]);
+/** Yalnızca otoyollar ücretlidir; fiyat aracın ücret sınıfına göre. */
+export function motorwayToll(km: number, tollClass: VehicleModel['tollClass']): Money {
+  return Math.round(km * BALANCE.motorwayTollPerKm[tollClass]);
+}
+
+export function roadToll(road: Road, tollClass: VehicleModel['tollClass']): Money {
+  return road.kind === 'otoyol' ? motorwayToll(road.km, tollClass) : 0;
 }
 
 /**
@@ -86,7 +92,7 @@ export function findRoute(world: WorldDef, from: string, to: string): Route | nu
     roads,
     km: roads.reduce((sum, r) => sum + r.km, 0),
     minutes: dist.get(to)!,
-    tolls: roads.reduce((sum, r) => sum + roadToll(r), 0),
+    motorwayKm: roads.reduce((sum, r) => sum + (r.kind === 'otoyol' ? r.km : 0), 0),
   };
 }
 

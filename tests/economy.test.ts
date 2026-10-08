@@ -4,15 +4,25 @@ import { estimateJob, fuelLiters, jobPay, latePenalty, tripProgress } from '../s
 import { applyCommand, createInitialState } from '../src/core/sim';
 import type { Job } from '../src/core/types';
 import { getCargo } from '../src/data/cargo';
+import type { TruckSpec } from '../src/core/economy';
+import { truckSpec } from '../src/core/fleet';
 import { getVehicleModel } from '../src/data/vehicles';
 import { getWorld } from '../src/data/worlds';
 
-const van = getVehicleModel('van-used');
+const model = getVehicleModel('c1-standard');
+const van: TruckSpec = {
+  capacityTons: model.capacityTons,
+  body: 'tenteli',
+  fuelPer100Km: model.fuelPer100Km,
+  speedFactor: model.speedFactor,
+  tollClass: model.tollClass,
+};
 const job: Job = {
   id: 'j1',
   from: 'ist',
   to: 'ank',
   cargo: 'parcels',
+  body: 'tenteli',
   tons: 1,
   km: 450,
   pay: 900_000,
@@ -22,16 +32,19 @@ const job: Job = {
 
 describe('ekonomi', () => {
   it('yakıt yükle artar (plan 3.6)', () => {
-    expect(fuelLiters(100, van, 0)).toBeCloseTo(van.fuelPer100Km);
-    expect(fuelLiters(100, van, 1)).toBeCloseTo(van.fuelPer100Km * (1 + BALANCE.fuelLoadFactor));
+    expect(fuelLiters(100, van.fuelPer100Km, 0)).toBeCloseTo(van.fuelPer100Km);
+    expect(fuelLiters(100, van.fuelPer100Km, 1)).toBeCloseTo(
+      van.fuelPer100Km * (1 + BALANCE.fuelLoadFactor),
+    );
   });
 
   it('ödeme tam lira, mesafe ve talep ile artar', () => {
     const cargo = getCargo('parcels');
-    const a = jobPay(300, cargo, 1);
+    const a = jobPay(300, cargo, 1, 1);
     expect(a % 100).toBe(0);
-    expect(jobPay(600, cargo, 1)).toBeGreaterThan(a);
-    expect(jobPay(300, cargo, 1.2)).toBeGreaterThan(a);
+    expect(jobPay(600, cargo, 1, 1)).toBeGreaterThan(a);
+    expect(jobPay(300, cargo, 1, 1.2)).toBeGreaterThan(a);
+    expect(jobPay(300, cargo, 2, 1)).toBeGreaterThan(a);
   });
 
   it('gecikme cezası saat başı artar ve tavanı vardır', () => {
@@ -60,8 +73,9 @@ describe('aktif sefer ilerlemesi', () => {
     const s = createInitialState(4);
     const truck = s.trucks[0]!;
     expect(tripProgress(world, truck, s.time)).toBeNull();
-    const job = s.jobs[0]!;
-    const est = estimateJob(world, van, truck.cityId, job, s.time)!;
+    const job = { ...s.jobs[0]!, tons: 1, body: 'tenteli' as const };
+    s.jobs = [job];
+    const est = estimateJob(world, truckSpec(s, truck), truck.cityId, job, s.time)!;
     applyCommand(s, { type: 'acceptJob', jobId: job.id, truckId: truck.id }, [], world);
     const p = tripProgress(world, truck, s.time)!;
     expect(p.km).toBeCloseTo(est.emptyKm + est.km);

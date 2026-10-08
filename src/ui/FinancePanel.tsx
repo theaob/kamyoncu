@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { MINUTES_PER_DAY } from '../core/balance';
-import { LEDGER_CATEGORIES, type LedgerCategory, type Money } from '../core/types';
+import { emptyAmounts } from '../core/ledger';
+import {
+  LEDGER_CATEGORIES,
+  OPERATING_CATEGORIES,
+  type LedgerCategory,
+  type Money,
+} from '../core/types';
 import { currentLanguage } from '../i18n';
 import { formatKurus } from '../i18n/format';
 import { useGameStore } from '../store/gameStore';
@@ -8,12 +14,13 @@ import { useGameStore } from '../store/gameStore';
 type Amounts = Record<LedgerCategory, Money>;
 
 function sum(list: Amounts[]): Amounts {
-  const out = { freight: 0, fuel: 0, tolls: 0, penalties: 0 };
+  const out = emptyAmounts();
   for (const a of list) for (const c of LEDGER_CATEGORIES) out[c] += a[c];
   return out;
 }
 
-const net = (a: Amounts) => LEDGER_CATEGORIES.reduce((s, c) => s + a[c], 0);
+/** İşletme net kârı: araç alım-satımı hariç. */
+const net = (a: Amounts) => OPERATING_CATEGORIES.reduce((s, c) => s + a[c], 0);
 
 export function FinancePanel() {
   const { t } = useTranslation();
@@ -44,7 +51,7 @@ export function FinancePanel() {
           </tr>
         </thead>
         <tbody>
-          {LEDGER_CATEGORIES.map((c) => (
+          {OPERATING_CATEGORIES.map((c) => (
             <tr key={c}>
               <th scope="row">{t(`finance.category.${c}`)}</th>
               {columns.map(([key, a]) => (
@@ -61,6 +68,14 @@ export function FinancePanel() {
             {columns.map(([key, a]) => (
               <td key={key} className={tone(net(a))}>
                 {formatKurus(net(a), lang)}
+              </td>
+            ))}
+          </tr>
+          <tr className="aside">
+            <th scope="row">{t('finance.category.vehicles')}</th>
+            {columns.map(([key, a]) => (
+              <td key={key} className={tone(a.vehicles)}>
+                {formatKurus(a.vehicles, lang)}
               </td>
             ))}
           </tr>

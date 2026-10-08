@@ -22,16 +22,26 @@ const ROAD_ORDER: RoadKind[] = ['il', 'devlet', 'otoyol'];
 /** Küçük şehir etiketleri bu yakınlaştırmanın (piksel/km) üstünde görünür. */
 const SMALL_LABEL_ZOOM = 1.1;
 
-/** Harita üzerine çizilen oyun durumu: kamyon ve rotalar (şehir kimliği dizileri). */
+export interface TruckMarker {
+  id: string;
+  x: number;
+  y: number;
+  /** Seçili araç sarı ve en üstte çizilir. */
+  selected: boolean;
+  /** Aynı noktadaki araçların sırası; işaretler ekran pikseliyle kaydırılır. */
+  stack: number;
+}
+
+/** Harita üzerine çizilen oyun durumu: araçlar ve seçili aracın rotaları (şehir kimliği dizileri). */
 export interface MapOverlay {
-  truck: { x: number; y: number } | null;
+  trucks: TruckMarker[];
   activeRoute: string[] | null;
   previewEmpty: string[] | null;
   previewLoaded: string[] | null;
 }
 
 const EMPTY_OVERLAY: MapOverlay = {
-  truck: null,
+  trucks: [],
   activeRoute: null,
   previewEmpty: null,
   previewLoaded: null,
@@ -55,9 +65,12 @@ export class MapRenderer {
   private readonly world = new Container();
   private readonly roads = new Graphics();
   private readonly routes = new Graphics();
-  private readonly truckNode = new Container();
+  private readonly truckLayer = new Container();
+  private readonly truckNodes = new Map<
+    string,
+    { node: Container; body: Graphics; pos: { x: number; y: number }; selected: boolean | null }
+  >();
   private overlay: MapOverlay = EMPTY_OVERLAY;
-  private truckPos: { x: number; y: number } | null = null;
   private readonly cities: CityNode[] = [];
   private bounds: Bounds;
   private camera: Camera = { cx: 0, cy: 0, zoom: 1 };
@@ -108,8 +121,8 @@ export class MapRenderer {
     this.world.addChild(this.roads);
     this.world.addChild(this.routes);
     this.drawCities();
-    this.drawTruck();
-    this.app.ticker.add(() => this.moveTruck());
+    this.world.addChild(this.truckLayer);
+    this.app.ticker.add(() => this.moveTrucks());
 
     this.attachInput(canvas);
     this.resizeObserver = new ResizeObserver(() => this.applyCamera());
@@ -131,15 +144,8 @@ export class MapRenderer {
     this.overlay = overlay;
     if (!this.ready) return;
     if (routesChanged) this.drawRoutes();
-    // Kamyon ilk kez görünüyorsa ya da çok uzağa sıçradıysa (yeni oyun) kaydırmadan yerleştir.
-    const target = overlay.truck;
-    if (
-      target &&
-      (!this.truckPos || Math.hypot(target.x - this.truckPos.x, target.y - this.truckPos.y) > 200)
-    ) {
-      this.truckPos = { ...target };
-    }
-    this.moveTruck();
+    this.syncTrucks();
+    this.moveTrucks();
   }
 
   reset(): void {
@@ -178,7 +184,7 @@ export class MapRenderer {
     this.world.position.set(vp.width / 2 - cx * zoom, vp.height / 2 - cy * zoom);
     this.drawRoads();
     this.drawRoutes();
-    this.truckNode.scale.set(1 / zoom);
+    for (const t of this.truckNodes.values()) t.node.scale.set(1 / zoom);
     for (const c of this.cities) {
       c.node.scale.set(1 / zoom);
       c.label.visible = c.size >= 2 || zoom >= SMALL_LABEL_ZOOM;
@@ -244,30 +250,54 @@ export class MapRenderer {
     line(previewLoaded, ROUTE_WIDTH_PX, MAP_COLORS.routePreview);
   }
 
-  private drawTruck(): void {
-    const body = new Graphics()
-      .roundRect(-9, -6, 18, 12, 3)
-      .fill(MAP_COLORS.truck)
-      .stroke({ width: 2, color: MAP_COLORS.truckOutline })
-      .rect(3, -6, 6, 12)
-      .fill(MAP_COLORS.truckOutline);
-    this.truckNode.addChild(body);
-    this.truckNode.visible = false;
-    this.world.addChild(this.truckNode);
+  /** Araç işaretlerini ekler/kaldırır; renk yalnızca seçim değişince yeniden çizilir. */
+  private syncTrucks(): void {
+    const ids = new Set(this.overlay.trucks.map((t) => t.id));
+    for (const [id, t] of this.truckNodes) {
+      if (!ids.has(id)) {
+        t.node.destroy({ children: true });
+        this.truckNodes.delete(id);
+      }
+    }
+    for (const marker of this.overlay.trucks) {
+      let t = this.truckNodes.get(marker.id);
+      if (!t) {
+        const node = new Container();
+        const body = new Graphics();
+        node.addChild(body);
+        node.scale.set(1 / this.camera.zoom);
+        this.truckLayer.addChild(node);
+        t = { node, body, pos: { x: marker.x, y: marker.y }, selected: null };
+        this.truckNodes.set(marker.id, t);
+      }
+      // Çok uzağa sıçradıysa (yeni oyun, satın alma) kaydırmadan yerleştir.
+      if (Math.hypot(marker.x - t.pos.x, marker.y - t.pos.y) > 200) {
+        t.pos = { x: marker.x, y: marker.y };
+      }
+      t.body.position.set(marker.stack * 7, -marker.stack * 7);
+      if (t.selected !== marker.selected) {
+        t.selected = marker.selected;
+        t.body
+          .clear()
+          .roundRect(-9, -6, 18, 12, 3)
+          .fill(marker.selected ? MAP_COLORS.truck : MAP_COLORS.truckIdle)
+          .stroke({ width: 2, color: MAP_COLORS.truckOutline })
+          .rect(3, -6, 6, 12)
+          .fill(MAP_COLORS.truckOutline);
+        t.node.zIndex = marker.selected ? 1 : 0;
+      }
+    }
+    this.truckLayer.sortableChildren = true;
   }
 
-  private moveTruck(): void {
-    const target = this.overlay.truck;
-    this.truckNode.visible = target !== null;
-    if (!target) {
-      this.truckPos = null;
-      return;
+  private moveTrucks(): void {
+    for (const marker of this.overlay.trucks) {
+      const t = this.truckNodes.get(marker.id);
+      if (!t) continue;
+      t.pos.x += (marker.x - t.pos.x) * TRUCK_SMOOTHING;
+      t.pos.y += (marker.y - t.pos.y) * TRUCK_SMOOTHING;
+      t.node.position.set(t.pos.x, t.pos.y);
     }
-    const pos = this.truckPos ?? { ...target };
-    pos.x += (target.x - pos.x) * TRUCK_SMOOTHING;
-    pos.y += (target.y - pos.y) * TRUCK_SMOOTHING;
-    this.truckPos = pos;
-    this.truckNode.position.set(pos.x, pos.y);
   }
 
   private drawCities(): void {

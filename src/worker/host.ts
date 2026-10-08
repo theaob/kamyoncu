@@ -1,7 +1,7 @@
 import { SimRunner } from '../core/runner';
 import { deserialize, SaveLoadError, serialize, type SaveError } from '../core/save';
 import { createInitialState } from '../core/sim';
-import type { Job, Money, SimEvent } from '../core/types';
+import type { Candidate, Job, Money, SimEvent, UsedListing } from '../core/types';
 import type { FromWorker, ToWorker } from './protocol';
 
 /** Otomatik kayıt aralığı, gerçek ms. */
@@ -18,6 +18,8 @@ export class SimHost {
   private dirty = false;
   private sentJobs: Job[] | null = null;
   private sentMoney: Money | null = null;
+  private sentCandidates: Candidate[] | null = null;
+  private sentListings: UsedListing[] | null = null;
 
   constructor(
     private readonly post: (msg: FromWorker) => void,
@@ -52,7 +54,8 @@ export class SimHost {
         this.runner.apply(msg.command, events);
         this.dirty = true;
         this.postTick(events);
-        if (msg.command.type === 'acceptJob') this.save();
+        // Kabul ve alım-satım gibi kalıcı kararlar hemen kaydedilir.
+        if (!['setSpeed', 'setPaused', 'togglePause'].includes(msg.command.type)) this.save();
         return;
       }
     }
@@ -80,6 +83,8 @@ export class SimHost {
     this.dirty = false;
     this.sentJobs = state.jobs;
     this.sentMoney = state.money;
+    this.sentCandidates = state.candidates;
+    this.sentListings = state.usedListings;
     this.post({
       type: 'ready',
       worldId: state.activeWorldId,
@@ -87,7 +92,11 @@ export class SimHost {
       view: {
         money: state.money,
         trucks: state.trucks,
+        trailers: state.trailers,
+        drivers: state.drivers,
         jobs: state.jobs,
+        candidates: state.candidates,
+        usedListings: state.usedListings,
         finance: state.finance,
       },
       ...(loadError ? { loadError } : {}),
@@ -106,11 +115,22 @@ export class SimHost {
     const view: Extract<FromWorker, { type: 'tick' }>['view'] = {
       money: s.money,
       trucks: s.trucks,
+      trailers: s.trailers,
+      drivers: s.drivers,
     };
     // Yük borsası her değişiklikte yeni dizi olarak atanır; referans karşılaştırması yeterli.
     if (s.jobs !== this.sentJobs) {
       view.jobs = s.jobs;
       this.sentJobs = s.jobs;
+    }
+    // Pazar listeleri de değişince yeni dizi olarak atanır.
+    if (s.candidates !== this.sentCandidates) {
+      view.candidates = s.candidates;
+      this.sentCandidates = s.candidates;
+    }
+    if (s.usedListings !== this.sentListings) {
+      view.usedListings = s.usedListings;
+      this.sentListings = s.usedListings;
     }
     // Finans dökümü yalnızca nakit hareketiyle değişir.
     if (s.money !== this.sentMoney) {

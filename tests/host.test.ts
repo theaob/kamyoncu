@@ -50,7 +50,11 @@ describe('SimHost (worker protokolü)', () => {
     if (tick?.type === 'tick') expect(tick.view.jobs).toBeUndefined();
 
     const ready = out[0]!;
-    const jobId = ready.type === 'ready' ? ready.view.jobs[0]!.id : '';
+    // Başlangıç kamyonetine uyan (tenteli, ≤ 1,5 t) ilk ilan.
+    const jobId =
+      ready.type === 'ready'
+        ? ready.view.jobs.find((j) => j.body === 'tenteli' && j.tons <= 1.5)!.id
+        : '';
     host.handle({ type: 'command', command: { type: 'acceptJob', jobId, truckId: 't1' } });
     const afterAccept = out.filter((m) => m.type === 'tick').at(-1);
     expect(afterAccept?.type === 'tick' && afterAccept.view.jobs?.length).toBeGreaterThan(0);
