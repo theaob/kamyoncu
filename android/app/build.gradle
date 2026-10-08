@@ -3,8 +3,10 @@ apply plugin: 'com.android.application'
 // Sürüm bilgisi CI'dan gelir: ./gradlew -PversionCode=42 -PversionName=0.1.0
 def appVersionCode = (project.findProperty('versionCode') ?: '1').toString().toInteger()
 def appVersionName = (project.findProperty('versionName') ?: '0.0.0').toString()
-// İmzalama anahtarı yalnızca ortam değişkenleri verilirse kullanılır (bkz. docs/YAYINLAMA.md).
+// İmzalama anahtarı yalnızca tüm ortam değişkenleri verilirse kullanılır (bkz. docs/YAYINLAMA.md).
 def keystorePath = System.getenv('ANDROID_KEYSTORE_FILE')
+def releaseSigning = keystorePath && ['ANDROID_KEYSTORE_PASSWORD', 'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD']
+        .every { System.getenv(it) }
 
 android {
     namespace = "io.github.theaob.kamyoncu"
@@ -24,7 +26,7 @@ android {
     }
     signingConfigs {
         release {
-            if (keystorePath) {
+            if (releaseSigning) {
                 storeFile file(keystorePath)
                 storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
                 keyAlias System.getenv('ANDROID_KEY_ALIAS')
@@ -34,7 +36,7 @@ android {
     }
     buildTypes {
         release {
-            if (keystorePath) {
+            if (releaseSigning) {
                 signingConfig signingConfigs.release
             }
             minifyEnabled false
