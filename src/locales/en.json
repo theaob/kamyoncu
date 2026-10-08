@@ -1,7 +1,11 @@
 {
   "app": {
     "title": "Kamyoncu",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "newGame": "New game",
+    "newGameConfirm": "Delete the current career and start a new game?",
+    "saved": "Saved {{time}}",
+    "notSaved": "Can't save (storage disabled)"
   },
   "clock": {
     "paused": "Paused",
@@ -32,11 +36,116 @@
   },
   "log": {
     "title": "Events",
-    "empty": "No events yet. They will appear here when a new day starts."
+    "empty": "No events yet. Jobs and new days will show up here."
   },
   "events": {
     "time": {
       "newDay": "A new day has started: {{date}}"
+    },
+    "job": {
+      "accepted": "Job accepted: {{cargo}}, {{from}} → {{to}}",
+      "loaded": "Loaded in {{city}}: {{cargo}}",
+      "delivered": "Delivered to {{city}}: {{cargo}}. Paid {{pay}}, profit {{profit}}",
+      "deliveredLate": "Late delivery to {{city}}: {{cargo}}. Paid {{pay}}, penalty {{penalty}}, profit {{profit}}",
+      "rejected": "Couldn't accept the job: {{reason}}"
     }
+  },
+  "save": {
+    "loadError": {
+      "corrupt": "The save couldn't be read, so a new game was started. The old save was backed up.",
+      "tooNew": "The save is from a newer version of the game, so a new game was started. The old save was backed up."
+    },
+    "dismiss": "OK"
+  },
+  "money": {
+    "label": "Cash"
+  },
+  "units": {
+    "km": "{{km}} km",
+    "tons": "{{tons}} t",
+    "duration": "{{h}} h {{m}} min",
+    "durationShort": "{{m}} min"
+  },
+  "panel": {
+    "label": "Management panel",
+    "jobs": "Freight board",
+    "truck": "Truck",
+    "finance": "Finance"
+  },
+  "jobs": {
+    "filter": {
+      "label": "Show",
+      "here": "From my city",
+      "all": "All cities"
+    },
+    "sort": {
+      "label": "Sort",
+      "profit": "Estimated profit",
+      "perHour": "Profit per hour",
+      "deadline": "Time to deadline"
+    },
+    "empty": "No matching jobs. New listings arrive every hour.",
+    "pay": "Pay",
+    "profit": "Est. profit",
+    "perHour": "{{amount}}/h",
+    "emptyLeg": "empty run {{km}} km",
+    "noEmptyLeg": "cargo is here",
+    "deadlineIn": "Deliver within {{duration}}",
+    "lateRisk": "Will be late: −{{penalty}} penalty",
+    "accept": "Accept",
+    "acceptTitle": "Accept the {{from}} → {{to}} job",
+    "busy": "Truck is busy",
+    "tooHeavy": "Too heavy for the van",
+    "count": "{{count}} listings"
+  },
+  "truck": {
+    "name": "Used van",
+    "driver": "Driver: you",
+    "capacity": "Capacity",
+    "odometer": "Odometer",
+    "status": {
+      "idle": "Idle in {{city}}. Pick a job from the freight board.",
+      "toPickup": "On the way to {{city}} to pick up cargo",
+      "loading": "Loading in {{city}}",
+      "toDelivery": "Delivering to {{city}}",
+      "unloading": "Unloading in {{city}}"
+    },
+    "job": "Current job",
+    "remaining": "Distance left",
+    "eta": "Estimated delivery",
+    "deadline": "Deadline",
+    "late": "late",
+    "onTime": "on time",
+    "costs": "Costs on this job",
+    "goToBoard": "Open the freight board"
+  },
+  "finance": {
+    "today": "Today",
+    "week": "Last 7 days",
+    "total": "All time",
+    "net": "Net",
+    "category": {
+      "freight": "Freight income",
+      "fuel": "Fuel",
+      "tolls": "Motorway tolls",
+      "penalties": "Late penalties"
+    },
+    "deliveries": "Deliveries: {{count}} ({{late}} late)",
+    "byDay": "Daily net",
+    "dayN": "Day {{day}}"
+  },
+  "cargo": {
+    "parcels": "Parcels / e-commerce",
+    "textiles": "Textiles",
+    "food": "Food",
+    "spareParts": "Spare parts",
+    "electronics": "Electronics",
+    "pharma": "Pharmaceuticals"
+  },
+  "acceptError": {
+    "unknownJob": "the listing is gone",
+    "truckBusy": "the truck is busy",
+    "tooHeavy": "the cargo exceeds capacity",
+    "noRoute": "no route"
   }
 }

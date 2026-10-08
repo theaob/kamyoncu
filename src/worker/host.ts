@@ -1,6 +1,11 @@
 import { SimRunner } from '../core/runner';
+import { deserialize, SaveLoadError, serialize, type SaveError } from '../core/save';
 import { createInitialState } from '../core/sim';
+import type { Job, Money, SimEvent } from '../core/types';
 import type { FromWorker, ToWorker } from './protocol';
+
+/** Otomatik kayıt aralığı, gerçek ms. */
+export const AUTOSAVE_MS = 10_000;
 
 /**
  * Worker içindeki simülasyon döngüsü. Worker API'sinden bağımsız yazıldı;
@@ -9,6 +14,10 @@ import type { FromWorker, ToWorker } from './protocol';
 export class SimHost {
   private runner: SimRunner | null = null;
   private last = 0;
+  private lastSave = 0;
+  private dirty = false;
+  private sentJobs: Job[] | null = null;
+  private sentMoney: Money | null = null;
 
   constructor(
     private readonly post: (msg: FromWorker) => void,
@@ -16,19 +25,37 @@ export class SimHost {
   ) {}
 
   handle(msg: ToWorker): void {
-    if (msg.type === 'init') {
-      this.runner = new SimRunner(createInitialState(msg.seed));
-      this.last = this.now();
-      this.post({
-        type: 'ready',
-        worldId: this.runner.state.activeWorldId,
-        clock: this.clock(),
-      });
-      return;
+    switch (msg.type) {
+      case 'init': {
+        let loadError: SaveError | undefined;
+        let state = null;
+        if (msg.save) {
+          try {
+            state = deserialize(msg.save);
+          } catch (e) {
+            loadError = e instanceof SaveLoadError ? e.reason : 'corrupt';
+          }
+        }
+        this.start(state ?? createInitialState(msg.seed), loadError);
+        return;
+      }
+      case 'newGame':
+        this.start(createInitialState(msg.seed));
+        this.save();
+        return;
+      case 'save':
+        this.save();
+        return;
+      case 'command': {
+        if (!this.runner) return;
+        const events: SimEvent[] = [];
+        this.runner.apply(msg.command, events);
+        this.dirty = true;
+        this.postTick(events);
+        if (msg.command.type === 'acceptJob') this.save();
+        return;
+      }
     }
-    if (!this.runner) return;
-    this.runner.apply(msg.command);
-    this.post({ type: 'tick', clock: this.clock(), events: [] });
   }
 
   /** Periyodik olarak çağrılır; zaman ilerlediyse arayüze bildirir. */
@@ -39,8 +66,58 @@ export class SimHost {
     const events = this.runner.advance(now - this.last);
     this.last = now;
     if (this.runner.state.time !== before || events.length > 0) {
-      this.post({ type: 'tick', clock: this.clock(), events });
+      this.dirty = true;
+      this.postTick(events);
     }
+    const delivered = events.some((e) => e.code.startsWith('job.delivered'));
+    if (this.dirty && (delivered || now - this.lastSave >= AUTOSAVE_MS)) this.save();
+  }
+
+  private start(state: ReturnType<typeof createInitialState>, loadError?: SaveError): void {
+    this.runner = new SimRunner(state);
+    this.last = this.now();
+    this.lastSave = this.last;
+    this.dirty = false;
+    this.sentJobs = state.jobs;
+    this.sentMoney = state.money;
+    this.post({
+      type: 'ready',
+      worldId: state.activeWorldId,
+      clock: this.clock(),
+      view: {
+        money: state.money,
+        trucks: state.trucks,
+        jobs: state.jobs,
+        finance: state.finance,
+      },
+      ...(loadError ? { loadError } : {}),
+    });
+  }
+
+  private save(): void {
+    if (!this.runner) return;
+    this.lastSave = this.now();
+    this.dirty = false;
+    this.post({ type: 'save', data: serialize(this.runner.state) });
+  }
+
+  private postTick(events: SimEvent[]): void {
+    const s = this.runner!.state;
+    const view: Extract<FromWorker, { type: 'tick' }>['view'] = {
+      money: s.money,
+      trucks: s.trucks,
+    };
+    // Yük borsası her değişiklikte yeni dizi olarak atanır; referans karşılaştırması yeterli.
+    if (s.jobs !== this.sentJobs) {
+      view.jobs = s.jobs;
+      this.sentJobs = s.jobs;
+    }
+    // Finans dökümü yalnızca nakit hareketiyle değişir.
+    if (s.money !== this.sentMoney) {
+      view.finance = s.finance;
+      this.sentMoney = s.money;
+    }
+    this.post({ type: 'tick', clock: this.clock(), events, view });
   }
 
   private clock() {

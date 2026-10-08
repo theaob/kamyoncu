@@ -1,7 +1,10 @@
 import { create } from 'zustand';
+import type { SaveError } from '../core/save';
+import { createFinance } from '../core/sim';
 import type { Command, SimEvent } from '../core/types';
 import { startSimWorker, type SimClient } from '../worker/client';
-import type { ClockView, FromWorker } from '../worker/protocol';
+import type { ClockView, FromWorker, GameView } from '../worker/protocol';
+import { backupSave, readSave, writeSave } from './persistence';
 
 const LOG_LIMIT = 30;
 
@@ -11,44 +14,88 @@ export interface LogEntry {
   event: SimEvent;
 }
 
-interface GameStore {
+interface GameStore extends GameView {
   ready: boolean;
   worldId: string | null;
   clock: ClockView;
   log: LogEntry[];
+  loadError: SaveError | null;
+  /** Son başarılı otomatik kaydın oyun zamanı. */
+  savedAt: number | null;
+  /** Depolama kapalı ya da dolu: kayıt yazılamadı. */
+  saveFailed: boolean;
+  /** Haritada rotası vurgulanan ilan (üzerine gelinen/seçilen). */
+  highlightJobId: string | null;
   send(command: Command): void;
+  newGame(): void;
+  dismissLoadError(): void;
+  setHighlightJob(id: string | null): void;
   receive(msg: FromWorker): void;
 }
 
 let client: SimClient | null = null;
 let logId = 0;
 
-export const useGameStore = create<GameStore>((set) => ({
+const randomSeed = () => Date.now() % 2147483647;
+
+export const useGameStore = create<GameStore>((set, get) => ({
   ready: false,
   worldId: null,
   clock: { time: 0, speed: 1, paused: true },
   log: [],
+  money: 0,
+  trucks: [],
+  jobs: [],
+  finance: createFinance(),
+  loadError: null,
+  savedAt: null,
+  saveFailed: false,
+  highlightJobId: null,
   send: (command) => client?.send(command),
+  newGame: () => client?.newGame(randomSeed()),
+  dismissLoadError: () => set({ loadError: null }),
+  setHighlightJob: (id) => set({ highlightJobId: id }),
   receive: (msg) => {
-    if (msg.type === 'ready') {
-      set({ ready: true, worldId: msg.worldId, clock: msg.clock });
-      return;
+    switch (msg.type) {
+      case 'ready':
+        if (msg.loadError) backupSave();
+        set({
+          ready: true,
+          worldId: msg.worldId,
+          clock: msg.clock,
+          ...msg.view,
+          log: [],
+          loadError: msg.loadError ?? null,
+          highlightJobId: null,
+        });
+        return;
+      case 'save':
+        if (writeSave(msg.data)) set({ savedAt: get().clock.time, saveFailed: false });
+        else set({ saveFailed: true });
+        return;
+      case 'tick':
+        set((s) => ({
+          clock: msg.clock,
+          ...msg.view,
+          log:
+            msg.events.length === 0
+              ? s.log
+              : [
+                  ...msg.events.map((event) => ({ id: ++logId, time: msg.clock.time, event })),
+                  ...s.log,
+                ].slice(0, LOG_LIMIT),
+        }));
+        return;
     }
-    set((s) => ({
-      clock: msg.clock,
-      log:
-        msg.events.length === 0
-          ? s.log
-          : [
-              ...msg.events.map((event) => ({ id: ++logId, time: msg.clock.time, event })),
-              ...s.log,
-            ].slice(0, LOG_LIMIT),
-    }));
   },
 }));
 
 /** Simülasyon worker'ını bir kez başlatır (React StrictMode çift çağrısına dayanıklı). */
-export function ensureSimStarted(seed = Date.now() % 2147483647): void {
+export function ensureSimStarted(seed = randomSeed()): void {
   if (client) return;
-  client = startSimWorker(seed, (msg) => useGameStore.getState().receive(msg));
+  client = startSimWorker(seed, readSave(), (msg) => useGameStore.getState().receive(msg));
+  // Sekme kapanırken/arka plana geçerken son durumu kaydet.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') client?.requestSave();
+  });
 }
