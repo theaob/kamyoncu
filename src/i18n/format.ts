@@ -37,3 +37,18 @@ export function formatMoney(amountTry: number, lang: Lang): string {
 export function upper(text: string, lang: Lang): string {
   return text.toLocaleUpperCase(LOCALES[lang]);
 }
+
+/** Çekirdekteki para birimi tamsayı kuruştur. */
+export function formatKurus(kurus: number, lang: Lang): string {
+  return formatMoney(kurus / 100, lang);
+}
+
+export function formatNumber(value: number, lang: Lang, maximumFractionDigits = 0): string {
+  return new Intl.NumberFormat(LOCALES[lang], { maximumFractionDigits }).format(value);
+}
+
+/** Süreyi saat ve dakikaya böler (çeviri metni ayrıca biçimlendirir). */
+export function splitDuration(minutes: number): { h: number; m: number } {
+  const total = Math.max(0, Math.round(minutes));
+  return { h: Math.floor(total / 60), m: total % 60 };
+}

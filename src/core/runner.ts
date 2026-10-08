@@ -30,8 +30,8 @@ export class SimRunner {
     return this.pending;
   }
 
-  apply(command: Command): void {
-    applyCommand(this.state, command);
+  apply(command: Command, events: SimEvent[] = []): void {
+    applyCommand(this.state, command, events);
     if (this.state.paused) this.pending = 0;
   }
 }

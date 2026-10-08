@@ -1,7 +1,11 @@
 {
   "app": {
     "title": "Kamyoncu",
-    "loading": "Yükleniyor…"
+    "loading": "Yükleniyor…",
+    "newGame": "Yeni oyun",
+    "newGameConfirm": "Mevcut kariyer silinip yeni oyun başlatılsın mı?",
+    "saved": "Kaydedildi {{time}}",
+    "notSaved": "Kayıt yapılamıyor (depolama kapalı)"
   },
   "clock": {
     "paused": "Duraklatıldı",
@@ -32,11 +36,116 @@
   },
   "log": {
     "title": "Olaylar",
-    "empty": "Henüz olay yok. Yeni gün başladığında burada görünecek."
+    "empty": "Henüz olay yok. İşler ve yeni günler burada görünecek."
   },
   "events": {
     "time": {
       "newDay": "Yeni gün başladı: {{date}}"
+    },
+    "job": {
+      "accepted": "İş kabul edildi: {{cargo}}, {{from}} → {{to}}",
+      "loaded": "{{city}} şehrinde yüklendi: {{cargo}}",
+      "delivered": "{{city}} şehrine teslim edildi: {{cargo}}. Ödeme {{pay}}, kâr {{profit}}",
+      "deliveredLate": "{{city}} şehrine geç teslim: {{cargo}}. Ödeme {{pay}}, ceza {{penalty}}, kâr {{profit}}",
+      "rejected": "İş kabul edilemedi: {{reason}}"
     }
+  },
+  "save": {
+    "loadError": {
+      "corrupt": "Kayıt okunamadı; yeni oyun başlatıldı. Eski kayıt yedeklendi.",
+      "tooNew": "Kayıt oyunun daha yeni bir sürümüne ait; yeni oyun başlatıldı. Eski kayıt yedeklendi."
+    },
+    "dismiss": "Tamam"
+  },
+  "money": {
+    "label": "Nakit"
+  },
+  "units": {
+    "km": "{{km}} km",
+    "tons": "{{tons}} t",
+    "duration": "{{h}} sa {{m}} dk",
+    "durationShort": "{{m}} dk"
+  },
+  "panel": {
+    "label": "Yönetim paneli",
+    "jobs": "Yük borsası",
+    "truck": "Kamyon",
+    "finance": "Finans"
+  },
+  "jobs": {
+    "filter": {
+      "label": "Göster",
+      "here": "Bulunduğum şehirden",
+      "all": "Tüm şehirler"
+    },
+    "sort": {
+      "label": "Sırala",
+      "profit": "Tahmini kâr",
+      "perHour": "Saatlik kâr",
+      "deadline": "Teslim süresi"
+    },
+    "empty": "Uygun ilan yok. Yeni ilanlar her saat gelir.",
+    "pay": "Ödeme",
+    "profit": "Tahmini kâr",
+    "perHour": "{{amount}}/sa",
+    "emptyLeg": "boş gidiş {{km}} km",
+    "noEmptyLeg": "yük burada",
+    "deadlineIn": "Teslim: {{duration}} içinde",
+    "lateRisk": "Gecikir: −{{penalty}} ceza",
+    "accept": "Kabul et",
+    "acceptTitle": "{{from}} → {{to}} işini kabul et",
+    "busy": "Kamyon meşgul",
+    "tooHeavy": "Kamyonet için ağır",
+    "count": "{{count}} ilan"
+  },
+  "truck": {
+    "name": "İkinci el kamyonet",
+    "driver": "Şoför: sen",
+    "capacity": "Kapasite",
+    "odometer": "Kilometre",
+    "status": {
+      "idle": "{{city}} şehrinde boşta. Yük borsasından bir iş seç.",
+      "toPickup": "Yük almak için {{city}} yolunda",
+      "loading": "{{city}} şehrinde yükleniyor",
+      "toDelivery": "{{city}} şehrine teslimata gidiyor",
+      "unloading": "{{city}} şehrinde boşaltılıyor"
+    },
+    "job": "Aktif iş",
+    "remaining": "Kalan yol",
+    "eta": "Tahmini teslim",
+    "deadline": "Son teslim",
+    "late": "gecikmede",
+    "onTime": "zamanında",
+    "costs": "Bu işin gideri",
+    "goToBoard": "Yük borsasını aç"
+  },
+  "finance": {
+    "today": "Bugün",
+    "week": "Son 7 gün",
+    "total": "Toplam",
+    "net": "Net",
+    "category": {
+      "freight": "Taşıma geliri",
+      "fuel": "Yakıt",
+      "tolls": "Otoyol ücreti",
+      "penalties": "Gecikme cezası"
+    },
+    "deliveries": "Teslimat: {{count}} ({{late}} gecikmeli)",
+    "byDay": "Günlük net",
+    "dayN": "{{day}}. gün"
+  },
+  "cargo": {
+    "parcels": "Koli / e-ticaret",
+    "textiles": "Tekstil",
+    "food": "Gıda",
+    "spareParts": "Yedek parça",
+    "electronics": "Elektronik",
+    "pharma": "İlaç"
+  },
+  "acceptError": {
+    "unknownJob": "ilan artık yok",
+    "truckBusy": "kamyon meşgul",
+    "tooHeavy": "yük kapasiteyi aşıyor",
+    "noRoute": "rota yok"
   }
 }

@@ -10,11 +10,35 @@ import {
   type Camera,
   type Viewport,
 } from './camera';
-import { MAP_COLORS, OTOYOL_CASING_PX, ROAD_WIDTH_PX } from './palette';
+import {
+  MAP_COLORS,
+  OTOYOL_CASING_PX,
+  ROAD_WIDTH_PX,
+  ROUTE_CASING_PX,
+  ROUTE_WIDTH_PX,
+} from './palette';
 
 const ROAD_ORDER: RoadKind[] = ['il', 'devlet', 'otoyol'];
 /** Küçük şehir etiketleri bu yakınlaştırmanın (piksel/km) üstünde görünür. */
 const SMALL_LABEL_ZOOM = 1.1;
+
+/** Harita üzerine çizilen oyun durumu: kamyon ve rotalar (şehir kimliği dizileri). */
+export interface MapOverlay {
+  truck: { x: number; y: number } | null;
+  activeRoute: string[] | null;
+  previewEmpty: string[] | null;
+  previewLoaded: string[] | null;
+}
+
+const EMPTY_OVERLAY: MapOverlay = {
+  truck: null,
+  activeRoute: null,
+  previewEmpty: null,
+  previewLoaded: null,
+};
+
+/** Kamyon işaretinin hedef konuma yaklaşma hızı (kare başına oran); adımlar arası akıcılık için. */
+const TRUCK_SMOOTHING = 0.25;
 
 interface CityNode {
   node: Container;
@@ -30,6 +54,10 @@ export class MapRenderer {
   private readonly app = new Application();
   private readonly world = new Container();
   private readonly roads = new Graphics();
+  private readonly routes = new Graphics();
+  private readonly truckNode = new Container();
+  private overlay: MapOverlay = EMPTY_OVERLAY;
+  private truckPos: { x: number; y: number } | null = null;
   private readonly cities: CityNode[] = [];
   private bounds: Bounds;
   private camera: Camera = { cx: 0, cy: 0, zoom: 1 };
@@ -78,7 +106,10 @@ export class MapRenderer {
     this.app.stage.addChild(this.world);
     this.drawLand();
     this.world.addChild(this.roads);
+    this.world.addChild(this.routes);
     this.drawCities();
+    this.drawTruck();
+    this.app.ticker.add(() => this.moveTruck());
 
     this.attachInput(canvas);
     this.resizeObserver = new ResizeObserver(() => this.applyCamera());
@@ -90,6 +121,25 @@ export class MapRenderer {
   setAriaLabel(label: string): void {
     this.ariaLabel = label;
     if (this.ready) this.app.canvas.setAttribute('aria-label', label);
+  }
+
+  setOverlay(overlay: MapOverlay): void {
+    const routesChanged =
+      overlay.activeRoute !== this.overlay.activeRoute ||
+      overlay.previewEmpty !== this.overlay.previewEmpty ||
+      overlay.previewLoaded !== this.overlay.previewLoaded;
+    this.overlay = overlay;
+    if (!this.ready) return;
+    if (routesChanged) this.drawRoutes();
+    // Kamyon ilk kez görünüyorsa ya da çok uzağa sıçradıysa (yeni oyun) kaydırmadan yerleştir.
+    const target = overlay.truck;
+    if (
+      target &&
+      (!this.truckPos || Math.hypot(target.x - this.truckPos.x, target.y - this.truckPos.y) > 200)
+    ) {
+      this.truckPos = { ...target };
+    }
+    this.moveTruck();
   }
 
   reset(): void {
@@ -127,6 +177,8 @@ export class MapRenderer {
     this.world.scale.set(zoom);
     this.world.position.set(vp.width / 2 - cx * zoom, vp.height / 2 - cy * zoom);
     this.drawRoads();
+    this.drawRoutes();
+    this.truckNode.scale.set(1 / zoom);
     for (const c of this.cities) {
       c.node.scale.set(1 / zoom);
       c.label.visible = c.size >= 2 || zoom >= SMALL_LABEL_ZOOM;
@@ -166,6 +218,56 @@ export class MapRenderer {
       segment(kind);
       g.stroke({ width: ROAD_WIDTH_PX[kind] * k, color: MAP_COLORS[kind], cap: 'round' });
     }
+  }
+
+  /** Rotalar da yakınlaştırmayla yeniden çizilir (sabit piksel kalınlığı). */
+  private drawRoutes(): void {
+    const g = this.routes;
+    const k = 1 / this.camera.zoom;
+    const byId = new Map(this.def.cities.map((c) => [c.id, c]));
+    g.clear();
+    const line = (route: string[] | null, width: number, color: number) => {
+      if (!route || route.length < 2) return;
+      const first = byId.get(route[0]!)!;
+      g.moveTo(first.x, first.y);
+      for (const id of route.slice(1)) {
+        const c = byId.get(id)!;
+        g.lineTo(c.x, c.y);
+      }
+      g.stroke({ width: width * k, color, cap: 'round', join: 'round' });
+    };
+    const { activeRoute, previewEmpty, previewLoaded } = this.overlay;
+    line(activeRoute, ROUTE_CASING_PX, MAP_COLORS.routeCasing);
+    line(activeRoute, ROUTE_WIDTH_PX, MAP_COLORS.routeActive);
+    line(previewEmpty, ROUTE_WIDTH_PX - 1, MAP_COLORS.routeEmpty);
+    line(previewLoaded, ROUTE_CASING_PX, MAP_COLORS.labelHalo);
+    line(previewLoaded, ROUTE_WIDTH_PX, MAP_COLORS.routePreview);
+  }
+
+  private drawTruck(): void {
+    const body = new Graphics()
+      .roundRect(-9, -6, 18, 12, 3)
+      .fill(MAP_COLORS.truck)
+      .stroke({ width: 2, color: MAP_COLORS.truckOutline })
+      .rect(3, -6, 6, 12)
+      .fill(MAP_COLORS.truckOutline);
+    this.truckNode.addChild(body);
+    this.truckNode.visible = false;
+    this.world.addChild(this.truckNode);
+  }
+
+  private moveTruck(): void {
+    const target = this.overlay.truck;
+    this.truckNode.visible = target !== null;
+    if (!target) {
+      this.truckPos = null;
+      return;
+    }
+    const pos = this.truckPos ?? { ...target };
+    pos.x += (target.x - pos.x) * TRUCK_SMOOTHING;
+    pos.y += (target.y - pos.y) * TRUCK_SMOOTHING;
+    this.truckPos = pos;
+    this.truckNode.position.set(pos.x, pos.y);
   }
 
   private drawCities(): void {
