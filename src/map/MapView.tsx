@@ -25,7 +25,7 @@ function makeOverlayBuilder(worldId: string) {
     const preview = highlightJobId ? jobs.find((j) => j.id === highlightJobId) : undefined;
     const key = [
       trip ? `${trip.job.id}:${trip.phase}:${trip.route.join('-')}` : '',
-      truck && preview ? `${truck.cityId}:${preview.id}` : '',
+      truck && preview ? `${trip?.job.to ?? truck.cityId}:${preview.id}` : '',
     ].join('|');
     if (key !== routeKey) {
       routeKey = key;
@@ -45,8 +45,11 @@ function makeOverlayBuilder(worldId: string) {
       }
       routes = {
         activeRoute,
+        // Kamyon yoldaysa bir sonraki iş teslim şehrinden başlar (yük borsası tahminleriyle aynı).
         previewEmpty:
-          truck && preview ? (findRoute(world, truck.cityId, preview.from)?.cities ?? null) : null,
+          truck && preview
+            ? (findRoute(world, trip?.job.to ?? truck.cityId, preview.from)?.cities ?? null)
+            : null,
         previewLoaded: preview
           ? (findRoute(world, preview.from, preview.to)?.cities ?? null)
           : null,

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../src/core/balance';
-import { estimateJob, fuelLiters, jobPay, latePenalty } from '../src/core/economy';
+import { estimateJob, fuelLiters, jobPay, latePenalty, tripProgress } from '../src/core/economy';
+import { applyCommand, createInitialState } from '../src/core/sim';
 import type { Job } from '../src/core/types';
 import { getCargo } from '../src/data/cargo';
 import { getVehicleModel } from '../src/data/vehicles';
@@ -50,5 +51,20 @@ describe('ekonomi', () => {
     const far = estimateJob(world, van, 'izm', job, 0)!;
     expect(far.emptyKm).toBeGreaterThan(0);
     expect(far.profit).toBeLessThan(here.profit);
+  });
+});
+
+describe('aktif sefer ilerlemesi', () => {
+  it('boşta null; yeni kabul edilen işte tahmini teslim anı ile aynı', () => {
+    const world = getWorld('tr');
+    const s = createInitialState(4);
+    const truck = s.trucks[0]!;
+    expect(tripProgress(world, truck, s.time)).toBeNull();
+    const job = s.jobs[0]!;
+    const est = estimateJob(world, van, truck.cityId, job, s.time)!;
+    applyCommand(s, { type: 'acceptJob', jobId: job.id, truckId: truck.id }, [], world);
+    const p = tripProgress(world, truck, s.time)!;
+    expect(p.km).toBeCloseTo(est.emptyKm + est.km);
+    expect(p.eta).toBeCloseTo(est.eta);
   });
 });

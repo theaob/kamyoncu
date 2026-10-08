@@ -94,9 +94,9 @@
     "lateRisk": "Will be late: −{{penalty}} penalty",
     "accept": "Accept",
     "acceptTitle": "Accept the {{from}} → {{to}} job",
-    "busy": "Truck is busy",
     "tooHeavy": "Too heavy for the van",
-    "count": "{{count}} listings"
+    "count": "{{count}} listings",
+    "busyNotice": "Your van is on a delivery to {{city}}. You can take a new job after it delivers; the estimates below start from {{city}}."
   },
   "truck": {
     "name": "Used van",

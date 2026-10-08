@@ -1,6 +1,6 @@
 import { BALANCE, MINUTES_PER_HOUR } from './balance';
-import { findRoute, roadToll } from './routing';
-import type { CargoType, Job, Money, Road, VehicleModel, WorldDef } from './types';
+import { findRoute, roadBetween, roadToll } from './routing';
+import type { CargoType, Job, Money, Road, Truck, VehicleModel, WorldDef } from './types';
 
 /** Plan 3.6: yakıt_L = mesafe_km / 100 × tüketim × (1 + 0,35 × yük_oranı). */
 export function fuelLiters(km: number, model: VehicleModel, loadRatio: number): number {
@@ -81,4 +81,37 @@ export function estimateJob(
     penalty,
     profit: job.pay - penalty - fuel - tolls,
   };
+}
+
+/**
+ * Aktif işin kalan km'si ve tahmini teslim anı (sürüş + kalan yükleme/boşaltma).
+ * Kamyon boştaysa `null`.
+ */
+export function tripProgress(
+  world: WorldDef,
+  truck: Truck,
+  now: number,
+): { km: number; eta: number } | null {
+  const trip = truck.trip;
+  if (!trip) return null;
+  let km = 0;
+  let minutes = 0;
+  if (trip.phase === 'toPickup' || trip.phase === 'toDelivery') {
+    for (let i = trip.leg; i < trip.route.length - 1; i++) {
+      const road = roadBetween(world, trip.route[i]!, trip.route[i + 1]!)!;
+      const left = i === trip.leg ? road.km - trip.legKm : road.km;
+      km += left;
+      minutes += (left / BALANCE.roadSpeedKmh[road.kind]) * 60;
+    }
+  } else {
+    minutes += Math.max(trip.waitUntil - now, 0);
+  }
+  if (trip.phase === 'toPickup' || trip.phase === 'loading') {
+    const loaded = findRoute(world, trip.job.from, trip.job.to);
+    km += loaded?.km ?? 0;
+    minutes += loaded?.minutes ?? 0;
+  }
+  if (trip.phase === 'toPickup') minutes += BALANCE.loadingMinutes;
+  if (trip.phase !== 'unloading') minutes += BALANCE.unloadingMinutes;
+  return { km, eta: now + minutes };
 }
