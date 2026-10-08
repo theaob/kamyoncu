@@ -3,3 +3,8 @@ dist
 coverage
 *.log
 .DS_Store
+
+# Android imzalama anahtarları (bkz. docs/YAYINLAMA.md)
+*.keystore
+*.keystore.b64
+*.jks

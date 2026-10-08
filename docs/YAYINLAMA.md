@@ -42,11 +42,18 @@ kurulabilir, ama her CI çalıştırıcısında farklı bir debug anahtarıyla i
 için bir sürümün üzerine diğeri kurulamaz (önce eskisini kaldırmak gerekir).
 Kalıcı bir anahtarla imzalamak için:
 
+Bir kez, kendi bilgisayarında (JDK'nın `keytool` aracı gerekir):
+
 ```sh
-keytool -genkeypair -v -keystore kamyoncu.keystore -alias kamyoncu \
-  -keyalg RSA -keysize 4096 -validity 10000
+keytool -genkeypair -v -keystore kamyoncu.keystore -storetype PKCS12 \
+  -alias kamyoncu -keyalg RSA -keysize 4096 -validity 10000
+# macOS: base64 -i kamyoncu.keystore -o kamyoncu.keystore.b64
 base64 -w0 kamyoncu.keystore > kamyoncu.keystore.b64
 ```
+
+`keytool` önce parolayı, sonra ad/kurum bilgilerini sorar (istediğin gibi
+doldurabilirsin). PKCS12 deposunda anahtar parolası depo parolasıyla aynıdır;
+aşağıda iki sırra da aynı parolayı yaz.
 
 GitHub → Settings → Secrets and variables → Actions → **Secrets**:
 
@@ -56,6 +63,14 @@ GitHub → Settings → Secrets and variables → Actions → **Secrets**:
 | `ANDROID_KEYSTORE_PASSWORD` | Anahtar deposu parolası |
 | `ANDROID_KEY_ALIAS` | `kamyoncu` |
 | `ANDROID_KEY_PASSWORD` | Anahtar parolası |
+
+Dört sırrın **hepsi** tanımlıysa CI imzalı bir `-release.apk` üretir; hiçbiri
+yoksa `-debug.apk` üretir. Yalnızca bir kısmı tanımlıysa Android işi hata
+verir; böylece release beklenirken yanlışlıkla debug APK yayınlanmaz. Her çalıştırmanın özetinde APK'nın türü ve imza sertifikasının SHA-256
+parmak izi yazar; release derlemelerinde bu parmak izi hep aynı olmalıdır.
+Fork'lardan gelen PR'larda sırlar paylaşılmadığı için APK debug imzalıdır.
+
+Sırları ekledikten sonra `kamyoncu.keystore.b64` dosyasını sil.
 
 > Anahtar deposunu ve parolaları güvenli bir yerde yedekle. Kaybedilirse aynı
 > uygulamanın güncellemeleri artık imzalanamaz. Anahtar dosyasını depoya ekleme.
