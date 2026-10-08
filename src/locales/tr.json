@@ -94,9 +94,9 @@
     "lateRisk": "Gecikir: −{{penalty}} ceza",
     "accept": "Kabul et",
     "acceptTitle": "{{from}} → {{to}} işini kabul et",
-    "busy": "Kamyon meşgul",
     "tooHeavy": "Kamyonet için ağır",
-    "count": "{{count}} ilan"
+    "count": "{{count}} ilan",
+    "busyNotice": "Kamyonetin {{city}} teslimatında. Teslimattan sonra yeni iş alabilirsin; aşağıdaki tahminler {{city}} çıkışlıdır."
   },
   "truck": {
     "name": "İkinci el kamyonet",

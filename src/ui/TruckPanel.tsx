@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { BALANCE, MINUTES_PER_DAY } from '../core/balance';
-import { findRoute, roadBetween } from '../core/routing';
-import type { Truck } from '../core/types';
+import { MINUTES_PER_DAY } from '../core/balance';
+import { tripProgress } from '../core/economy';
 import { getVehicleModel } from '../data/vehicles';
 import { getWorld } from '../data/worlds';
 import { currentLanguage } from '../i18n';
@@ -9,31 +8,6 @@ import { formatGameTime, formatKurus, formatNumber } from '../i18n/format';
 import { useGameStore } from '../store/gameStore';
 import { cityName } from './names';
 import { useDuration } from './useDuration';
-
-/** Aktif işin kalan km'si ve tahmini teslim anı (sürüş + kalan yükleme/boşaltma). */
-function progress(worldId: string, truck: Truck, now: number) {
-  const trip = truck.trip!;
-  const world = getWorld(worldId);
-  let km = 0;
-  let minutes = 0;
-  if (trip.phase === 'toPickup' || trip.phase === 'toDelivery') {
-    for (let i = trip.leg; i < trip.route.length - 1; i++) {
-      const road = roadBetween(world, trip.route[i]!, trip.route[i + 1]!)!;
-      const left = i === trip.leg ? road.km - trip.legKm : road.km;
-      km += left;
-      minutes += (left / BALANCE.roadSpeedKmh[road.kind]) * 60;
-    }
-  } else {
-    minutes += Math.max(trip.waitUntil - now, 0);
-  }
-  if (trip.phase === 'toPickup') {
-    const loaded = findRoute(world, trip.job.from, trip.job.to);
-    km += loaded?.km ?? 0;
-    minutes += BALANCE.loadingMinutes + (loaded?.minutes ?? 0);
-  }
-  if (trip.phase !== 'unloading') minutes += BALANCE.unloadingMinutes;
-  return { km, eta: now + minutes };
-}
 
 export function TruckPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
   const { t } = useTranslation();
@@ -54,7 +28,7 @@ export function TruckPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
       trip.phase === 'toPickup' || trip.phase === 'loading' ? trip.job.from : trip.job.to;
     status = t(`truck.status.${trip.phase}`, { city: city(target) });
   }
-  const p = trip ? progress(worldId, truck, now) : null;
+  const p = trip ? tripProgress(getWorld(worldId), truck, now) : null;
   const when = (minutes: number) =>
     `${t('clock.day', { day: Math.floor(minutes / MINUTES_PER_DAY) + 1 })}, ${formatGameTime(minutes, lang)}`;
   const late = trip && p ? p.eta > trip.job.deadline : false;

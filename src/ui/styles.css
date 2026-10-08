@@ -289,10 +289,10 @@ select:focus-visible {
 }
 .jobs-note {
   margin: 0 0 10px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-radius: 4px;
-  background: var(--bg);
-  color: var(--muted);
+  background: var(--plaka);
+  color: #1d2224;
   font-size: 13px;
 }
 .job-list {
@@ -310,6 +310,9 @@ select:focus-visible {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--bg);
+}
+.job.locked {
+  grid-template-columns: 1fr;
 }
 .job.highlighted {
   border-color: #2a6fdb;

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { estimateJob, type JobEstimate } from '../core/economy';
+import { estimateJob, tripProgress, type JobEstimate } from '../core/economy';
 import type { Job } from '../core/types';
 import { getVehicleModel } from '../data/vehicles';
 import { getWorld } from '../data/worlds';
@@ -37,12 +37,16 @@ export function JobBoard() {
     if (!worldId || !truck) return [];
     const world = getWorld(worldId);
     const model = getVehicleModel(truck.modelId);
+    // Kamyon yoldaysa tahminler teslimattan sonrası içindir: teslim şehrinden, teslim anından.
+    const base = truck.trip
+      ? { city: truck.trip.job.to, time: tripProgress(world, truck, now)!.eta }
+      : { city: truck.cityId, time: now };
     const out: Row[] = [];
     for (const job of jobs) {
-      if (filter === 'here' && job.from !== truck.cityId) continue;
-      const est = estimateJob(world, model, truck.cityId, job, now);
+      if (filter === 'here' && job.from !== base.city) continue;
+      const est = estimateJob(world, model, base.city, job, base.time);
       if (!est) continue;
-      const hours = Math.max((est.eta - now) / 60, 0.5);
+      const hours = Math.max((est.eta - base.time) / 60, 0.5);
       out.push({ job, est, perHour: est.profit / hours });
     }
     const key: Record<Sort, (r: Row) => number> = {
@@ -55,7 +59,8 @@ export function JobBoard() {
 
   if (!truck) return null;
   const capacity = getVehicleModel(truck.modelId).capacityTons;
-  const busy = truck.trip !== null;
+  const trip = truck.trip;
+  const busy = trip !== null;
 
   return (
     <div className="jobs">
@@ -77,7 +82,11 @@ export function JobBoard() {
         </label>
         <span className="jobs-count">{t('jobs.count', { count: rows.length })}</span>
       </div>
-      {busy && <p className="jobs-note">{t('jobs.busy')}</p>}
+      {trip && (
+        <p className="jobs-note" role="status">
+          {t('jobs.busyNotice', { city: cityName(worldId, trip.job.to) })}
+        </p>
+      )}
       {rows.length === 0 ? (
         <p className="empty">{t('jobs.empty')}</p>
       ) : (
@@ -89,7 +98,9 @@ export function JobBoard() {
             return (
               <li
                 key={job.id}
-                className={highlight === job.id ? 'job highlighted' : 'job'}
+                className={['job', highlight === job.id && 'highlighted', busy && 'locked']
+                  .filter(Boolean)
+                  .join(' ')}
                 onMouseEnter={() => setHighlight(job.id)}
                 onFocus={() => setHighlight(job.id)}
               >
@@ -125,25 +136,21 @@ export function JobBoard() {
                     {t('jobs.lateRisk', { penalty: formatKurus(est.penalty, lang) })}
                   </p>
                 )}
-                <button
-                  type="button"
-                  className="accept"
-                  disabled={busy || tooHeavy}
-                  title={
-                    busy
-                      ? t('jobs.busy')
-                      : tooHeavy
-                        ? t('jobs.tooHeavy')
-                        : t('jobs.acceptTitle', { from, to })
-                  }
-                  aria-label={t('jobs.acceptTitle', { from, to })}
-                  onClick={() => {
-                    send({ type: 'acceptJob', jobId: job.id, truckId: truck.id });
-                    setHighlight(null);
-                  }}
-                >
-                  {t('jobs.accept')}
-                </button>
+                {!busy && (
+                  <button
+                    type="button"
+                    className="accept"
+                    disabled={tooHeavy}
+                    title={tooHeavy ? t('jobs.tooHeavy') : t('jobs.acceptTitle', { from, to })}
+                    aria-label={t('jobs.acceptTitle', { from, to })}
+                    onClick={() => {
+                      send({ type: 'acceptJob', jobId: job.id, truckId: truck.id });
+                      setHighlight(null);
+                    }}
+                  >
+                    {t('jobs.accept')}
+                  </button>
+                )}
               </li>
             );
           })}
