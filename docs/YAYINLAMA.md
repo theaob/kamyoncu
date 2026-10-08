@@ -22,9 +22,9 @@ eskisinin üzerine kurulabilir. Sürüm, oyunda logonun üzerine gelince görün
    - Proje adresindeki kısa adı not et (ör. `theaob.itch.io/kamyoncu` → `kamyoncu`).
    - Şimdilik **Draft** olarak kaydet.
 2. API anahtarı al: itch.io → Settings → API keys → **Generate new API key**.
-3. GitHub deposunda: Settings → Secrets and variables → Actions:
-   - **Secrets** sekmesi → `BUTLER_API_KEY` = API anahtarı
-   - **Variables** sekmesi → `ITCH_GAME` = `kullaniciadi/oyun-kisa-adi` (ör. `theaob/kamyoncu`)
+3. GitHub deposunda: Settings → Secrets and variables → Actions → **Secrets** sekmesi:
+   - `BUTLER_API_KEY` = API anahtarı
+   - `ITCH_GAME` = `kullaniciadi/oyun-kisa-adi` (ör. `theaob/kamyoncu`)
 4. İlk yayından sonra itch.io proje sayfasında:
    - `html5` dosyasının yanında **This file will be played in the browser** işaretle.
    - Embed options: **Viewport 1280 × 720**, **Fullscreen button** açık,

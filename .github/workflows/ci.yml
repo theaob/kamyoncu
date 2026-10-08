@@ -138,12 +138,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-      ITCH_GAME: ${{ vars.ITCH_GAME }}
+      ITCH_GAME: ${{ secrets.ITCH_GAME }}
     steps:
       - name: Ayarları denetle
         run: |
           if [ -z "$BUTLER_API_KEY" ] || [ -z "$ITCH_GAME" ]; then
-            echo "::error::BUTLER_API_KEY sırrı ve ITCH_GAME değişkeni (ör. kullanici/kamyoncu) tanımlı olmalı. Bkz. docs/YAYINLAMA.md"
+            echo "::error::BUTLER_API_KEY ve ITCH_GAME (ör. kullanici/kamyoncu) sırları tanımlı olmalı. Bkz. docs/YAYINLAMA.md"
             exit 1
           fi
       - uses: actions/download-artifact@v4
