@@ -8,6 +8,7 @@
 | Web derlemesi | Her gönderim ve PR | `kamyoncu-web` (Actions çıktısı) |
 | Android APK | Her gönderim ve PR | `kamyoncu-android` (Actions çıktısı) |
 | itch.io'ya yayın | `main` dalına gönderim, `v*` etiketi veya elle tetikleme | itch.io'da `html5` ve `android` kanalları |
+| Dal önizlemesi | `main` dışındaki dallara gönderim | GitHub Pages'te dala özel web sürümü |
 | GitHub Release | `v*` etiketi | Web zip + APK |
 
 **Sürüm numarası:** etiketlerde etiketin kendisi (`v0.2.0` → `0.2.0`), diğer
@@ -85,6 +86,25 @@ Sırları ekledikten sonra `kamyoncu.keystore.b64` dosyasını sil.
   itch.io'ya yayınlanır ve APK ile web zip'i içeren bir GitHub Release oluşur.
 - **Elle:** GitHub → Actions → CI/CD → **Run workflow** → dalı seç,
   "itch.io'ya yayınla" kutusunu işaretle.
+
+## 4. Dal önizlemeleri (birleştirilmemiş dalları oynamak)
+
+`main` dışındaki her dala gönderim, oyunun web sürümünü GitHub Pages'e kendi
+klasörüne yayınlar. itch.io'ya dokunulmaz; itch.io sayfasında tarayıcıda yalnızca
+bir HTML dosyası oynatılabildiği için önizlemeler orada tutulmaz.
+
+- Tüm önizlemeler: `https://theaob.github.io/kamyoncu/`
+- Bir dal: `https://theaob.github.io/kamyoncu/b/<dal-adı>/` (küçük harf, `/` ve
+  diğer özel karakterler `-` olur; ör. `claude/faz-2` → `claude-faz-2`).
+  Adres, çalıştırma özetinde de yazar.
+- Her önizleme kendi kayıt yuvasını kullanır (`kamyoncu.save.<dal-adı>`), böylece
+  dallar birbirinin kaydını bozmaz.
+- Dal silinince önizlemesi, bir sonraki önizleme yayınında kaldırılır.
+- Dalın APK'sı çalıştırmanın **Artifacts** bölümündedir (`kamyoncu-android`).
+
+**Kurulum (bir kez):** ilk önizleme yayınından sonra `gh-pages` dalı oluşur.
+GitHub → Settings → Pages → **Build and deployment** → Source: **Deploy from a
+branch** → Branch: `gh-pages`, klasör `/ (root)` → Save.
 
 ## Yerelde Android
 

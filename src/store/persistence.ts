@@ -1,7 +1,15 @@
+/**
+ * Dal önizlemeleri aynı kökte (GitHub Pages) yayınlanır; her dal kendi kayıt
+ * yuvasını kullansın diye CI VITE_SAVE_NAMESPACE verir. Asıl sürümde boştur.
+ */
+const NAMESPACE = import.meta.env.VITE_SAVE_NAMESPACE
+  ? `.${import.meta.env.VITE_SAVE_NAMESPACE}`
+  : '';
+
 /** Otomatik kayıt yuvası. Depolama kapalıysa (gizli sekme vb.) oyun kayıtsız sürer. */
-export const SAVE_KEY = 'kamyoncu.save';
+export const SAVE_KEY = `kamyoncu.save${NAMESPACE}`;
 /** Yüklenemeyen kayıt, üzerine yazılmadan önce buraya taşınır. */
-export const SAVE_BACKUP_KEY = 'kamyoncu.save.backup';
+export const SAVE_BACKUP_KEY = `${SAVE_KEY}.backup`;
 
 export function readSave(): string | null {
   try {
