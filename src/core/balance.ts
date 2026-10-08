@@ -18,8 +18,12 @@ export const BALANCE = {
    */
   maxRealMsPerAdvance: 250,
 
-  /** Başlangıç sermayesi (plan 7). */
-  startingMoney: 250_000 * TL,
+  /**
+   * Başlangıç sermayesi (plan 7). Panodaki en pahalı ilk işin yakıt + otoyol
+   * giderini (boş gidiş dahil, ~21.500 ₺) karşılar ama birkaç işten fazlasına
+   * yetmez; ilk teslimatlar gerçekten önemli olsun diye.
+   */
+  startingMoney: 25_000 * TL,
   /** Oyuncunun başladığı şehir. */
   startCityId: 'ist',
 

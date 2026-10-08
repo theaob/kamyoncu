@@ -874,7 +874,7 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 
 | Değer | Başlangıç tahmini |
 |---|---|
-| Başlangıç sermayesi | 250.000 ₺ + ikinci el kamyonet |
+| Başlangıç sermayesi | 25.000 ₺ + ikinci el kamyonet (ilk oyun testinde 250.000 ₺ fazla bulundu) |
 | İkinci el kamyon | 1,5 – 3 M₺ |
 | Sıfır kamyon | 4 – 6 M₺ |
 | Motorin | ~45 ₺/L (dalgalanır) |

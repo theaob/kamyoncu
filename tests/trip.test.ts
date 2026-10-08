@@ -107,6 +107,19 @@ describe('sefer döngüsü', () => {
 });
 
 describe('denge duman testi', () => {
+  it('başlangıç parası panodaki her ilk işin giderini karşılar, fazlasını değil', () => {
+    for (let seed = 1; seed <= 50; seed++) {
+      const s = createInitialState(seed);
+      const truck = s.trucks[0]!;
+      for (const job of s.jobs) {
+        const e = estimateJob(world, van, truck.cityId, job, s.time)!;
+        expect(e.fuel + e.tolls, `${seed}:${job.id}`).toBeLessThan(BALANCE.startingMoney);
+      }
+    }
+    // Kariyer başı sermaye birkaç uzun seferlik yakıttan ibaret kalmalı.
+    expect(BALANCE.startingMoney).toBeLessThanOrEqual(50_000 * 100);
+  });
+
   it('açgözlü bot 20 günde kâr eder (Faz 1 başarı ölçütünün kaba vekili)', () => {
     const s = createInitialState(2026);
     const truck = s.trucks[0]!;
