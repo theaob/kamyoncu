@@ -2,10 +2,11 @@ name: CI/CD
 
 # Her gönderimde kontrol + web ve Android derlemesi.
 # main dalına gönderim ve v* etiketleri itch.io'ya yayınlanır; v* etiketleri ayrıca
-# GitHub Release oluşturur. Kurulum: docs/YAYINLAMA.md
+# GitHub Release oluşturur. Diğer dallar GitHub Pages'te önizleme olarak yayınlanır.
+# Kurulum: docs/YAYINLAMA.md
 on:
   push:
-    branches: ['**']
+    branches: ['**', '!gh-pages']
     tags: ['v*']
   pull_request:
   workflow_dispatch:
@@ -187,6 +188,101 @@ jobs:
         run: ./butler/butler push web "$ITCH_GAME:html5" --userversion "${{ needs.version.outputs.name }}"
       - name: APK'yı gönder (android kanalı)
         run: ./butler/butler push apk "$ITCH_GAME:android" --userversion "${{ needs.version.outputs.name }}"
+
+  preview:
+    name: Dal önizlemesi (GitHub Pages)
+    needs: [check, version]
+    if: >-
+      github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - id: slug
+        name: Dal adından klasör adı üret
+        run: |
+          slug=$(echo "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+|-+$//g')
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Ayrı derleme: her dal kendi kayıt yuvasını kullanır, böylece önizlemeler
+      # birbirinin (ve şemanın farklı olabileceği) kayıtlarını bozmaz.
+      - run: npm run build
+        env:
+          VITE_APP_VERSION: ${{ needs.version.outputs.name }}
+          VITE_SAVE_NAMESPACE: ${{ steps.slug.outputs.slug }}
+      - name: gh-pages dalına yayınla
+        env:
+          SLUG: ${{ steps.slug.outputs.slug }}
+          VERSION: ${{ needs.version.outputs.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          slugify() { tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+|-+$//g'; }
+          html() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g'; }
+
+          publish() {
+            rm -rf pages && git worktree prune
+            if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+              git fetch -q --depth 1 origin gh-pages
+              git worktree add -q -B gh-pages pages FETCH_HEAD
+            else
+              git worktree add -q --detach pages
+              git -C pages checkout -q --orphan gh-pages
+              git -C pages rm -rfq --ignore-unmatch .
+            fi
+            (
+              cd pages
+              touch .nojekyll
+              mkdir -p b
+              rm -rf "b/$SLUG"
+              cp -r ../dist "b/$SLUG"
+              printf '%s\n%s\n%s\n%s\n' "$GITHUB_REF_NAME" "$VERSION" "$(date -u +'%Y-%m-%d %H:%M UTC')" "$RUN_URL" > "b/$SLUG/.build"
+
+              # Silinmiş dalların önizlemelerini temizle.
+              live=$(git ls-remote --heads origin | sed 's#.*refs/heads/##' | slugify)
+              for f in b/*/.build; do
+                [ -e "$f" ] || continue
+                d=$(basename "$(dirname "$f")")
+                grep -qxF "$d" <<< "$live" || rm -rf "b/$d"
+              done
+
+              # Dizin sayfası: en yeni önizleme en üstte.
+              {
+                echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+                echo '<title>Kamyoncu önizlemeleri</title>'
+                echo '<style>body{font:16px system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem}li{margin:.6rem 0}small{color:#666}</style>'
+                echo '<h1>Kamyoncu dal önizlemeleri</h1><p>Asıl sürüm itch.io’dadır. APK için ilgili çalıştırmanın Artifacts bölümüne bak.</p><ul>'
+                for f in b/*/.build; do
+                  [ -e "$f" ] || continue
+                  { read -r branch; read -r ver; read -r when; read -r run; } < "$f"
+                  echo "$when|<li><a href=\"$(dirname "$f")/\">$(html <<< "$branch")</a> <small>$(html <<< "$ver") · $when · <a href=\"$run\">çalıştırma</a></small></li>"
+                done | sort -r | cut -d'|' -f2-
+                echo '</ul>'
+              } > index.html
+
+              git add -A
+              git diff --cached --quiet && exit 0
+              git commit -qm "Önizleme: $GITHUB_REF_NAME ($VERSION)"
+              git push -q origin gh-pages
+            )
+          }
+
+          # Başka bir dalın önizlemesi araya girerse güncel gh-pages üzerine yeniden dene.
+          for attempt in 1 2 3 4 5; do
+            publish && break
+            [ "$attempt" -eq 5 ] && { echo "::error::gh-pages dalına gönderilemedi."; exit 1; }
+            sleep $((attempt * 3))
+          done
+
+          url="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}/b/$SLUG/"
+          echo "Önizleme: $url" >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Önizleme::$url"
 
   release:
     name: GitHub Release
