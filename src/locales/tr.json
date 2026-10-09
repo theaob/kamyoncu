@@ -23,6 +23,14 @@
     "tr": "Türkçe",
     "en": "English"
   },
+  "menu": {
+    "title": "Menü",
+    "open": "Menüyü aç",
+    "close": "Kapat",
+    "notSavedYet": "Henüz kaydedilmedi",
+    "autoPause": "Bir araç beni beklerken duraklat",
+    "autoPauseHint": "Bir araç teslimatı bitirince ya da bakım isteyince saati durdurur."
+  },
   "map": {
     "label": "Türkiye haritası",
     "zoomIn": "Yakınlaştır",
@@ -40,7 +48,8 @@
   },
   "events": {
     "time": {
-      "newDay": "Yeni gün başladı: {{date}}"
+      "newDay": "Yeni gün başladı: {{date}}",
+      "autoPaused": "Duraklatıldı: bir araç ilginizi bekliyor."
     },
     "job": {
       "accepted": "{{plate}} iş aldı: {{cargo}}, {{from}} → {{to}}",
@@ -91,7 +100,9 @@
     "finance": "Finans",
     "fleet": "Filo",
     "drivers": "Şoförler",
-    "market": "Pazar"
+    "market": "Pazar",
+    "shrink": "Haritayı büyüt",
+    "expand": "Paneli büyüt"
   },
   "jobs": {
     "filter": {

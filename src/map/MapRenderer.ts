@@ -26,6 +26,8 @@ export interface TruckMarker {
   id: string;
   x: number;
   y: number;
+  /** Gidiş yönü (radyan, +x = doğu); şehirde beklerken null, son yön korunur. */
+  heading: number | null;
   /** Seçili araç sarı ve en üstte çizilir. */
   selected: boolean;
   /** Aynı noktadaki araçların sırası; işaretler ekran pikseliyle kaydırılır. */
@@ -68,7 +70,13 @@ export class MapRenderer {
   private readonly truckLayer = new Container();
   private readonly truckNodes = new Map<
     string,
-    { node: Container; body: Graphics; pos: { x: number; y: number }; selected: boolean | null }
+    {
+      node: Container;
+      body: Graphics;
+      pos: { x: number; y: number };
+      angle: number;
+      selected: boolean | null;
+    }
   >();
   private overlay: MapOverlay = EMPTY_OVERLAY;
   private readonly cities: CityNode[] = [];
@@ -267,7 +275,13 @@ export class MapRenderer {
         node.addChild(body);
         node.scale.set(1 / this.camera.zoom);
         this.truckLayer.addChild(node);
-        t = { node, body, pos: { x: marker.x, y: marker.y }, selected: null };
+        t = {
+          node,
+          body,
+          pos: { x: marker.x, y: marker.y },
+          angle: marker.heading ?? 0,
+          selected: null,
+        };
         this.truckNodes.set(marker.id, t);
       }
       // Çok uzağa sıçradıysa (yeni oyun, satın alma) kaydırmadan yerleştir.
@@ -297,6 +311,15 @@ export class MapRenderer {
       t.pos.x += (marker.x - t.pos.x) * TRUCK_SMOOTHING;
       t.pos.y += (marker.y - t.pos.y) * TRUCK_SMOOTHING;
       t.node.position.set(t.pos.x, t.pos.y);
+      if (marker.heading !== null) {
+        // En kısa yönden dön (ör. 170° → -170° 20° döner, 340° değil).
+        const diff = Math.atan2(
+          Math.sin(marker.heading - t.angle),
+          Math.cos(marker.heading - t.angle),
+        );
+        t.angle += diff * TRUCK_SMOOTHING;
+      }
+      t.body.rotation = t.angle;
     }
   }
 

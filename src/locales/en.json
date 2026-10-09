@@ -23,6 +23,14 @@
     "tr": "Türkçe",
     "en": "English"
   },
+  "menu": {
+    "title": "Menu",
+    "open": "Open menu",
+    "close": "Close",
+    "notSavedYet": "Not saved yet",
+    "autoPause": "Pause when a truck needs me",
+    "autoPauseHint": "Stops the clock when a truck finishes a delivery or needs a service."
+  },
   "map": {
     "label": "Map of Türkiye",
     "zoomIn": "Zoom in",
@@ -40,7 +48,8 @@
   },
   "events": {
     "time": {
-      "newDay": "A new day has started: {{date}}"
+      "newDay": "A new day has started: {{date}}",
+      "autoPaused": "Paused: a truck needs your attention."
     },
     "job": {
       "accepted": "{{plate}} took a job: {{cargo}}, {{from}} → {{to}}",
@@ -91,7 +100,9 @@
     "finance": "Finance",
     "fleet": "Fleet",
     "drivers": "Drivers",
-    "market": "Market"
+    "market": "Market",
+    "shrink": "Show more map",
+    "expand": "Enlarge panel"
   },
   "jobs": {
     "filter": {

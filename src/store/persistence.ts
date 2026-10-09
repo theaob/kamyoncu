@@ -11,6 +11,25 @@ export const SAVE_KEY = `kamyoncu.save${NAMESPACE}`;
 /** Yüklenemeyen kayıt, üzerine yazılmadan önce buraya taşınır. */
 export const SAVE_BACKUP_KEY = `${SAVE_KEY}.backup`;
 
+/** Oyuncu tercihi: ilgi isteyen olayda otomatik duraklat. Varsayılan açık. */
+const AUTO_PAUSE_KEY = 'kamyoncu.autoPause';
+
+export function readAutoPause(): boolean {
+  try {
+    return localStorage.getItem(AUTO_PAUSE_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+export function writeAutoPause(on: boolean): void {
+  try {
+    localStorage.setItem(AUTO_PAUSE_KEY, on ? '1' : '0');
+  } catch {
+    // Depolama kapalıysa tercih yalnızca bu oturumda geçerli olur.
+  }
+}
+
 export function readSave(): string | null {
   try {
     return localStorage.getItem(SAVE_KEY);

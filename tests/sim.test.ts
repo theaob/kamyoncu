@@ -72,4 +72,38 @@ describe('SimRunner', () => {
     };
     expect(run()).toBe(run());
   });
+
+  it('otomatik duraklatma: araç boşa çıktığı dakikada durur', () => {
+    const run = (autoPause: boolean) => {
+      const s = createInitialState(1);
+      s.jobs = [
+        {
+          id: 'x',
+          from: 'ist',
+          to: 'koc',
+          cargo: 'parcels',
+          body: 'tenteli',
+          tons: 1,
+          km: 110,
+          pay: 1_000_000,
+          deadline: 2 * MINUTES_PER_DAY,
+          expiresAt: MINUTES_PER_DAY,
+        },
+      ];
+      const r = new SimRunner(s);
+      r.autoPause = autoPause;
+      r.apply({ type: 'acceptJob', jobId: 'x', truckId: 't1' });
+      r.apply({ type: 'setSpeed', speed: 16 });
+      const events: SimEvent[] = [];
+      for (let i = 0; i < 2000 && !s.paused; i++) events.push(...r.advance(50));
+      return { s, events };
+    };
+    const on = run(true);
+    expect(on.s.paused).toBe(true);
+    expect(on.s.trucks[0]!.trip).toBeNull();
+    const codes = on.events.map((e) => e.code);
+    expect(codes.at(-1)).toBe('time.autoPaused');
+    expect(codes.at(-2)).toBe('job.delivered');
+    expect(run(false).s.paused).toBe(false);
+  });
 });

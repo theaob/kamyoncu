@@ -12,9 +12,19 @@ type Tab = (typeof TABS)[number];
 export function SidePanel() {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('jobs');
+  // Dikey ekranda panel yarım ekran; tutamaçla büyütülüp haritaya yer açılır.
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <aside className="side" aria-label={t('panel.label')}>
+    <aside className={expanded ? 'side expanded' : 'side'} aria-label={t('panel.label')}>
+      <button
+        type="button"
+        className="panel-grip"
+        aria-expanded={expanded}
+        aria-label={expanded ? t('panel.shrink') : t('panel.expand')}
+        title={expanded ? t('panel.shrink') : t('panel.expand')}
+        onClick={() => setExpanded((e) => !e)}
+      />
       <div className="tabs" role="tablist">
         {TABS.map((id) => (
           <button

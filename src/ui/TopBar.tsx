@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { MINUTES_PER_DAY } from '../core/balance';
 import { SPEEDS } from '../core/types';
-import { currentLanguage, setLanguage } from '../i18n';
+import { currentLanguage } from '../i18n';
 import { formatGameDate, formatGameTime, formatKurus } from '../i18n/format';
-import { isLang, LANGUAGES } from '../i18n/languages';
 import { useGameStore } from '../store/gameStore';
 import { APP_VERSION } from '../version';
+import { GameMenu } from './GameMenu';
 
 export function TopBar() {
   const { t } = useTranslation();
@@ -13,9 +13,6 @@ export function TopBar() {
   const clock = useGameStore((s) => s.clock);
   const send = useGameStore((s) => s.send);
   const money = useGameStore((s) => s.money);
-  const savedAt = useGameStore((s) => s.savedAt);
-  const saveFailed = useGameStore((s) => s.saveFailed);
-  const newGame = useGameStore((s) => s.newGame);
   const day = Math.floor(clock.time / MINUTES_PER_DAY) + 1;
 
   return (
@@ -66,38 +63,7 @@ export function TopBar() {
         {clock.paused && <span className="paused-chip">{t('clock.paused')}</span>}
       </div>
 
-      <div className="game-menu">
-        <span className="save-status" aria-live="polite">
-          {saveFailed
-            ? t('app.notSaved')
-            : savedAt !== null && t('app.saved', { time: formatGameTime(savedAt, lang) })}
-        </span>
-        <button
-          type="button"
-          onClick={() => {
-            if (window.confirm(t('app.newGameConfirm'))) newGame();
-          }}
-        >
-          {t('app.newGame')}
-        </button>
-      </div>
-
-      <label className="lang">
-        <span>{t('language.label')}</span>
-        <select
-          id="language"
-          value={lang}
-          onChange={(e) => {
-            if (isLang(e.target.value)) setLanguage(e.target.value);
-          }}
-        >
-          {LANGUAGES.map((l) => (
-            <option key={l} value={l}>
-              {t(`language.${l}`)}
-            </option>
-          ))}
-        </select>
-      </label>
+      <GameMenu />
     </header>
   );
 }
