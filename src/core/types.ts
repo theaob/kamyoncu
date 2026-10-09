@@ -21,6 +21,12 @@ export interface Road {
   /** Yol mesafesi, km. */
   km: number;
   kind: RoadKind;
+  /**
+   * Çizim ve kamyon konumu için yolun güzergâhı, harita koordinatlarında (km):
+   * [x0, y0, x1, y1, ...]; `from` şehriyle başlar, `to` şehriyle biter.
+   * Süre ve maliyet yine `km` ile hesaplanır; kamyon güzergâh boyunca orantılı ilerler.
+   */
+  path: Polygon;
 }
 
 /** Harita koordinatlarında (km) bir çokgen: [x0, y0, x1, y1, ...]. */

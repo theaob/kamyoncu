@@ -1,5 +1,6 @@
 import { Application, Container, Graphics, Text } from 'pixi.js';
 import type { RoadKind, WorldDef } from '../core/types';
+import { routePath } from '../core/routing';
 import {
   boundsOf,
   clampToBounds,
@@ -204,10 +205,10 @@ export class MapRenderer {
     for (const poly of this.def.land) {
       g.poly(poly)
         .fill(MAP_COLORS.land)
-        .stroke({ width: 2, color: MAP_COLORS.coast, pixelLine: false });
+        .stroke({ width: 1.2, color: MAP_COLORS.coast, pixelLine: false });
     }
     for (const poly of this.def.water) {
-      g.poly(poly).fill(MAP_COLORS.sea).stroke({ width: 1.5, color: MAP_COLORS.coast });
+      g.poly(poly).fill(MAP_COLORS.sea).stroke({ width: 1, color: MAP_COLORS.coast });
     }
     this.world.addChild(g);
   }
@@ -216,21 +217,30 @@ export class MapRenderer {
   private drawRoads(): void {
     const g = this.roads;
     const k = 1 / this.camera.zoom;
-    const byId = new Map(this.def.cities.map((c) => [c.id, c]));
     g.clear();
     const segment = (kind: RoadKind | 'casing') => {
       for (const r of this.def.roads) {
         if (kind === 'casing' ? r.kind !== 'otoyol' : r.kind !== kind) continue;
-        const a = byId.get(r.from)!;
-        const b = byId.get(r.to)!;
-        g.moveTo(a.x, a.y).lineTo(b.x, b.y);
+        const p = r.path;
+        g.moveTo(p[0]!, p[1]!);
+        for (let i = 2; i < p.length; i += 2) g.lineTo(p[i]!, p[i + 1]!);
       }
     };
     segment('casing');
-    g.stroke({ width: OTOYOL_CASING_PX * k, color: MAP_COLORS.otoyolCasing, cap: 'round' });
+    g.stroke({
+      width: OTOYOL_CASING_PX * k,
+      color: MAP_COLORS.otoyolCasing,
+      cap: 'round',
+      join: 'round',
+    });
     for (const kind of ROAD_ORDER) {
       segment(kind);
-      g.stroke({ width: ROAD_WIDTH_PX[kind] * k, color: MAP_COLORS[kind], cap: 'round' });
+      g.stroke({
+        width: ROAD_WIDTH_PX[kind] * k,
+        color: MAP_COLORS[kind],
+        cap: 'round',
+        join: 'round',
+      });
     }
   }
 
@@ -238,16 +248,13 @@ export class MapRenderer {
   private drawRoutes(): void {
     const g = this.routes;
     const k = 1 / this.camera.zoom;
-    const byId = new Map(this.def.cities.map((c) => [c.id, c]));
     g.clear();
     const line = (route: string[] | null, width: number, color: number) => {
       if (!route || route.length < 2) return;
-      const first = byId.get(route[0]!)!;
-      g.moveTo(first.x, first.y);
-      for (const id of route.slice(1)) {
-        const c = byId.get(id)!;
-        g.lineTo(c.x, c.y);
-      }
+      const p = routePath(this.def, route);
+      if (p.length < 4) return;
+      g.moveTo(p[0]!, p[1]!);
+      for (let i = 2; i < p.length; i += 2) g.lineTo(p[i]!, p[i + 1]!);
       g.stroke({ width: width * k, color, cap: 'round', join: 'round' });
     };
     const { activeRoute, previewEmpty, previewLoaded } = this.overlay;

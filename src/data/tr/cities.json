@@ -1,5 +1,5 @@
 [
-  { "id": "ist", "name": "İstanbul", "lon": 29.0, "lat": 41.01, "size": 3 },
+  { "id": "ist", "name": "İstanbul", "lon": 28.94, "lat": 41.02, "size": 3 },
   { "id": "koc", "name": "Kocaeli", "lon": 29.92, "lat": 40.77, "size": 2 },
   { "id": "bur", "name": "Bursa", "lon": 29.06, "lat": 40.19, "size": 2 },
   { "id": "izm", "name": "İzmir", "lon": 27.14, "lat": 38.42, "size": 3 },
