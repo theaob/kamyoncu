@@ -56,5 +56,10 @@ describe('kamyon konumu', () => {
     });
     expect(p.x).toBeCloseTo((ist.x + koc.x) / 2);
     expect(p.y).toBeCloseTo((ist.y + koc.y) / 2);
+    expect(p.heading).toBeCloseTo(Math.atan2(koc.y - ist.y, koc.x - ist.x));
+  });
+
+  it('şehirde beklerken yönü yoktur', () => {
+    expect(truckPosition(world, { cityId: 'ist', trip: null }).heading).toBeNull();
   });
 });

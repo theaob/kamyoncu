@@ -107,14 +107,18 @@ export function roadBetween(world: WorldDef, a: string, b: string): Road | undef
 export function truckPosition(
   world: WorldDef,
   truck: { cityId: string; trip: { route: string[]; leg: number; legKm: number } | null },
-): { x: number; y: number } {
+): { x: number; y: number; heading: number | null } {
   const city = (id: string) => world.cities.find((c) => c.id === id)!;
   const trip = truck.trip;
   const here = city(truck.cityId);
-  if (!trip || trip.leg >= trip.route.length - 1) return { x: here.x, y: here.y };
+  if (!trip || trip.leg >= trip.route.length - 1) return { x: here.x, y: here.y, heading: null };
   const a = city(trip.route[trip.leg]!);
   const b = city(trip.route[trip.leg + 1]!);
   const road = roadBetween(world, a.id, b.id);
   const t = road ? Math.min(trip.legKm / road.km, 1) : 0;
-  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  return {
+    x: a.x + (b.x - a.x) * t,
+    y: a.y + (b.y - a.y) * t,
+    heading: Math.atan2(b.y - a.y, b.x - a.x),
+  };
 }
