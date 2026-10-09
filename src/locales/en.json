@@ -29,7 +29,7 @@
     "close": "Close",
     "notSavedYet": "Not saved yet",
     "autoPause": "Pause when a truck needs me",
-    "autoPauseHint": "Stops the clock when a truck finishes a delivery or needs a service."
+    "autoPauseHint": "Stops the clock when a truck finishes a delivery, needs a service or comes out of service."
   },
   "map": {
     "label": "Map of Türkiye",

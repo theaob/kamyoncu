@@ -56,6 +56,21 @@ describe('SimRunner', () => {
     expect(r.state.time).toBeLessThanOrEqual(Math.ceil(max));
   });
 
+  it('otomatik duraklatma bakım bitince de durur', () => {
+    const s = createInitialState(1);
+    s.trucks[0]!.condition = 50;
+    const r = new SimRunner(s);
+    r.autoPause = true;
+    r.apply({ type: 'serviceTruck', truckId: 't1' });
+    expect(s.trucks[0]!.serviceUntil).not.toBeNull();
+    r.apply({ type: 'setSpeed', speed: 64 });
+    const events: SimEvent[] = [];
+    for (let i = 0; i < 2000 && !s.paused; i++) events.push(...r.advance(50));
+    expect(s.paused).toBe(true);
+    expect(s.trucks[0]!.serviceUntil).toBeNull();
+    expect(events.map((e) => e.code).slice(-2)).toEqual(['fleet.serviceDone', 'time.autoPaused']);
+  });
+
   it('64× hızda her oyun dakikası tek tek işlenir', () => {
     const r = new SimRunner(createInitialState(1));
     r.apply({ type: 'setSpeed', speed: 64 });
