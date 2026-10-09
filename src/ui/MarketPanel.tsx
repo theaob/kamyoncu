@@ -8,6 +8,14 @@ import { currentLanguage } from '../i18n';
 import { formatKurus, formatNumber } from '../i18n/format';
 import { useGameStore, useSelectedTruck } from '../store/gameStore';
 import { SendButton } from './FleetPanel';
+import {
+  NEW_SORT_KEYS,
+  readMarketSort,
+  sortMarket,
+  USED_SORT_KEYS,
+  writeMarketSort,
+  type MarketSort,
+} from './marketSort';
 import { cityName } from './names';
 import { TruckDrawing } from './TruckDrawing';
 
@@ -23,10 +31,27 @@ export function MarketPanel() {
   const selected = useSelectedTruck();
   const [cityId, setCityId] = useState<string>(selected?.cityId ?? BALANCE.startCityId);
   const [bodies, setBodies] = useState<Record<string, BodyKind>>({});
+  const [usedSort, setUsedSort] = useState(() => readMarketSort('used', USED_SORT_KEYS));
+  const [newSort, setNewSort] = useState(() => readMarketSort('new', NEW_SORT_KEYS));
   if (!worldId) return null;
   const cities = [...getWorld(worldId).cities].sort((a, b) => a.name.localeCompare(b.name, lang));
   const price = (amount: number) => formatKurus(amount, lang);
   const noMoney = (amount: number) => (money < amount ? t('commandError.noMoney') : undefined);
+  const bodyOf = (modelId: string, tractor: boolean) =>
+    tractor ? null : (bodies[modelId] ?? 'tenteli');
+  const sortedListings = sortMarket(
+    listings,
+    (l) => {
+      const m = VEHICLE_MODELS.find((model) => model.id === l.modelId)!;
+      return { ...m, id: l.id, price: l.price, condition: l.condition, builtAt: l.builtAt };
+    },
+    usedSort,
+  );
+  const sortedModels = sortMarket(
+    VEHICLE_MODELS,
+    (m) => ({ ...m, price: newTruckPrice(m, bodyOf(m.id, m.tractor)) }),
+    newSort,
+  );
 
   return (
     <div className="market">
@@ -36,40 +61,50 @@ export function MarketPanel() {
         {listings.length === 0 ? (
           <p className="empty">{t('market.noUsed')}</p>
         ) : (
-          <ul className="cards">
-            {listings.map((l) => {
-              const model = VEHICLE_MODELS.find((m) => m.id === l.modelId)!;
-              const years = Math.max(0, Math.round((now - l.builtAt) / MINUTES_PER_YEAR));
-              return (
-                <li key={l.id} className="card">
-                  <TruckDrawing modelId={l.modelId} body={l.body} label={model.name} />
-                  <strong>
-                    {model.name} · {t('vehicle.class', { n: model.vehicleClass })}
-                  </strong>
-                  <small>
-                    {l.body ? t(`body.${l.body}`) : t('market.tractor')} ·{' '}
-                    {t('units.tons', { tons: formatNumber(model.capacityTons, lang, 1) })} ·{' '}
-                    {t('vehicle.license', { license: model.license })}
-                  </small>
-                  <small>
-                    {t('market.age', { years })} ·{' '}
-                    {t('units.km', { km: formatNumber(l.odometerKm, lang) })} ·{' '}
-                    {t('market.conditionShort', { value: l.condition })} ·{' '}
-                    {cityName(worldId, l.cityId)}
-                  </small>
-                  <SendButton
-                    className="primary"
-                    disabled={money < l.price}
-                    title={noMoney(l.price)}
-                    confirm={t('market.buyConfirm', { what: model.name, price: price(l.price) })}
-                    command={{ type: 'buyUsedTruck', listingId: l.id }}
-                  >
-                    {t('market.buyFor', { price: price(l.price) })}
-                  </SendButton>
-                </li>
-              );
-            })}
-          </ul>
+          <>
+            <SortBar
+              keys={USED_SORT_KEYS}
+              sort={usedSort}
+              onChange={(next) => {
+                setUsedSort(next);
+                writeMarketSort('used', next);
+              }}
+            />
+            <ul className="cards">
+              {sortedListings.map((l) => {
+                const model = VEHICLE_MODELS.find((m) => m.id === l.modelId)!;
+                const years = Math.max(0, Math.round((now - l.builtAt) / MINUTES_PER_YEAR));
+                return (
+                  <li key={l.id} className="card">
+                    <TruckDrawing modelId={l.modelId} body={l.body} label={model.name} />
+                    <strong>
+                      {model.name} · {t('vehicle.class', { n: model.vehicleClass })}
+                    </strong>
+                    <small>
+                      {l.body ? t(`body.${l.body}`) : t('market.tractor')} ·{' '}
+                      {t('units.tons', { tons: formatNumber(model.capacityTons, lang, 1) })} ·{' '}
+                      {t('vehicle.license', { license: model.license })}
+                    </small>
+                    <small>
+                      {t('market.age', { years })} ·{' '}
+                      {t('units.km', { km: formatNumber(l.odometerKm, lang) })} ·{' '}
+                      {t('market.conditionShort', { value: l.condition })} ·{' '}
+                      {cityName(worldId, l.cityId)}
+                    </small>
+                    <SendButton
+                      className="primary"
+                      disabled={money < l.price}
+                      title={noMoney(l.price)}
+                      confirm={t('market.buyConfirm', { what: model.name, price: price(l.price) })}
+                      command={{ type: 'buyUsedTruck', listingId: l.id }}
+                    >
+                      {t('market.buyFor', { price: price(l.price) })}
+                    </SendButton>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
         )}
       </section>
 
@@ -85,9 +120,17 @@ export function MarketPanel() {
             ))}
           </select>
         </label>
+        <SortBar
+          keys={NEW_SORT_KEYS}
+          sort={newSort}
+          onChange={(next) => {
+            setNewSort(next);
+            writeMarketSort('new', next);
+          }}
+        />
         <ul className="cards">
-          {VEHICLE_MODELS.map((model) => {
-            const body = model.tractor ? null : (bodies[model.id] ?? 'tenteli');
+          {sortedModels.map((model) => {
+            const body = bodyOf(model.id, model.tractor);
             const cost = newTruckPrice(model, body);
             return (
               <li key={model.id} className="card">
@@ -158,6 +201,42 @@ export function MarketPanel() {
           ))}
         </ul>
       </section>
+    </div>
+  );
+}
+
+function SortBar<K extends string>({
+  keys,
+  sort,
+  onChange,
+}: {
+  keys: readonly K[];
+  sort: MarketSort<K>;
+  onChange: (sort: MarketSort<K>) => void;
+}) {
+  const { t } = useTranslation();
+  const desc = sort.dir === 'desc';
+  return (
+    <div className="sort-bar">
+      <label>
+        <span>{t('market.sortBy')}</span>
+        <select value={sort.key} onChange={(e) => onChange({ ...sort, key: e.target.value as K })}>
+          {keys.map((k) => (
+            <option key={k} value={k}>
+              {t(`market.sort.${k}`)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button
+        type="button"
+        className="secondary"
+        aria-label={t(desc ? 'market.sortDesc' : 'market.sortAsc')}
+        title={t(desc ? 'market.sortDesc' : 'market.sortAsc')}
+        onClick={() => onChange({ ...sort, dir: desc ? 'asc' : 'desc' })}
+      >
+        {desc ? '↓' : '↑'} {t(`market.sortDir.${sort.key}.${sort.dir}`)}
+      </button>
     </div>
   );
 }
