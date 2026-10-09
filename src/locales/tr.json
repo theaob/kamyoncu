@@ -43,11 +43,29 @@
       "newDay": "Yeni gün başladı: {{date}}"
     },
     "job": {
-      "accepted": "İş kabul edildi: {{cargo}}, {{from}} → {{to}}",
-      "loaded": "{{city}} şehrinde yüklendi: {{cargo}}",
-      "delivered": "{{city}} şehrine teslim edildi: {{cargo}}. Ödeme {{pay}}, kâr {{profit}}",
-      "deliveredLate": "{{city}} şehrine geç teslim: {{cargo}}. Ödeme {{pay}}, ceza {{penalty}}, kâr {{profit}}",
+      "accepted": "{{plate}} iş aldı: {{cargo}}, {{from}} → {{to}}",
+      "loaded": "{{plate}} {{city}} şehrinde yüklendi: {{cargo}}",
+      "delivered": "{{plate}} {{city}} şehrine teslim etti: {{cargo}}. Ödeme {{pay}}, kâr {{profit}}",
+      "deliveredLate": "{{plate}} {{city}} şehrine geç teslim etti: {{cargo}}. Ödeme {{pay}}, ceza {{penalty}}, kâr {{profit}}",
       "rejected": "İş kabul edilemedi: {{reason}}"
+    },
+    "fleet": {
+      "bought": "Yeni araç: {{plate}} {{model}}, {{city}} teslim. Ödenen {{price}}",
+      "sold": "{{plate}} satıldı: {{price}}",
+      "trailerBought": "Yeni dorse: {{kind}}, {{city}} teslim. Ödenen {{price}}",
+      "trailerSold": "{{kind}} dorse satıldı: {{price}}",
+      "serviceDone": "{{plate}} bakımdan çıktı, durumu tam",
+      "needsService": "{{plate}} yıprandı: bakım yapılmadan yeni iş alamaz"
+    },
+    "driver": {
+      "hired": "{{name}} işe alındı",
+      "fired": "{{name}} işten çıkarıldı"
+    },
+    "market": {
+      "refreshed": "Araç pazarı ve şoför adayları yenilendi"
+    },
+    "command": {
+      "failed": "İşlem yapılamadı: {{reason}}"
     }
   },
   "save": {
@@ -64,19 +82,23 @@
     "km": "{{km}} km",
     "tons": "{{tons}} t",
     "duration": "{{h}} sa {{m}} dk",
-    "durationShort": "{{m}} dk"
+    "durationShort": "{{m}} dk",
+    "per100": "{{l}} L/100 km"
   },
   "panel": {
     "label": "Yönetim paneli",
     "jobs": "Yük borsası",
-    "truck": "Kamyon",
-    "finance": "Finans"
+    "finance": "Finans",
+    "fleet": "Filo",
+    "drivers": "Şoförler",
+    "market": "Pazar"
   },
   "jobs": {
     "filter": {
       "label": "Göster",
       "here": "Bulunduğum şehirden",
-      "all": "Tüm şehirler"
+      "all": "Tüm şehirler",
+      "fits": "Araca uygun"
     },
     "sort": {
       "label": "Sırala",
@@ -94,13 +116,12 @@
     "lateRisk": "Gecikir: −{{penalty}} ceza",
     "accept": "Kabul et",
     "acceptTitle": "{{from}} → {{to}} işini kabul et",
-    "tooHeavy": "Kamyonet için ağır",
     "count": "{{count}} ilan",
-    "busyNotice": "Kamyonetin {{city}} teslimatında. Teslimattan sonra yeni iş alabilirsin; aşağıdaki tahminler {{city}} çıkışlıdır."
+    "busyNotice": "{{plate}} şu an {{city}} teslimatında. Teslimattan sonra yeni iş alabilir; aşağıdaki tahminler {{city}} çıkışlıdır.",
+    "emptyFits": "Bu araca uygun ilan yok. Nedenini görmek için tüm şehirleri göster.",
+    "serviceNotice": "{{plate}} bakımda. Bakım bitince yeni iş alabilir."
   },
   "truck": {
-    "name": "İkinci el kamyonet",
-    "driver": "Şoför: sen",
     "capacity": "Kapasite",
     "odometer": "Kilometre",
     "status": {
@@ -108,7 +129,8 @@
       "toPickup": "Yük almak için {{city}} yolunda",
       "loading": "{{city}} şehrinde yükleniyor",
       "toDelivery": "{{city}} şehrine teslimata gidiyor",
-      "unloading": "{{city}} şehrinde boşaltılıyor"
+      "unloading": "{{city}} şehrinde boşaltılıyor",
+      "service": "{{city}} şehrinde bakımda"
     },
     "job": "Aktif iş",
     "remaining": "Kalan yol",
@@ -128,7 +150,10 @@
       "freight": "Taşıma geliri",
       "fuel": "Yakıt",
       "tolls": "Otoyol ücreti",
-      "penalties": "Gecikme cezası"
+      "penalties": "Gecikme cezası",
+      "salaries": "Maaşlar",
+      "maintenance": "Bakım",
+      "vehicles": "Araç alım-satımı (net kâra dahil değil)"
     },
     "deliveries": "Teslimat: {{count}} ({{late}} gecikmeli)",
     "byDay": "Günlük net",
@@ -140,12 +165,116 @@
     "food": "Gıda",
     "spareParts": "Yedek parça",
     "electronics": "Elektronik",
-    "pharma": "İlaç"
+    "pharma": "İlaç",
+    "whiteGoods": "Beyaz eşya",
+    "furniture": "Mobilya",
+    "construction": "İnşaat malzemesi",
+    "grain": "Tahıl",
+    "frozen": "Donuk gıda",
+    "fuel": "Akaryakıt",
+    "chemicals": "Kimyasal",
+    "containers": "Konteyner"
   },
   "acceptError": {
     "unknownJob": "ilan artık yok",
-    "truckBusy": "kamyon meşgul",
+    "truckBusy": "araç meşgul",
     "tooHeavy": "yük kapasiteyi aşıyor",
-    "noRoute": "rota yok"
+    "noRoute": "rota yok",
+    "inService": "araç bakımda",
+    "noDriver": "araçta şoför yok",
+    "license": "şoförün ehliyeti yetmiyor",
+    "noTrailer": "çekicide dorse yok",
+    "wrongBody": "kasa türü uymuyor",
+    "needsService": "araç yıprandı, önce bakım gerekli"
+  },
+  "vehicle": {
+    "class": "Sınıf {{n}}",
+    "license": "{{license}} ehliyet"
+  },
+  "tier": {
+    "economy": "Ekonomik",
+    "standard": "Standart",
+    "premium": "Premium"
+  },
+  "body": {
+    "tenteli": "Tenteli",
+    "frigorifik": "Frigorifik",
+    "tanker": "Tanker",
+    "konteyner": "Konteyner"
+  },
+  "fleet": {
+    "vehicle": "Araç",
+    "busy": "meşgul",
+    "list": "Araçlar",
+    "condition": "Durum",
+    "trailers": "Dorseler",
+    "trailerOn": "{{plate}} çekicisinde",
+    "trailerAt": "{{city}} şehrinde bekliyor",
+    "sellConfirm": "{{what}} {{price}} karşılığında satılsın mı?",
+    "sellFor": "Sat: {{price}}",
+    "drawing": "{{model}} yan görünüm",
+    "serviceLeft": "{{duration}} kaldı",
+    "driver": "Şoför",
+    "noDriver": "Şoför yok",
+    "trailer": "Dorse",
+    "body": "Kasa",
+    "noTrailer": "Dorse yok",
+    "fuel": "Tüketim",
+    "value": "Bugünkü değeri",
+    "detach": "{{kind}} dorseyi bırak",
+    "attach": "{{kind}} dorseyi tak",
+    "noFreeTrailer": "{{city}} şehrinde boşta dorse yok. Pazardan dorse alabilirsin.",
+    "serviceNotNeeded": "Bakım gerekmiyor",
+    "service": "Bakıma al: {{cost}}, {{duration}}"
+  },
+  "drivers": {
+    "you": "Sen (patron)",
+    "staff": "Kadro",
+    "summary": "{{license}} ehliyet, seviye {{level}}",
+    "unassigned": "araçsız",
+    "salary": "{{amount}}/ay",
+    "fireConfirm": "{{name}} işten çıkarılsın mı?",
+    "fire": "Çıkar",
+    "payroll": "Aylık maaş toplamı: {{amount}} (her gün 1/30'u ödenir)",
+    "licenseHint": "Senin ehliyetin B: yalnızca kamyonet sürebilirsin. Büyük araçlar için uygun ehliyetli şoför al.",
+    "candidates": "Adaylar",
+    "nextRefresh": "Yeni adaylar {{duration}} sonra",
+    "noCandidates": "Bu hafta aday kalmadı.",
+    "hire": "İşe al"
+  },
+  "market": {
+    "used": "İkinci el",
+    "usedHint": "İlanlar haftada bir yenilenir. Araç ilandaki şehirde teslim edilir.",
+    "noUsed": "Bu hafta ilan kalmadı.",
+    "tractor": "Çekici",
+    "age": "{{years}} yaşında",
+    "conditionShort": "durum %{{value}}",
+    "buyConfirm": "{{what}} {{price}} karşılığında alınsın mı?",
+    "buyFor": "Al: {{price}}",
+    "new": "Sıfır araçlar",
+    "deliverTo": "Teslim şehri",
+    "needsTrailer": "dorse gerekir",
+    "trailers": "Dorseler",
+    "trailersHint": "Dorseler tır çekicilerine takılır. Seçili teslim şehrinde teslim edilir.",
+    "trailerUse": {
+      "tenteli": "Genel yük, inşaat, tahıl",
+      "frigorifik": "Gıda, ilaç, donuk ürün",
+      "tanker": "Akaryakıt ve kimyasal",
+      "konteyner": "Liman konteynerleri"
+    }
+  },
+  "commandError": {
+    "notFound": "bulunamadı",
+    "noMoney": "nakit yetmiyor",
+    "truckBusy": "araç meşgul",
+    "lastTruck": "son araç satılamaz",
+    "license": "şoförün ehliyeti bu araca yetmiyor",
+    "driverBusy": "şoför yolda",
+    "notTractor": "yalnızca çekicilere dorse takılır",
+    "differentCity": "dorse başka şehirde",
+    "trailerInUse": "dorse bir çekiciye bağlı",
+    "noRigidBody": "bu kasa kamyona takılamaz",
+    "isPlayer": "kendini işten çıkaramazsın",
+    "notNeeded": "bakım gerekmiyor"
   }
 }

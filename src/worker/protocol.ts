@@ -1,5 +1,17 @@
 import type { SaveError } from '../core/save';
-import type { Command, Finance, Job, Money, SimEvent, Speed, Truck } from '../core/types';
+import type {
+  Candidate,
+  Command,
+  Driver,
+  Finance,
+  Job,
+  Money,
+  SimEvent,
+  Speed,
+  Trailer,
+  Truck,
+  UsedListing,
+} from '../core/types';
 
 /** Arayüzün ihtiyaç duyduğu, sık değişen durum. Her tikte gönderilir. */
 export interface ClockView {
@@ -9,15 +21,22 @@ export interface ClockView {
 }
 
 /**
- * Oyun durumunun arayüze giden kısmı. `money` ve `trucks` her tikte gelir;
- * `jobs` ve `finance` yalnızca değiştiklerinde (plan 5.2: farklar).
+ * Oyun durumunun arayüze giden kısmı. Para ve filo (araç, dorse, şoför) her
+ * tikte gelir; borsa, pazar ve finans yalnızca değiştiklerinde (plan 5.2: farklar).
  */
 export interface GameView {
   money: Money;
   trucks: Truck[];
+  trailers: Trailer[];
+  drivers: Driver[];
   jobs: Job[];
+  candidates: Candidate[];
+  usedListings: UsedListing[];
   finance: Finance;
 }
+
+/** Her tikte gönderilen alanlar. */
+export type FleetView = Pick<GameView, 'money' | 'trucks' | 'trailers' | 'drivers'>;
 
 export type ToWorker =
   | { type: 'init'; seed: number; save?: string | null }
@@ -38,7 +57,7 @@ export type FromWorker =
       type: 'tick';
       clock: ClockView;
       events: SimEvent[];
-      view: Pick<GameView, 'money' | 'trucks'> & Partial<Pick<GameView, 'jobs' | 'finance'>>;
+      view: FleetView & Partial<GameView>;
     }
   /** Otomatik kayıt: serileştirilmiş `GameState`; ana iş parçacığı depolar. */
   | { type: 'save'; data: string };

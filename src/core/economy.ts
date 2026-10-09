@@ -1,30 +1,46 @@
 import { BALANCE, MINUTES_PER_HOUR } from './balance';
-import { findRoute, roadBetween, roadToll } from './routing';
-import type { CargoType, Job, Money, Road, Truck, VehicleModel, WorldDef } from './types';
+import { findRoute, motorwayToll, roadBetween, roadMinutes, roadToll } from './routing';
+import type { BodyKind, CargoType, Job, Money, Road, Truck, VehicleModel, WorldDef } from './types';
 
-/** Plan 3.6: yakıt_L = mesafe_km / 100 × tüketim × (1 + 0,35 × yük_oranı). */
-export function fuelLiters(km: number, model: VehicleModel, loadRatio: number): number {
-  return (km / 100) * model.fuelPer100Km * (1 + BALANCE.fuelLoadFactor * loadRatio);
+/**
+ * Bir aracın iş hesaplarında kullanılan etkin değerleri: model + kasa/dorse +
+ * durum + şoför becerisi birleşimi (bkz. fleet.ts `truckSpec`).
+ */
+export interface TruckSpec {
+  /** Taşıyabileceği yük; dorsesiz çekicide 0. */
+  capacityTons: number;
+  /** Kasa ya da takılı dorse türü; dorsesiz çekicide `null`. */
+  body: BodyKind | null;
+  /** Boşken etkin tüketim, L/100 km. */
+  fuelPer100Km: number;
+  speedFactor: number;
+  tollClass: VehicleModel['tollClass'];
 }
 
-export function fuelCost(km: number, model: VehicleModel, loadRatio: number): Money {
-  return Math.round(fuelLiters(km, model, loadRatio) * BALANCE.dieselPerLiter);
+/** Plan 3.6: yakıt_L = mesafe_km / 100 × tüketim × (1 + 0,35 × yük_oranı). */
+export function fuelLiters(km: number, fuelPer100Km: number, loadRatio: number): number {
+  return (km / 100) * fuelPer100Km * (1 + BALANCE.fuelLoadFactor * loadRatio);
+}
+
+export function fuelCost(km: number, fuelPer100Km: number, loadRatio: number): Money {
+  return Math.round(fuelLiters(km, fuelPer100Km, loadRatio) * BALANCE.dieselPerLiter);
 }
 
 /** Bir yolun yakıt + geçiş ücreti. */
-export function legCost(road: Road, model: VehicleModel, loadRatio: number) {
+export function legCost(road: Road, spec: TruckSpec, loadRatio: number) {
   return {
-    fuel: fuelCost(road.km, model, loadRatio),
-    tolls: roadToll(road),
+    fuel: fuelCost(road.km, spec.fuelPer100Km, loadRatio),
+    tolls: roadToll(road, spec.tollClass),
   };
 }
 
 /**
- * Plan 3.6: ödeme = taban + km × birim_fiyat × aciliyet × talep.
+ * Plan 3.6: ödeme = taban + km × (km fiyatı + ton × ton-km fiyatı) × aciliyet × talep.
  * Tam liraya yuvarlanır.
  */
-export function jobPay(km: number, cargo: CargoType, demand: number): Money {
-  const raw = BALANCE.jobBasePay + km * cargo.ratePerKm * cargo.urgency * demand;
+export function jobPay(km: number, cargo: CargoType, tons: number, demand: number): Money {
+  const perKm = cargo.ratePerKm + tons * cargo.ratePerTonKm;
+  const raw = BALANCE.jobBasePay + km * perKm * cargo.urgency * demand;
   return Math.round(raw / 100) * 100;
 }
 
@@ -53,12 +69,13 @@ export interface JobEstimate {
 }
 
 /**
- * Yük borsasında gösterilen tahmini kâr. Kamyon `cityId` şehrinde boşta
- * kabul ederse ne olacağını hesaplar. Rota yoksa `null`.
+ * Yük borsasında gösterilen tahmini kâr. Araç `cityId` şehrinde boşta
+ * kabul ederse ne olacağını hesaplar. Rota yoksa `null`. Uygunluk (kasa,
+ * kapasite) burada denetlenmez; bkz. sim.ts `canAccept`.
  */
 export function estimateJob(
   world: WorldDef,
-  model: VehicleModel,
+  spec: TruckSpec,
   cityId: string,
   job: Job,
   now: number,
@@ -66,11 +83,17 @@ export function estimateJob(
   const empty = findRoute(world, cityId, job.from);
   const loaded = findRoute(world, job.from, job.to);
   if (!empty || !loaded) return null;
-  const load = job.tons / model.capacityTons;
-  const fuel = fuelCost(empty.km, model, 0) + fuelCost(loaded.km, model, load);
-  const tolls = empty.tolls + loaded.tolls;
+  const load = spec.capacityTons > 0 ? Math.min(job.tons / spec.capacityTons, 1) : 1;
+  const fuel =
+    fuelCost(empty.km, spec.fuelPer100Km, 0) + fuelCost(loaded.km, spec.fuelPer100Km, load);
+  const tolls =
+    motorwayToll(empty.motorwayKm, spec.tollClass) +
+    motorwayToll(loaded.motorwayKm, spec.tollClass);
   const eta =
-    now + empty.minutes + BALANCE.loadingMinutes + loaded.minutes + BALANCE.unloadingMinutes;
+    now +
+    (empty.minutes + loaded.minutes) / spec.speedFactor +
+    BALANCE.loadingMinutes +
+    BALANCE.unloadingMinutes;
   const penalty = latePenalty(job, eta);
   return {
     emptyKm: empty.km,
@@ -91,6 +114,7 @@ export function tripProgress(
   world: WorldDef,
   truck: Truck,
   now: number,
+  speedFactor = 1,
 ): { km: number; eta: number } | null {
   const trip = truck.trip;
   if (!trip) return null;
@@ -101,7 +125,7 @@ export function tripProgress(
       const road = roadBetween(world, trip.route[i]!, trip.route[i + 1]!)!;
       const left = i === trip.leg ? road.km - trip.legKm : road.km;
       km += left;
-      minutes += (left / BALANCE.roadSpeedKmh[road.kind]) * 60;
+      minutes += roadMinutes({ ...road, km: left }, speedFactor);
     }
   } else {
     minutes += Math.max(trip.waitUntil - now, 0);
@@ -109,7 +133,7 @@ export function tripProgress(
   if (trip.phase === 'toPickup' || trip.phase === 'loading') {
     const loaded = findRoute(world, trip.job.from, trip.job.to);
     km += loaded?.km ?? 0;
-    minutes += loaded?.minutes ?? 0;
+    minutes += (loaded?.minutes ?? 0) / speedFactor;
   }
   if (trip.phase === 'toPickup') minutes += BALANCE.loadingMinutes;
   if (trip.phase !== 'unloading') minutes += BALANCE.unloadingMinutes;

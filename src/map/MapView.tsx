@@ -7,23 +7,24 @@ import { MapRenderer, type MapOverlay } from './MapRenderer';
 
 type OverlayInput = Pick<
   ReturnType<typeof useGameStore.getState>,
-  'trucks' | 'jobs' | 'highlightJobId'
+  'trucks' | 'jobs' | 'highlightJobId' | 'selectedTruckId'
 >;
 
 /** Store durumundan harita katmanını üretir. Rotalar yalnızca değişince yeniden hesaplanır. */
 function makeOverlayBuilder(worldId: string) {
   const world = getWorld(worldId);
   let routeKey = '';
-  let routes: Omit<MapOverlay, 'truck'> = {
+  let routes: Omit<MapOverlay, 'trucks'> = {
     activeRoute: null,
     previewEmpty: null,
     previewLoaded: null,
   };
-  return ({ trucks, jobs, highlightJobId }: OverlayInput): MapOverlay => {
-    const truck = trucks[0];
+  return ({ trucks, jobs, highlightJobId, selectedTruckId }: OverlayInput): MapOverlay => {
+    const truck = trucks.find((t) => t.id === selectedTruckId) ?? trucks[0];
     const trip = truck?.trip ?? null;
     const preview = highlightJobId ? jobs.find((j) => j.id === highlightJobId) : undefined;
     const key = [
+      truck?.id ?? '',
       trip ? `${trip.job.id}:${trip.phase}:${trip.route.join('-')}` : '',
       truck && preview ? `${trip?.job.to ?? truck.cityId}:${preview.id}` : '',
     ].join('|');
@@ -45,7 +46,7 @@ function makeOverlayBuilder(worldId: string) {
       }
       routes = {
         activeRoute,
-        // Kamyon yoldaysa bir sonraki iş teslim şehrinden başlar (yük borsası tahminleriyle aynı).
+        // Seçili araç yoldaysa bir sonraki iş teslim şehrinden başlar (yük borsası tahminleriyle aynı).
         previewEmpty:
           truck && preview
             ? (findRoute(world, trip?.job.to ?? truck.cityId, preview.from)?.cities ?? null)
@@ -55,7 +56,18 @@ function makeOverlayBuilder(worldId: string) {
           : null,
       };
     }
-    return { ...routes, truck: truck ? truckPosition(world, truck) : null };
+    // Aynı şehirde bekleyen araçlar üst üste binmesin diye sıralanır.
+    const seen = new Map<string, number>();
+    return {
+      ...routes,
+      trucks: trucks.map((t) => {
+        const pos = truckPosition(world, t);
+        const key = `${Math.round(pos.x)}:${Math.round(pos.y)}`;
+        const stack = seen.get(key) ?? 0;
+        seen.set(key, stack + 1);
+        return { id: t.id, ...pos, selected: t === truck, stack };
+      }),
+    };
   };
 }
 

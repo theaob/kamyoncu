@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DriversPanel } from './DriversPanel';
 import { FinancePanel } from './FinancePanel';
+import { FleetPanel } from './FleetPanel';
 import { JobBoard } from './JobBoard';
-import { TruckPanel } from './TruckPanel';
+import { MarketPanel } from './MarketPanel';
 
-const TABS = ['jobs', 'truck', 'finance'] as const;
+const TABS = ['jobs', 'fleet', 'drivers', 'market', 'finance'] as const;
 type Tab = (typeof TABS)[number];
 
 export function SidePanel() {
@@ -35,7 +37,9 @@ export function SidePanel() {
         aria-labelledby={`tab-${tab}`}
       >
         {tab === 'jobs' && <JobBoard />}
-        {tab === 'truck' && <TruckPanel onOpenBoard={() => setTab('jobs')} />}
+        {tab === 'fleet' && <FleetPanel onOpenBoard={() => setTab('jobs')} />}
+        {tab === 'drivers' && <DriversPanel />}
+        {tab === 'market' && <MarketPanel />}
         {tab === 'finance' && <FinancePanel />}
       </div>
     </aside>

@@ -18,6 +18,8 @@ export const MAP_COLORS = {
   routePreview: 0x2a6fdb,
   routeEmpty: 0x93b4e6,
   truck: 0xf2c230,
+  /** Seçili olmayan araçlar. */
+  truckIdle: 0xffffff,
   truckOutline: 0x1d2224,
 } as const;
 

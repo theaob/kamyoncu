@@ -13,7 +13,7 @@ describe('rota bulma', () => {
     const r = findRoute(world, 'ist', 'koc')!;
     expect(r.cities).toEqual(['ist', 'koc']);
     expect(r.km).toBe(110);
-    expect(r.tolls).toBeGreaterThan(0); // otoyol
+    expect(r.motorwayKm).toBe(110); // otoyol
   });
 
   it('en hızlı rotayı seçer: İstanbul → Ankara otoyoldan', () => {

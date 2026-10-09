@@ -43,11 +43,29 @@
       "newDay": "A new day has started: {{date}}"
     },
     "job": {
-      "accepted": "Job accepted: {{cargo}}, {{from}} → {{to}}",
-      "loaded": "Loaded in {{city}}: {{cargo}}",
-      "delivered": "Delivered to {{city}}: {{cargo}}. Paid {{pay}}, profit {{profit}}",
-      "deliveredLate": "Late delivery to {{city}}: {{cargo}}. Paid {{pay}}, penalty {{penalty}}, profit {{profit}}",
+      "accepted": "{{plate}} took a job: {{cargo}}, {{from}} → {{to}}",
+      "loaded": "{{plate}} loaded in {{city}}: {{cargo}}",
+      "delivered": "{{plate}} delivered to {{city}}: {{cargo}}. Paid {{pay}}, profit {{profit}}",
+      "deliveredLate": "{{plate}} delivered late to {{city}}: {{cargo}}. Paid {{pay}}, penalty {{penalty}}, profit {{profit}}",
       "rejected": "Couldn't accept the job: {{reason}}"
+    },
+    "fleet": {
+      "bought": "New vehicle: {{plate}} {{model}}, delivered in {{city}}. Paid {{price}}",
+      "sold": "{{plate}} sold for {{price}}",
+      "trailerBought": "New trailer: {{kind}}, delivered in {{city}}. Paid {{price}}",
+      "trailerSold": "{{kind}} trailer sold for {{price}}",
+      "serviceDone": "{{plate}} is back from service in full condition",
+      "needsService": "{{plate}} is worn out: it can't take new jobs until serviced"
+    },
+    "driver": {
+      "hired": "{{name}} was hired",
+      "fired": "{{name}} was let go"
+    },
+    "market": {
+      "refreshed": "The vehicle market and driver candidates were refreshed"
+    },
+    "command": {
+      "failed": "Couldn't do that: {{reason}}"
     }
   },
   "save": {
@@ -64,19 +82,23 @@
     "km": "{{km}} km",
     "tons": "{{tons}} t",
     "duration": "{{h}} h {{m}} min",
-    "durationShort": "{{m}} min"
+    "durationShort": "{{m}} min",
+    "per100": "{{l}} L/100 km"
   },
   "panel": {
     "label": "Management panel",
     "jobs": "Freight board",
-    "truck": "Truck",
-    "finance": "Finance"
+    "finance": "Finance",
+    "fleet": "Fleet",
+    "drivers": "Drivers",
+    "market": "Market"
   },
   "jobs": {
     "filter": {
       "label": "Show",
       "here": "From my city",
-      "all": "All cities"
+      "all": "All cities",
+      "fits": "Fits vehicle"
     },
     "sort": {
       "label": "Sort",
@@ -94,13 +116,12 @@
     "lateRisk": "Will be late: −{{penalty}} penalty",
     "accept": "Accept",
     "acceptTitle": "Accept the {{from}} → {{to}} job",
-    "tooHeavy": "Too heavy for the van",
     "count": "{{count}} listings",
-    "busyNotice": "Your van is on a delivery to {{city}}. You can take a new job after it delivers; the estimates below start from {{city}}."
+    "busyNotice": "{{plate}} is on a delivery to {{city}}. It can take a new job after it delivers; the estimates below start from {{city}}.",
+    "emptyFits": "No listings fit this vehicle. Show all cities to see why.",
+    "serviceNotice": "{{plate}} is in service. It can take a new job once the service is done."
   },
   "truck": {
-    "name": "Used van",
-    "driver": "Driver: you",
     "capacity": "Capacity",
     "odometer": "Odometer",
     "status": {
@@ -108,7 +129,8 @@
       "toPickup": "On the way to {{city}} to pick up cargo",
       "loading": "Loading in {{city}}",
       "toDelivery": "Delivering to {{city}}",
-      "unloading": "Unloading in {{city}}"
+      "unloading": "Unloading in {{city}}",
+      "service": "In service in {{city}}"
     },
     "job": "Current job",
     "remaining": "Distance left",
@@ -128,7 +150,10 @@
       "freight": "Freight income",
       "fuel": "Fuel",
       "tolls": "Motorway tolls",
-      "penalties": "Late penalties"
+      "penalties": "Late penalties",
+      "salaries": "Salaries",
+      "maintenance": "Maintenance",
+      "vehicles": "Vehicle purchases and sales (not in net)"
     },
     "deliveries": "Deliveries: {{count}} ({{late}} late)",
     "byDay": "Daily net",
@@ -140,12 +165,116 @@
     "food": "Food",
     "spareParts": "Spare parts",
     "electronics": "Electronics",
-    "pharma": "Pharmaceuticals"
+    "pharma": "Pharmaceuticals",
+    "whiteGoods": "White goods",
+    "furniture": "Furniture",
+    "construction": "Building materials",
+    "grain": "Grain",
+    "frozen": "Frozen food",
+    "fuel": "Fuel",
+    "chemicals": "Chemicals",
+    "containers": "Containers"
   },
   "acceptError": {
     "unknownJob": "the listing is gone",
-    "truckBusy": "the truck is busy",
+    "truckBusy": "the vehicle is busy",
     "tooHeavy": "the cargo exceeds capacity",
-    "noRoute": "no route"
+    "noRoute": "no route",
+    "inService": "the vehicle is in service",
+    "noDriver": "the vehicle has no driver",
+    "license": "the driver's licence doesn't cover it",
+    "noTrailer": "the tractor has no trailer",
+    "wrongBody": "wrong body type",
+    "needsService": "the vehicle is worn out and needs a service first"
+  },
+  "vehicle": {
+    "class": "Class {{n}}",
+    "license": "{{license}} licence"
+  },
+  "tier": {
+    "economy": "Economy",
+    "standard": "Standard",
+    "premium": "Premium"
+  },
+  "body": {
+    "tenteli": "Curtainsider",
+    "frigorifik": "Reefer",
+    "tanker": "Tanker",
+    "konteyner": "Container"
+  },
+  "fleet": {
+    "vehicle": "Vehicle",
+    "busy": "busy",
+    "list": "Vehicles",
+    "condition": "Condition",
+    "trailers": "Trailers",
+    "trailerOn": "on {{plate}}",
+    "trailerAt": "parked in {{city}}",
+    "sellConfirm": "Sell {{what}} for {{price}}?",
+    "sellFor": "Sell: {{price}}",
+    "drawing": "{{model}} side view",
+    "serviceLeft": "{{duration}} left",
+    "driver": "Driver",
+    "noDriver": "No driver",
+    "trailer": "Trailer",
+    "body": "Body",
+    "noTrailer": "No trailer",
+    "fuel": "Consumption",
+    "value": "Current value",
+    "detach": "Drop the {{kind}} trailer",
+    "attach": "Hook up the {{kind}} trailer",
+    "noFreeTrailer": "No free trailer in {{city}}. You can buy one in the market.",
+    "serviceNotNeeded": "No service needed",
+    "service": "Service: {{cost}}, {{duration}}"
+  },
+  "drivers": {
+    "you": "You (owner)",
+    "staff": "Staff",
+    "summary": "{{license}} licence, level {{level}}",
+    "unassigned": "no vehicle",
+    "salary": "{{amount}}/month",
+    "fireConfirm": "Let {{name}} go?",
+    "fire": "Let go",
+    "payroll": "Monthly payroll: {{amount}} (1/30 is paid each day)",
+    "licenseHint": "Your licence is B, so you can only drive the van. Hire drivers with the right licence for bigger vehicles.",
+    "candidates": "Candidates",
+    "nextRefresh": "New candidates in {{duration}}",
+    "noCandidates": "No candidates left this week.",
+    "hire": "Hire"
+  },
+  "market": {
+    "used": "Used",
+    "usedHint": "Listings refresh once a week. The vehicle is handed over in the listed city.",
+    "noUsed": "No listings left this week.",
+    "tractor": "Tractor unit",
+    "age": "{{years}} years old",
+    "conditionShort": "condition {{value}}%",
+    "buyConfirm": "Buy {{what}} for {{price}}?",
+    "buyFor": "Buy: {{price}}",
+    "new": "New vehicles",
+    "deliverTo": "Delivery city",
+    "needsTrailer": "needs a trailer",
+    "trailers": "Trailers",
+    "trailersHint": "Trailers hook up to tractor units. They are delivered to the chosen delivery city.",
+    "trailerUse": {
+      "tenteli": "General cargo, construction, grain",
+      "frigorifik": "Food, pharma, frozen goods",
+      "tanker": "Fuel and chemicals",
+      "konteyner": "Port containers"
+    }
+  },
+  "commandError": {
+    "notFound": "not found",
+    "noMoney": "not enough cash",
+    "truckBusy": "the vehicle is busy",
+    "lastTruck": "you can't sell your last vehicle",
+    "license": "the driver's licence doesn't cover this vehicle",
+    "driverBusy": "the driver is on the road",
+    "notTractor": "only tractor units take trailers",
+    "differentCity": "the trailer is in another city",
+    "trailerInUse": "the trailer is hooked to a tractor",
+    "noRigidBody": "that body can't go on a truck",
+    "isPlayer": "you can't fire yourself",
+    "notNeeded": "no service needed"
   }
 }

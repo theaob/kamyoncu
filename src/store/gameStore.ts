@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { SaveError } from '../core/save';
-import { createFinance } from '../core/sim';
+import { createFinance } from '../core/ledger';
 import type { Command, SimEvent } from '../core/types';
 import { startSimWorker, type SimClient } from '../worker/client';
 import type { ClockView, FromWorker, GameView } from '../worker/protocol';
@@ -26,10 +26,13 @@ interface GameStore extends GameView {
   saveFailed: boolean;
   /** Haritada rotası vurgulanan ilan (üzerine gelinen/seçilen). */
   highlightJobId: string | null;
+  /** Panellerde ve haritada seçili araç. */
+  selectedTruckId: string | null;
   send(command: Command): void;
   newGame(): void;
   dismissLoadError(): void;
   setHighlightJob(id: string | null): void;
+  selectTruck(id: string): void;
   receive(msg: FromWorker): void;
 }
 
@@ -45,16 +48,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
   log: [],
   money: 0,
   trucks: [],
+  trailers: [],
+  drivers: [],
   jobs: [],
+  candidates: [],
+  usedListings: [],
   finance: createFinance(),
   loadError: null,
   savedAt: null,
   saveFailed: false,
   highlightJobId: null,
+  selectedTruckId: null,
   send: (command) => client?.send(command),
   newGame: () => client?.newGame(randomSeed()),
   dismissLoadError: () => set({ loadError: null }),
   setHighlightJob: (id) => set({ highlightJobId: id }),
+  selectTruck: (id) => set({ selectedTruckId: id }),
   receive: (msg) => {
     switch (msg.type) {
       case 'ready':
@@ -67,6 +76,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           log: [],
           loadError: msg.loadError ?? null,
           highlightJobId: null,
+          selectedTruckId: msg.view.trucks[0]?.id ?? null,
         });
         return;
       case 'save':
@@ -77,6 +87,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set((s) => ({
           clock: msg.clock,
           ...msg.view,
+          // Satılan araç seçiliyse ilk araca dön.
+          selectedTruckId: msg.view.trucks.some((t) => t.id === s.selectedTruckId)
+            ? s.selectedTruckId
+            : (msg.view.trucks[0]?.id ?? null),
           log:
             msg.events.length === 0
               ? s.log
@@ -89,6 +103,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 }));
+
+/** Seçili araç (yoksa ilki). */
+export function useSelectedTruck() {
+  return useGameStore((s) => s.trucks.find((t) => t.id === s.selectedTruckId) ?? s.trucks[0]);
+}
 
 /** Simülasyon worker'ını bir kez başlatır (React StrictMode çift çağrısına dayanıklı). */
 export function ensureSimStarted(seed = randomSeed()): void {
