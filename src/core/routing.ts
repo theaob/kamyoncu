@@ -103,7 +103,37 @@ export function roadBetween(world: WorldDef, a: string, b: string): Road | undef
     ?.find((e) => e.to === b)?.road;
 }
 
-/** Kamyonun harita konumu (km); yoldaysa iki şehir arasında doğrusal ara değer. */
+/** Yol güzergâhı `fromId` şehrinden başlayacak yönde: [x0, y0, x1, y1, ...]. */
+export function roadPath(road: Road, fromId: string): number[] {
+  if (fromId === road.from) return road.path;
+  const out: number[] = [];
+  for (let i = road.path.length - 2; i >= 0; i -= 2) out.push(road.path[i]!, road.path[i + 1]!);
+  return out;
+}
+
+/** Güzergâh uzunluğunun `t` (0–1) oranındaki nokta ve o andaki gidiş yönü (radyan). */
+export function pointAlong(path: number[], t: number): { x: number; y: number; heading: number } {
+  let total = 0;
+  for (let i = 2; i < path.length; i += 2) {
+    total += Math.hypot(path[i]! - path[i - 2]!, path[i + 1]! - path[i - 1]!);
+  }
+  let left = Math.max(0, Math.min(t, 1)) * total;
+  for (let i = 2; i < path.length; i += 2) {
+    const ax = path[i - 2]!;
+    const ay = path[i - 1]!;
+    const dx = path[i]! - ax;
+    const dy = path[i + 1]! - ay;
+    const len = Math.hypot(dx, dy);
+    if (left <= len || i === path.length - 2) {
+      const f = len > 0 ? Math.min(left / len, 1) : 0;
+      return { x: ax + dx * f, y: ay + dy * f, heading: Math.atan2(dy, dx) };
+    }
+    left -= len;
+  }
+  return { x: path[0]!, y: path[1]!, heading: 0 };
+}
+
+/** Kamyonun harita konumu (km); yoldaysa yol güzergâhı boyunca kat ettiği oranda. */
 export function truckPosition(
   world: WorldDef,
   truck: { cityId: string; trip: { route: string[]; leg: number; legKm: number } | null },
@@ -115,10 +145,18 @@ export function truckPosition(
   const a = city(trip.route[trip.leg]!);
   const b = city(trip.route[trip.leg + 1]!);
   const road = roadBetween(world, a.id, b.id);
-  const t = road ? Math.min(trip.legKm / road.km, 1) : 0;
-  return {
-    x: a.x + (b.x - a.x) * t,
-    y: a.y + (b.y - a.y) * t,
-    heading: Math.atan2(b.y - a.y, b.x - a.x),
-  };
+  if (!road) return { x: a.x, y: a.y, heading: Math.atan2(b.y - a.y, b.x - a.x) };
+  return pointAlong(roadPath(road, a.id), trip.legKm / road.km);
+}
+
+/** Şehir dizisinden oluşan rotanın çizgisi: ardışık yol güzergâhları uç uca. */
+export function routePath(world: WorldDef, cities: string[]): number[] {
+  const out: number[] = [];
+  for (let i = 0; i + 1 < cities.length; i++) {
+    const road = roadBetween(world, cities[i]!, cities[i + 1]!);
+    if (!road) continue;
+    const path = roadPath(road, cities[i]!);
+    out.push(...(out.length ? path.slice(2) : path));
+  }
+  return out;
 }

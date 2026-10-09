@@ -36,6 +36,22 @@ describe.each(Object.values(WORLDS))('dünya verisi: $id', (world) => {
     }
   });
 
+  it('yol güzergâhı şehirleri birleştirir ve km değerinden kısa kalır', () => {
+    for (const r of world.roads) {
+      const p = r.path;
+      const a = byId.get(r.from)!;
+      const b = byId.get(r.to)!;
+      expect(p.slice(0, 2), r.id).toEqual([a.x, a.y]);
+      expect(p.slice(-2), r.id).toEqual([b.x, b.y]);
+      let drawn = 0;
+      for (let i = 2; i < p.length; i += 2)
+        drawn += Math.hypot(p[i]! - p[i - 2]!, p[i + 1]! - p[i - 1]!);
+      // Çizilen hat sadeleştirilmiş olduğundan gerçek yol km'si ondan biraz uzundur.
+      expect(drawn, r.id).toBeLessThanOrEqual(r.km);
+      expect(r.km / drawn, r.id).toBeLessThanOrEqual(1.4);
+    }
+  });
+
   it('tüm şehirler yol ağıyla birbirine bağlı', () => {
     const adj = new Map<string, string[]>();
     for (const r of world.roads) {
