@@ -256,6 +256,38 @@
   "market": {
     "used": "Used",
     "usedHint": "Listings refresh once a week. The vehicle is handed over in the listed city.",
+    "sortBy": "Sort by",
+    "sortAsc": "Ascending, tap for descending",
+    "sortDesc": "Descending, tap for ascending",
+    "sort": {
+      "price": "Price",
+      "capacity": "Class / capacity",
+      "fuel": "Fuel use",
+      "condition": "Condition",
+      "age": "Age"
+    },
+    "sortDir": {
+      "price": {
+        "asc": "cheapest",
+        "desc": "priciest"
+      },
+      "capacity": {
+        "asc": "smallest",
+        "desc": "largest"
+      },
+      "fuel": {
+        "asc": "thriftiest",
+        "desc": "thirstiest"
+      },
+      "condition": {
+        "asc": "worst",
+        "desc": "best"
+      },
+      "age": {
+        "asc": "newest",
+        "desc": "oldest"
+      }
+    },
     "noUsed": "No listings left this week.",
     "tractor": "Tractor unit",
     "age": "{{years}} years old",

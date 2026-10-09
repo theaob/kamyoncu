@@ -256,6 +256,38 @@
   "market": {
     "used": "İkinci el",
     "usedHint": "İlanlar haftada bir yenilenir. Araç ilandaki şehirde teslim edilir.",
+    "sortBy": "Sırala",
+    "sortAsc": "Artan, azalan için dokun",
+    "sortDesc": "Azalan, artan için dokun",
+    "sort": {
+      "price": "Fiyat",
+      "capacity": "Sınıf / kapasite",
+      "fuel": "Yakıt tüketimi",
+      "condition": "Durum",
+      "age": "Yaş"
+    },
+    "sortDir": {
+      "price": {
+        "asc": "en ucuz",
+        "desc": "en pahalı"
+      },
+      "capacity": {
+        "asc": "en küçük",
+        "desc": "en büyük"
+      },
+      "fuel": {
+        "asc": "en az yakan",
+        "desc": "en çok yakan"
+      },
+      "condition": {
+        "asc": "en kötü",
+        "desc": "en iyi"
+      },
+      "age": {
+        "asc": "en yeni",
+        "desc": "en eski"
+      }
+    },
     "noUsed": "Bu hafta ilan kalmadı.",
     "tractor": "Çekici",
     "age": "{{years}} yaşında",
