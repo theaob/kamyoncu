@@ -1055,3 +1055,45 @@ select:focus-visible {
   color: var(--muted);
   font-size: 12px;
 }
+
+/* Haritada üst üste binen araçlar için seçim listesi. */
+.map-chooser {
+  position: absolute;
+  z-index: 3;
+  overflow-y: auto;
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.2);
+}
+.map-chooser button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.map-chooser button:hover,
+.map-chooser button:focus-visible {
+  border-color: var(--line);
+}
+.map-chooser small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.map-chooser button[aria-pressed='true'] {
+  border-color: var(--otoyol);
+}

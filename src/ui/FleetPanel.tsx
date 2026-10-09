@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BALANCE, MINUTES_PER_DAY } from '../core/balance';
 import { tripProgress } from '../core/economy';
@@ -42,6 +43,12 @@ export function FleetPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
   const select = useGameStore((s) => s.selectTruck);
   const lang = currentLanguage();
   const now = useGameStore((s) => s.clock.time);
+  const focus = useGameStore((s) => s.truckFocus);
+  const detailRef = useRef<HTMLDivElement>(null);
+  // Haritadan seçilen aracın kartı listenin altında kalmasın.
+  useEffect(() => {
+    if (focus > 0) detailRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [focus]);
   if (!worldId || !selected) return null;
 
   return (
@@ -64,7 +71,9 @@ export function FleetPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
           </li>
         ))}
       </ul>
-      <TruckDetail truck={selected} worldId={worldId} onOpenBoard={onOpenBoard} />
+      <div ref={detailRef}>
+        <TruckDetail truck={selected} worldId={worldId} onOpenBoard={onOpenBoard} />
+      </div>
       {trailers.length > 0 && (
         <section className="fleet-section">
           <h3>{t('fleet.trailers')}</h3>
