@@ -2,12 +2,13 @@ import { BALANCE } from './balance';
 import { applyCommand, step } from './sim';
 import type { Command, GameState, SimEvent } from './types';
 
-/** Oyuncunun ilgisini isteyen olaylar: boşa çıkan ya da bakım isteyen araç. */
+/** Oyuncunun ilgisini isteyen olaylar: boşa çıkan, bakım isteyen ya da bakımdan çıkan araç. */
 export function needsAttention(event: SimEvent): boolean {
   return (
     event.code === 'job.delivered' ||
     event.code === 'job.deliveredLate' ||
-    event.code === 'fleet.needsService'
+    event.code === 'fleet.needsService' ||
+    event.code === 'fleet.serviceDone'
   );
 }
 

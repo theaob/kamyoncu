@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { SPEEDS } from '../core/types';
 import { useGameStore } from '../store/gameStore';
 
-/** Boşluk: duraklat/devam · 1–5: hız. Form alanlarında devre dışı. */
+/** Boşluk: duraklat/devam · 1–7: hız. Form alanlarında devre dışı. */
 export function useKeyboardShortcuts(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

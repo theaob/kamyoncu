@@ -47,7 +47,8 @@ export function TopBar() {
           aria-pressed={clock.paused}
           onClick={() => send({ type: 'togglePause' })}
         >
-          {clock.paused ? `▶ ${t('speed.resume')}` : `❚❚ ${t('speed.pause')}`}
+          <span aria-hidden="true">{clock.paused ? '▶' : '❚❚'}</span>
+          <span className="pause-label">{clock.paused ? t('speed.resume') : t('speed.pause')}</span>
         </button>
         {SPEEDS.map((s) => (
           <button

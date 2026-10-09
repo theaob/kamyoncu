@@ -940,7 +940,7 @@ select:focus-visible {
     padding: 0 4px;
   }
   .speed .pause {
-    flex: 2;
+    flex: 1.4;
     min-width: 0;
   }
   .log {
@@ -1054,4 +1054,20 @@ select:focus-visible {
   margin-top: 2px;
   color: var(--muted);
   font-size: 12px;
+}
+.pause-label {
+  margin-left: 6px;
+}
+/* Dar telefonda duraklat düğmesi yalnızca simge; yedi hız düğmesine yer kalsın. */
+@media (max-width: 420px) {
+  .pause-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .speed button {
+    font-size: 12px;
+  }
 }

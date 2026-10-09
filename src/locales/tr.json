@@ -16,7 +16,7 @@
     "pause": "Duraklat",
     "resume": "Devam et",
     "set": "Hız {{speed}}×",
-    "shortcuts": "Boşluk: duraklat · 1–5: hız"
+    "shortcuts": "Boşluk: duraklat · 1–7: hız"
   },
   "language": {
     "label": "Dil",
@@ -29,7 +29,7 @@
     "close": "Kapat",
     "notSavedYet": "Henüz kaydedilmedi",
     "autoPause": "Bir araç beni beklerken duraklat",
-    "autoPauseHint": "Bir araç teslimatı bitirince ya da bakım isteyince saati durdurur."
+    "autoPauseHint": "Bir araç teslimatı bitirince, bakım isteyince ya da bakımdan çıkınca saati durdurur."
   },
   "map": {
     "label": "Türkiye haritası",
