@@ -37,6 +37,7 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "reset": "Recenter map",
+    "chooseVehicle": "Choose a vehicle",
     "legend": {
       "otoyol": "Motorway",
       "devlet": "State road",

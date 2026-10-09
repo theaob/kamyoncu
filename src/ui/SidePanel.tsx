@@ -4,14 +4,13 @@ import { DriversPanel } from './DriversPanel';
 import { FinancePanel } from './FinancePanel';
 import { FleetPanel } from './FleetPanel';
 import { JobBoard } from './JobBoard';
+import { PANEL_TABS, useGameStore } from '../store/gameStore';
 import { MarketPanel } from './MarketPanel';
-
-const TABS = ['jobs', 'fleet', 'drivers', 'market', 'finance'] as const;
-type Tab = (typeof TABS)[number];
 
 export function SidePanel() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<Tab>('jobs');
+  const tab = useGameStore((s) => s.panelTab);
+  const setTab = useGameStore((s) => s.setPanelTab);
   // Dikey ekranda panel yarım ekran; tutamaçla büyütülüp haritaya yer açılır.
   const [expanded, setExpanded] = useState(false);
 
@@ -26,7 +25,7 @@ export function SidePanel() {
         onClick={() => setExpanded((e) => !e)}
       />
       <div className="tabs" role="tablist">
-        {TABS.map((id) => (
+        {PANEL_TABS.map((id) => (
           <button
             key={id}
             type="button"

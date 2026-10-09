@@ -6,6 +6,7 @@ import {
   clampToBounds,
   fitBounds,
   pan,
+  toScreen,
   zoomAt,
   type Bounds,
   type Camera,
@@ -18,6 +19,7 @@ import {
   ROUTE_CASING_PX,
   ROUTE_WIDTH_PX,
 } from './palette';
+import { hitRadius, isTap, markersAt } from './picking';
 
 const ROAD_ORDER: RoadKind[] = ['il', 'devlet', 'otoyol'];
 /** Küçük şehir etiketleri bu yakınlaştırmanın (piksel/km) üstünde görünür. */
@@ -50,6 +52,12 @@ const EMPTY_OVERLAY: MapOverlay = {
   previewLoaded: null,
 };
 
+/** Aynı noktadaki araç işaretleri arasındaki kaydırma (ekran pikseli). */
+const STACK_OFFSET_PX = 7;
+
+/** Haritada araca dokunulunca/tıklanınca: isabet eden araçlar (yakından uzağa) ve ekran noktası. */
+export type TruckPickHandler = (ids: string[], at: { x: number; y: number }) => void;
+
 /** Kamyon işaretinin hedef konuma yaklaşma hızı (kare başına oran); adımlar arası akıcılık için. */
 const TRUCK_SMOOTHING = 0.25;
 
@@ -76,9 +84,13 @@ export class MapRenderer {
       body: Graphics;
       pos: { x: number; y: number };
       angle: number;
+      stack: number;
       selected: boolean | null;
     }
   >();
+  private onPick: TruckPickHandler | null = null;
+  /** Tek parmakla başlayan basış; kayarsa ya da ikinci parmak gelirse dokunma sayılmaz. */
+  private tap: { pointerId: number; x: number; y: number; valid: boolean } | null = null;
   private overlay: MapOverlay = EMPTY_OVERLAY;
   private readonly cities: CityNode[] = [];
   private bounds: Bounds;
@@ -155,6 +167,10 @@ export class MapRenderer {
     if (routesChanged) this.drawRoutes();
     this.syncTrucks();
     this.moveTrucks();
+  }
+
+  setPickHandler(handler: TruckPickHandler | null): void {
+    this.onPick = handler;
   }
 
   reset(): void {
@@ -287,6 +303,7 @@ export class MapRenderer {
           body,
           pos: { x: marker.x, y: marker.y },
           angle: marker.heading ?? 0,
+          stack: 0,
           selected: null,
         };
         this.truckNodes.set(marker.id, t);
@@ -295,11 +312,14 @@ export class MapRenderer {
       if (Math.hypot(marker.x - t.pos.x, marker.y - t.pos.y) > 200) {
         t.pos = { x: marker.x, y: marker.y };
       }
-      t.body.position.set(marker.stack * 7, -marker.stack * 7);
+      t.stack = marker.stack;
+      t.body.position.set(marker.stack * STACK_OFFSET_PX, -marker.stack * STACK_OFFSET_PX);
       if (t.selected !== marker.selected) {
         t.selected = marker.selected;
+        t.body.clear();
+        // Seçili araç: arkasında yarı saydam sarı hale.
+        if (marker.selected) t.body.circle(0, 0, 15).fill({ color: MAP_COLORS.truck, alpha: 0.35 });
         t.body
-          .clear()
           .roundRect(-9, -6, 18, 12, 3)
           .fill(marker.selected ? MAP_COLORS.truck : MAP_COLORS.truckIdle)
           .stroke({ width: 2, color: MAP_COLORS.truckOutline })
@@ -328,6 +348,16 @@ export class MapRenderer {
       }
       t.body.rotation = t.angle;
     }
+  }
+
+  /** Ekran noktasının altındaki araçlar; işaretlerin çizildiği (yumuşatılmış) konuma göre. */
+  private trucksAt(x: number, y: number, pointerType: string): string[] {
+    const vp = this.viewport();
+    const markers = [...this.truckNodes].map(([id, t]) => {
+      const s = toScreen(this.camera, vp, t.pos.x, t.pos.y);
+      return { id, x: s.x + t.stack * STACK_OFFSET_PX, y: s.y - t.stack * STACK_OFFSET_PX };
+    });
+    return markersAt(markers, x, y, hitRadius(pointerType));
   }
 
   private drawCities(): void {
@@ -375,12 +405,24 @@ export class MapRenderer {
     );
     canvas.addEventListener('pointerdown', (e) => {
       canvas.setPointerCapture(e.pointerId);
-      this.pointers.set(e.pointerId, local(e));
+      const p = local(e);
+      this.pointers.set(e.pointerId, p);
+      this.tap =
+        this.pointers.size === 1 && e.button === 0
+          ? { pointerId: e.pointerId, ...p, valid: true }
+          : null;
     });
     canvas.addEventListener('pointermove', (e) => {
       const prev = this.pointers.get(e.pointerId);
-      if (!prev) return;
       const p = local(e);
+      if (!prev) {
+        // Fare basılı değilken: araç üzerindeyse tıklanabilir imleci.
+        if (e.pointerType === 'mouse') {
+          canvas.style.cursor = this.trucksAt(p.x, p.y, 'mouse').length > 0 ? 'pointer' : '';
+        }
+        return;
+      }
+      if (this.tap?.pointerId === e.pointerId && !isTap(this.tap, p)) this.tap.valid = false;
       if (this.pointers.size === 1) {
         this.setCamera(pan(this.camera, p.x - prev.x, p.y - prev.y));
       } else if (this.pointers.size === 2) {
@@ -399,8 +441,18 @@ export class MapRenderer {
       }
       this.pointers.set(e.pointerId, p);
     });
-    const end = (e: PointerEvent) => this.pointers.delete(e.pointerId);
-    canvas.addEventListener('pointerup', end);
+    const end = (e: PointerEvent) => {
+      this.pointers.delete(e.pointerId);
+      if (this.tap?.pointerId === e.pointerId) this.tap = null;
+    };
+    canvas.addEventListener('pointerup', (e) => {
+      const tap = this.tap;
+      end(e);
+      if (!tap || tap.pointerId !== e.pointerId || !tap.valid) return;
+      const p = local(e);
+      if (!isTap(tap, p)) return;
+      this.onPick?.(this.trucksAt(p.x, p.y, e.pointerType), p);
+    });
     canvas.addEventListener('pointercancel', end);
   }
 }

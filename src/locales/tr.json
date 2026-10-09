@@ -37,6 +37,7 @@
     "zoomIn": "Yakınlaştır",
     "zoomOut": "Uzaklaştır",
     "reset": "Haritayı ortala",
+    "chooseVehicle": "Araç seçin",
     "legend": {
       "otoyol": "Otoyol",
       "devlet": "Devlet yolu",

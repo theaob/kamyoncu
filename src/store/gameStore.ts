@@ -8,6 +8,9 @@ import { backupSave, readAutoPause, readSave, writeAutoPause, writeSave } from '
 
 const LOG_LIMIT = 30;
 
+export const PANEL_TABS = ['jobs', 'fleet', 'drivers', 'market', 'finance'] as const;
+export type PanelTab = (typeof PANEL_TABS)[number];
+
 export interface LogEntry {
   id: number;
   time: number;
@@ -33,6 +36,10 @@ interface GameStore extends GameView {
   highlightJobId: string | null;
   /** Panellerde ve haritada seçili araç. */
   selectedTruckId: string | null;
+  /** Yan panelde açık sekme. */
+  panelTab: PanelTab;
+  /** Haritadan araç seçildikçe artar; Filo paneli seçili aracın kartını görünüme kaydırır. */
+  truckFocus: number;
   /** Araç boşa çıkınca ya da bakım isteyince oyunu duraklat. */
   autoPause: boolean;
   setAutoPause(on: boolean): void;
@@ -41,6 +48,9 @@ interface GameStore extends GameView {
   dismissLoadError(): void;
   setHighlightJob(id: string | null): void;
   selectTruck(id: string): void;
+  setPanelTab(tab: PanelTab): void;
+  /** Haritada dokunulan aracı seçer ve Filo sekmesinde kartını açar. */
+  pickTruck(id: string): void;
   receive(msg: FromWorker): void;
 }
 
@@ -68,6 +78,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   saveBlocked: false,
   highlightJobId: null,
   selectedTruckId: null,
+  panelTab: 'jobs',
+  truckFocus: 0,
   autoPause: readAutoPause(),
   setAutoPause: (on) => {
     writeAutoPause(on);
@@ -79,6 +91,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
   dismissLoadError: () => set({ loadError: null }),
   setHighlightJob: (id) => set({ highlightJobId: id }),
   selectTruck: (id) => set({ selectedTruckId: id }),
+  setPanelTab: (tab) => set({ panelTab: tab }),
+  pickTruck: (id) =>
+    set((s) => ({ selectedTruckId: id, panelTab: 'fleet', truckFocus: s.truckFocus + 1 })),
   receive: (msg) => {
     switch (msg.type) {
       case 'ready':
