@@ -24,6 +24,11 @@ interface GameStore extends GameView {
   savedAt: number | null;
   /** Depolama kapalı ya da dolu: kayıt yazılamadı. */
   saveFailed: boolean;
+  /**
+   * Kayıt bu derlemeden yeni bir sürüme ait (ör. başka bir dalın önizlemesi).
+   * Kayıt ortak olduğu için bu oturumda hiç yazılmaz; yeni sürüm bozulmasın.
+   */
+  saveBlocked: boolean;
   /** Haritada rotası vurgulanan ilan (üzerine gelinen/seçilen). */
   highlightJobId: string | null;
   /** Panellerde ve haritada seçili araç. */
@@ -60,6 +65,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   loadError: null,
   savedAt: null,
   saveFailed: false,
+  saveBlocked: false,
   highlightJobId: null,
   selectedTruckId: null,
   autoPause: readAutoPause(),
@@ -76,8 +82,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   receive: (msg) => {
     switch (msg.type) {
       case 'ready':
-        if (msg.loadError) backupSave();
+        // Yeni sürüm kaydı olduğu gibi kalır; bozuk kayıt yedeklenip üzerine yazılır.
+        if (msg.loadError === 'corrupt') backupSave();
         set({
+          saveBlocked: get().saveBlocked || msg.loadError === 'tooNew',
           ready: true,
           worldId: msg.worldId,
           clock: msg.clock,
@@ -89,6 +97,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         });
         return;
       case 'save':
+        if (get().saveBlocked) return;
         if (writeSave(msg.data)) set({ savedAt: get().clock.time, saveFailed: false });
         else set({ saveFailed: true });
         return;

@@ -5,7 +5,8 @@
     "newGame": "Yeni oyun",
     "newGameConfirm": "Mevcut kariyer silinip yeni oyun başlatılsın mı?",
     "saved": "Kaydedildi {{time}}",
-    "notSaved": "Kayıt yapılamıyor (depolama kapalı)"
+    "notSaved": "Kayıt yapılamıyor (depolama kapalı)",
+    "saveBlocked": "Kaydedilmiyor: kayıt daha yeni bir sürüme ait"
   },
   "clock": {
     "paused": "Duraklatıldı",
@@ -80,7 +81,7 @@
   "save": {
     "loadError": {
       "corrupt": "Kayıt okunamadı; yeni oyun başlatıldı. Eski kayıt yedeklendi.",
-      "tooNew": "Kayıt oyunun daha yeni bir sürümüne ait; yeni oyun başlatıldı. Eski kayıt yedeklendi."
+      "tooNew": "Kayıt oyunun daha yeni bir sürümüne ait (başka bir dalın derlemesi olabilir). Kayda dokunulmadı: bu oturumda kaydedilmeyen yeni bir oyun oynuyorsun. Devam etmek için yeni sürümü aç."
     },
     "dismiss": "Tamam"
   },
