@@ -100,7 +100,9 @@
     "finance": "Finance",
     "fleet": "Fleet",
     "drivers": "Drivers",
-    "market": "Market"
+    "market": "Market",
+    "shrink": "Show more map",
+    "expand": "Enlarge panel"
   },
   "jobs": {
     "filter": {
