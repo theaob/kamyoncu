@@ -37,7 +37,7 @@ export interface WorldDef {
 }
 
 /** Oyun hızı çarpanları. Duraklatma ayrı bir bayraktır; devam edince son hız korunur. */
-export const SPEEDS = [1, 2, 4, 8, 16] as const;
+export const SPEEDS = [1, 2, 4, 8, 16, 32, 64] as const;
 export type Speed = (typeof SPEEDS)[number];
 
 /** Para: tamsayı kuruş (plan 5.5). */

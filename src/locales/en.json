@@ -16,7 +16,7 @@
     "pause": "Pause",
     "resume": "Resume",
     "set": "Speed {{speed}}×",
-    "shortcuts": "Space: pause · 1–5: speed"
+    "shortcuts": "Space: pause · 1–7: speed"
   },
   "language": {
     "label": "Language",
