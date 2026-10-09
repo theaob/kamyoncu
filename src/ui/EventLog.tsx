@@ -97,6 +97,7 @@ function describe(
     case 'driver.fired':
       return [key, { name: event.params.name }];
     case 'market.refreshed':
+    case 'time.autoPaused':
       return [key, {}];
     case 'command.failed':
       return [key, { reason: t(`commandError.${event.params.reason}`) }];

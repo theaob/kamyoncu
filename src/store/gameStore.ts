@@ -4,7 +4,7 @@ import { createFinance } from '../core/ledger';
 import type { Command, SimEvent } from '../core/types';
 import { startSimWorker, type SimClient } from '../worker/client';
 import type { ClockView, FromWorker, GameView } from '../worker/protocol';
-import { backupSave, readSave, writeSave } from './persistence';
+import { backupSave, readAutoPause, readSave, writeAutoPause, writeSave } from './persistence';
 
 const LOG_LIMIT = 30;
 
@@ -28,6 +28,9 @@ interface GameStore extends GameView {
   highlightJobId: string | null;
   /** Panellerde ve haritada seçili araç. */
   selectedTruckId: string | null;
+  /** Araç boşa çıkınca ya da bakım isteyince oyunu duraklat. */
+  autoPause: boolean;
+  setAutoPause(on: boolean): void;
   send(command: Command): void;
   newGame(): void;
   dismissLoadError(): void;
@@ -59,6 +62,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
   saveFailed: false,
   highlightJobId: null,
   selectedTruckId: null,
+  autoPause: readAutoPause(),
+  setAutoPause: (on) => {
+    writeAutoPause(on);
+    client?.setAutoPause(on);
+    set({ autoPause: on });
+  },
   send: (command) => client?.send(command),
   newGame: () => client?.newGame(randomSeed()),
   dismissLoadError: () => set({ loadError: null }),
@@ -112,7 +121,9 @@ export function useSelectedTruck() {
 /** Simülasyon worker'ını bir kez başlatır (React StrictMode çift çağrısına dayanıklı). */
 export function ensureSimStarted(seed = randomSeed()): void {
   if (client) return;
-  client = startSimWorker(seed, readSave(), (msg) => useGameStore.getState().receive(msg));
+  client = startSimWorker(seed, readSave(), useGameStore.getState().autoPause, (msg) =>
+    useGameStore.getState().receive(msg),
+  );
   // Sekme kapanırken/arka plana geçerken son durumu kaydet.
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') client?.requestSave();

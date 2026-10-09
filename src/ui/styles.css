@@ -960,3 +960,21 @@ select:focus-visible {
     max-width: min(320px, calc(100% - 70px));
   }
 }
+.menu-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.menu-check input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--otoyol);
+}
+.menu-check small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}

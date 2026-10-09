@@ -20,6 +20,7 @@ export class SimHost {
   private sentMoney: Money | null = null;
   private sentCandidates: Candidate[] | null = null;
   private sentListings: UsedListing[] | null = null;
+  private autoPause = false;
 
   constructor(
     private readonly post: (msg: FromWorker) => void,
@@ -29,6 +30,7 @@ export class SimHost {
   handle(msg: ToWorker): void {
     switch (msg.type) {
       case 'init': {
+        this.autoPause = msg.autoPause ?? false;
         let loadError: SaveError | undefined;
         let state = null;
         if (msg.save) {
@@ -47,6 +49,10 @@ export class SimHost {
         return;
       case 'save':
         this.save();
+        return;
+      case 'setAutoPause':
+        this.autoPause = msg.on;
+        if (this.runner) this.runner.autoPause = msg.on;
         return;
       case 'command': {
         if (!this.runner) return;
@@ -78,6 +84,7 @@ export class SimHost {
 
   private start(state: ReturnType<typeof createInitialState>, loadError?: SaveError): void {
     this.runner = new SimRunner(state);
+    this.runner.autoPause = this.autoPause;
     this.last = this.now();
     this.lastSave = this.last;
     this.dirty = false;

@@ -13,6 +13,8 @@ export function GameMenu() {
   const savedAt = useGameStore((s) => s.savedAt);
   const saveFailed = useGameStore((s) => s.saveFailed);
   const newGame = useGameStore((s) => s.newGame);
+  const autoPause = useGameStore((s) => s.autoPause);
+  const setAutoPause = useGameStore((s) => s.setAutoPause);
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -74,6 +76,18 @@ export function GameMenu() {
                 </option>
               ))}
             </select>
+          </label>
+
+          <label className="menu-check">
+            <input
+              type="checkbox"
+              checked={autoPause}
+              onChange={(e) => setAutoPause(e.target.checked)}
+            />
+            <span>
+              {t('menu.autoPause')}
+              <small>{t('menu.autoPauseHint')}</small>
+            </span>
           </label>
 
           <p className="menu-row save-status" aria-live="polite">

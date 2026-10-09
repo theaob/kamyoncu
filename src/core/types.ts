@@ -251,6 +251,7 @@ export interface GameState {
  */
 export type SimEvent =
   | { code: 'time.newDay'; params: { day: number } }
+  | { code: 'time.autoPaused'; params: Record<string, never> }
   | { code: 'job.accepted'; params: { plate: string; from: string; to: string; cargo: string } }
   | { code: 'job.loaded'; params: { plate: string; city: string; cargo: string } }
   | {
@@ -285,6 +286,7 @@ export type SimEventCode = SimEvent['code'];
 /** Çeviri dosyalarının her olay kodunu kapsadığını test etmek için. */
 export const EVENT_CODES: readonly SimEventCode[] = [
   'time.newDay',
+  'time.autoPaused',
   'job.accepted',
   'job.loaded',
   'job.delivered',

@@ -39,10 +39,12 @@ export interface GameView {
 export type FleetView = Pick<GameView, 'money' | 'trucks' | 'trailers' | 'drivers'>;
 
 export type ToWorker =
-  | { type: 'init'; seed: number; save?: string | null }
+  | { type: 'init'; seed: number; save?: string | null; autoPause?: boolean }
   | { type: 'newGame'; seed: number }
   | { type: 'command'; command: Command }
-  | { type: 'save' };
+  | { type: 'save' }
+  /** Arayüz tercihi; kayda girmez. */
+  | { type: 'setAutoPause'; on: boolean };
 
 export type FromWorker =
   | {
