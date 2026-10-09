@@ -12,6 +12,7 @@ export function GameMenu() {
   const lang = currentLanguage();
   const savedAt = useGameStore((s) => s.savedAt);
   const saveFailed = useGameStore((s) => s.saveFailed);
+  const saveBlocked = useGameStore((s) => s.saveBlocked);
   const newGame = useGameStore((s) => s.newGame);
   const autoPause = useGameStore((s) => s.autoPause);
   const setAutoPause = useGameStore((s) => s.setAutoPause);
@@ -91,11 +92,13 @@ export function GameMenu() {
           </label>
 
           <p className="menu-row save-status" aria-live="polite">
-            {saveFailed
-              ? t('app.notSaved')
-              : savedAt !== null
-                ? t('app.saved', { time: formatGameTime(savedAt, lang) })
-                : t('menu.notSavedYet')}
+            {saveBlocked
+              ? t('app.saveBlocked')
+              : saveFailed
+                ? t('app.notSaved')
+                : savedAt !== null
+                  ? t('app.saved', { time: formatGameTime(savedAt, lang) })
+                  : t('menu.notSavedYet')}
           </p>
 
           <button

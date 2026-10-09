@@ -191,7 +191,7 @@ jobs:
 
   preview:
     name: Dal önizlemesi (GitHub Pages)
-    needs: [check, version]
+    needs: [web, version]
     if: >-
       github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -204,17 +204,11 @@ jobs:
           slug=$(echo "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+|-+$//g')
           echo "slug=$slug" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Önizlemeler aynı web derlemesini kullanır; kayıt yuvası tüm dallarda ortaktır.
+      - uses: actions/download-artifact@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci
-      # Ayrı derleme: her dal kendi kayıt yuvasını kullanır, böylece önizlemeler
-      # birbirinin (ve şemanın farklı olabileceği) kayıtlarını bozmaz.
-      - run: npm run build
-        env:
-          VITE_APP_VERSION: ${{ needs.version.outputs.name }}
-          VITE_SAVE_NAMESPACE: ${{ steps.slug.outputs.slug }}
+          name: kamyoncu-web
+          path: dist
       - name: gh-pages dalına yayınla
         env:
           SLUG: ${{ steps.slug.outputs.slug }}

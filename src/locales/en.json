@@ -5,7 +5,8 @@
     "newGame": "New game",
     "newGameConfirm": "Delete the current career and start a new game?",
     "saved": "Saved {{time}}",
-    "notSaved": "Can't save (storage disabled)"
+    "notSaved": "Can't save (storage disabled)",
+    "saveBlocked": "Not saved: the save belongs to a newer version"
   },
   "clock": {
     "paused": "Paused",
@@ -80,7 +81,7 @@
   "save": {
     "loadError": {
       "corrupt": "The save couldn't be read, so a new game was started. The old save was backed up.",
-      "tooNew": "The save is from a newer version of the game, so a new game was started. The old save was backed up."
+      "tooNew": "This save is from a newer version of the game (another branch build?). It was left untouched: you are playing a new game that won't be saved. Open the newer build to continue."
     },
     "dismiss": "OK"
   },
