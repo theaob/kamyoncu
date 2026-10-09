@@ -5,7 +5,8 @@
     "newGame": "New game",
     "newGameConfirm": "Delete the current career and start a new game?",
     "saved": "Saved {{time}}",
-    "notSaved": "Can't save (storage disabled)"
+    "notSaved": "Can't save (storage disabled)",
+    "saveBlocked": "Not saved: the save belongs to a newer version"
   },
   "clock": {
     "paused": "Paused",
@@ -16,7 +17,7 @@
     "pause": "Pause",
     "resume": "Resume",
     "set": "Speed {{speed}}×",
-    "shortcuts": "Space: pause · 1–5: speed"
+    "shortcuts": "Space: pause · 1–7: speed"
   },
   "language": {
     "label": "Language",
@@ -29,7 +30,7 @@
     "close": "Close",
     "notSavedYet": "Not saved yet",
     "autoPause": "Pause when a truck needs me",
-    "autoPauseHint": "Stops the clock when a truck finishes a delivery or needs a service."
+    "autoPauseHint": "Stops the clock when a truck finishes a delivery, needs a service or comes out of service."
   },
   "map": {
     "label": "Map of Türkiye",
@@ -81,7 +82,7 @@
   "save": {
     "loadError": {
       "corrupt": "The save couldn't be read, so a new game was started. The old save was backed up.",
-      "tooNew": "The save is from a newer version of the game, so a new game was started. The old save was backed up."
+      "tooNew": "This save is from a newer version of the game (another branch build?). It was left untouched: you are playing a new game that won't be saved. Open the newer build to continue."
     },
     "dismiss": "OK"
   },
@@ -257,6 +258,38 @@
   "market": {
     "used": "Used",
     "usedHint": "Listings refresh once a week. The vehicle is handed over in the listed city.",
+    "sortBy": "Sort by",
+    "sortAsc": "Ascending, tap for descending",
+    "sortDesc": "Descending, tap for ascending",
+    "sort": {
+      "price": "Price",
+      "capacity": "Class / capacity",
+      "fuel": "Fuel use",
+      "condition": "Condition",
+      "age": "Age"
+    },
+    "sortDir": {
+      "price": {
+        "asc": "cheapest",
+        "desc": "priciest"
+      },
+      "capacity": {
+        "asc": "smallest",
+        "desc": "largest"
+      },
+      "fuel": {
+        "asc": "thriftiest",
+        "desc": "thirstiest"
+      },
+      "condition": {
+        "asc": "worst",
+        "desc": "best"
+      },
+      "age": {
+        "asc": "newest",
+        "desc": "oldest"
+      }
+    },
     "noUsed": "No listings left this week.",
     "tractor": "Tractor unit",
     "age": "{{years}} years old",

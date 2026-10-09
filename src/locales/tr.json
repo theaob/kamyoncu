@@ -5,7 +5,8 @@
     "newGame": "Yeni oyun",
     "newGameConfirm": "Mevcut kariyer silinip yeni oyun başlatılsın mı?",
     "saved": "Kaydedildi {{time}}",
-    "notSaved": "Kayıt yapılamıyor (depolama kapalı)"
+    "notSaved": "Kayıt yapılamıyor (depolama kapalı)",
+    "saveBlocked": "Kaydedilmiyor: kayıt daha yeni bir sürüme ait"
   },
   "clock": {
     "paused": "Duraklatıldı",
@@ -16,7 +17,7 @@
     "pause": "Duraklat",
     "resume": "Devam et",
     "set": "Hız {{speed}}×",
-    "shortcuts": "Boşluk: duraklat · 1–5: hız"
+    "shortcuts": "Boşluk: duraklat · 1–7: hız"
   },
   "language": {
     "label": "Dil",
@@ -29,7 +30,7 @@
     "close": "Kapat",
     "notSavedYet": "Henüz kaydedilmedi",
     "autoPause": "Bir araç beni beklerken duraklat",
-    "autoPauseHint": "Bir araç teslimatı bitirince ya da bakım isteyince saati durdurur."
+    "autoPauseHint": "Bir araç teslimatı bitirince, bakım isteyince ya da bakımdan çıkınca saati durdurur."
   },
   "map": {
     "label": "Türkiye haritası",
@@ -81,7 +82,7 @@
   "save": {
     "loadError": {
       "corrupt": "Kayıt okunamadı; yeni oyun başlatıldı. Eski kayıt yedeklendi.",
-      "tooNew": "Kayıt oyunun daha yeni bir sürümüne ait; yeni oyun başlatıldı. Eski kayıt yedeklendi."
+      "tooNew": "Kayıt oyunun daha yeni bir sürümüne ait (başka bir dalın derlemesi olabilir). Kayda dokunulmadı: bu oturumda kaydedilmeyen yeni bir oyun oynuyorsun. Devam etmek için yeni sürümü aç."
     },
     "dismiss": "Tamam"
   },
@@ -257,6 +258,38 @@
   "market": {
     "used": "İkinci el",
     "usedHint": "İlanlar haftada bir yenilenir. Araç ilandaki şehirde teslim edilir.",
+    "sortBy": "Sırala",
+    "sortAsc": "Artan, azalan için dokun",
+    "sortDesc": "Azalan, artan için dokun",
+    "sort": {
+      "price": "Fiyat",
+      "capacity": "Sınıf / kapasite",
+      "fuel": "Yakıt tüketimi",
+      "condition": "Durum",
+      "age": "Yaş"
+    },
+    "sortDir": {
+      "price": {
+        "asc": "en ucuz",
+        "desc": "en pahalı"
+      },
+      "capacity": {
+        "asc": "en küçük",
+        "desc": "en büyük"
+      },
+      "fuel": {
+        "asc": "en az yakan",
+        "desc": "en çok yakan"
+      },
+      "condition": {
+        "asc": "en kötü",
+        "desc": "en iyi"
+      },
+      "age": {
+        "asc": "en yeni",
+        "desc": "en eski"
+      }
+    },
     "noUsed": "Bu hafta ilan kalmadı.",
     "tractor": "Çekici",
     "age": "{{years}} yaşında",

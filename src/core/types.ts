@@ -21,6 +21,12 @@ export interface Road {
   /** Yol mesafesi, km. */
   km: number;
   kind: RoadKind;
+  /**
+   * Çizim ve kamyon konumu için yolun güzergâhı, harita koordinatlarında (km):
+   * [x0, y0, x1, y1, ...]; `from` şehriyle başlar, `to` şehriyle biter.
+   * Süre ve maliyet yine `km` ile hesaplanır; kamyon güzergâh boyunca orantılı ilerler.
+   */
+  path: Polygon;
 }
 
 /** Harita koordinatlarında (km) bir çokgen: [x0, y0, x1, y1, ...]. */
@@ -37,7 +43,7 @@ export interface WorldDef {
 }
 
 /** Oyun hızı çarpanları. Duraklatma ayrı bir bayraktır; devam edince son hız korunur. */
-export const SPEEDS = [1, 2, 4, 8, 16] as const;
+export const SPEEDS = [1, 2, 4, 8, 16, 32, 64] as const;
 export type Speed = (typeof SPEEDS)[number];
 
 /** Para: tamsayı kuruş (plan 5.5). */

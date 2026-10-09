@@ -97,8 +97,10 @@ bir HTML dosyası oynatılabildiği için önizlemeler orada tutulmaz.
 - Bir dal: `https://theaob.github.io/kamyoncu/b/<dal-adı>/` (küçük harf, `/` ve
   diğer özel karakterler `-` olur; ör. `claude/faz-2` → `claude-faz-2`).
   Adres, çalıştırma özetinde de yazar.
-- Her önizleme kendi kayıt yuvasını kullanır (`kamyoncu.save.<dal-adı>`), böylece
-  dallar birbirinin kaydını bozmaz.
+- Tüm önizlemeler aynı kaydı paylaşır (`kamyoncu.save`), böylece ilerleme dallar
+  arasında taşınır. Kayıt daha yeni bir sürüme aitse (ör. kayıt biçimini değiştiren
+  bir dal) eski derleme kayda dokunmaz: yeni bir oyun açar ve bu oturumu kaydetmez.
+  itch.io sürümü ayrı bir alan adında olduğu için kaydı ayrıdır.
 - Dal silinince önizlemesi, bir sonraki önizleme yayınında kaldırılır.
 - Dalın APK'sı çalıştırmanın **Artifacts** bölümündedir (`kamyoncu-android`).
 
