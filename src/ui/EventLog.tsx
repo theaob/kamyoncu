@@ -1,4 +1,5 @@
 import type { TFunction } from 'i18next';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SimEvent } from '../core/types';
 import { currentLanguage } from '../i18n';
@@ -102,29 +103,58 @@ function describe(
   }
 }
 
+/**
+ * Haritanın üstünde kapanabilir olay günlüğü. Kapalıyken yalnızca son olayı tek satırda
+ * gösterir; böylece telefonlarda haritayı örtmez.
+ */
 export function EventLog() {
   const { t } = useTranslation();
   const lang = currentLanguage();
   const log = useGameStore((s) => s.log);
   const worldId = useGameStore((s) => s.worldId);
+  const [open, setOpen] = useState(false);
+  const text = (entry: (typeof log)[number]) => {
+    const [key, params] = describe(entry.event, entry.time, lang, worldId, t);
+    return t(key, params);
+  };
+  const latest = log[0];
 
   return (
-    <section className="log" aria-labelledby="log-title">
-      <h2 id="log-title">{t('log.title')}</h2>
-      {log.length === 0 ? (
-        <p className="log-empty">{t('log.empty')}</p>
-      ) : (
-        <ol>
-          {log.map((entry) => {
-            const [key, params] = describe(entry.event, entry.time, lang, worldId, t);
-            return (
-              <li key={entry.id}>
-                <time>{formatGameTime(entry.time, lang)}</time>
-                <span>{t(key, params)}</span>
-              </li>
-            );
-          })}
-        </ol>
+    <section className={open ? 'log open' : 'log'} aria-labelledby="log-title">
+      <button
+        type="button"
+        className="log-toggle"
+        aria-expanded={open}
+        aria-controls="log-body"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span id="log-title" className="log-title">
+          {t('log.title')}
+        </span>
+        {!open && latest && (
+          <span className="log-latest">
+            <time>{formatGameTime(latest.time, lang)}</time> {text(latest)}
+          </span>
+        )}
+        <span className="log-chevron" aria-hidden="true">
+          {open ? '▾' : '▴'}
+        </span>
+      </button>
+      {open && (
+        <div id="log-body" className="log-body">
+          {log.length === 0 ? (
+            <p className="log-empty">{t('log.empty')}</p>
+          ) : (
+            <ol>
+              {log.map((entry) => (
+                <li key={entry.id}>
+                  <time>{formatGameTime(entry.time, lang)}</time>
+                  <span>{text(entry)}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
       )}
     </section>
   );

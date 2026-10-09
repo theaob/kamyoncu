@@ -23,6 +23,12 @@
     "tr": "Türkçe",
     "en": "English"
   },
+  "menu": {
+    "title": "Menü",
+    "open": "Menüyü aç",
+    "close": "Kapat",
+    "notSavedYet": "Henüz kaydedilmedi"
+  },
   "map": {
     "label": "Türkiye haritası",
     "zoomIn": "Yakınlaştır",

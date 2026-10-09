@@ -23,6 +23,12 @@
     "tr": "Türkçe",
     "en": "English"
   },
+  "menu": {
+    "title": "Menu",
+    "open": "Open menu",
+    "close": "Close",
+    "notSavedYet": "Not saved yet"
+  },
   "map": {
     "label": "Map of Türkiye",
     "zoomIn": "Zoom in",
