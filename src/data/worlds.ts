@@ -41,7 +41,7 @@ export function buildWorld(
 }
 
 export const WORLDS: Record<string, WorldDef> = {
-  tr: buildWorld('tr', 1, trCities as RawCity[], trRoads, [TR_LAND], TR_WATER),
+  tr: buildWorld('tr', 1, trCities as RawCity[], trRoads, TR_LAND, TR_WATER),
 };
 
 export function getWorld(id: string): WorldDef {

@@ -205,10 +205,10 @@ export class MapRenderer {
     for (const poly of this.def.land) {
       g.poly(poly)
         .fill(MAP_COLORS.land)
-        .stroke({ width: 2, color: MAP_COLORS.coast, pixelLine: false });
+        .stroke({ width: 1.2, color: MAP_COLORS.coast, pixelLine: false });
     }
     for (const poly of this.def.water) {
-      g.poly(poly).fill(MAP_COLORS.sea).stroke({ width: 1.5, color: MAP_COLORS.coast });
+      g.poly(poly).fill(MAP_COLORS.sea).stroke({ width: 1, color: MAP_COLORS.coast });
     }
     this.world.addChild(g);
   }
