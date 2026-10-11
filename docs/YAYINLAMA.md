@@ -7,9 +7,10 @@
 | Kontrol | Her gönderim ve PR | Lint, biçim, tip denetimi, testler |
 | Web derlemesi | Her gönderim ve PR | `kamyoncu-web` (Actions çıktısı) |
 | Android APK | Her gönderim ve PR | `kamyoncu-android` (Actions çıktısı) |
+| Android AAB (Play Store) | Release imzası tanımlıysa her gönderim | `kamyoncu-android-aab` (Actions çıktısı) |
 | itch.io'ya yayın | `main` dalına gönderim, `v*` etiketi veya elle tetikleme | itch.io'da `html5` ve `android` kanalları |
 | Dal önizlemesi | `main` dışındaki dallara gönderim | GitHub Pages'te dala özel web sürümü |
-| GitHub Release | `v*` etiketi | Web zip + APK |
+| GitHub Release | `v*` etiketi | Web zip + APK + AAB |
 
 **Sürüm numarası:** etiketlerde etiketin kendisi (`v0.2.0` → `0.2.0`), diğer
 derlemelerde `package.json` sürümü + çalıştırma numarası (`0.1.0-build.42`).
@@ -87,7 +88,24 @@ Sırları ekledikten sonra `kamyoncu.keystore.b64` dosyasını sil.
 - **Elle:** GitHub → Actions → CI/CD → **Run workflow** → dalı seç,
   "itch.io'ya yayınla" kutusunu işaretle.
 
-## 4. Dal önizlemeleri (birleştirilmemiş dalları oynamak)
+## 4. Google Play
+
+Play Console yalnızca imzalı Android App Bundle (`.aab`) kabul eder. CI, release
+imzası tanımlıysa APK'nın yanında aynı anahtarla imzalı bir AAB de üretir
+(`kamyoncu-android-aab` çıktısı; etiketli sürümlerde GitHub Release'e de eklenir).
+Debug imzalı derlemelerde AAB üretilmez.
+
+- **Play App Signing:** Play Console uygulamayı ilk yüklemede Google'ın
+  yönettiği bir uygulama anahtarına kaydeder; CI'daki anahtar **yükleme
+  anahtarı** olur. Sonraki her AAB aynı anahtarla imzalanmalıdır. Anahtar
+  kaybolursa Play Console'dan yükleme anahtarı sıfırlanabilir.
+- **versionCode:** çalıştırma numarasıdır ve her derlemede artar. Play aynı ya
+  da daha küçük `versionCode` kabul etmez; bu yüzden her yüklemede en son
+  derlemenin AAB'sini kullan.
+- **Paket adı:** `io.github.theaob.kamyoncu`. Play'e ilk yüklemeden sonra
+  değiştirilemez.
+
+## 5. Dal önizlemeleri (birleştirilmemiş dalları oynamak)
 
 `main` dışındaki her dala gönderim, oyunun web sürümünü GitHub Pages'e kendi
 klasörüne yayınlar. itch.io'ya dokunulmaz; itch.io sayfasında tarayıcıda yalnızca

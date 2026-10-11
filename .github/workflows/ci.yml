@@ -136,6 +136,21 @@ jobs:
           cp app/build/outputs/apk/$type/app-$type.apk "../apk/kamyoncu-${{ needs.version.outputs.name }}-$type.apk"
           echo "APK türü: $type" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: AAB derle (Play Store)
+        # Play Console yalnızca yükleme anahtarıyla imzalı paket kabul eder; debug AAB üretilmez.
+        if: env.ANDROID_KEYSTORE_FILE != ''
+        working-directory: android
+        run: |
+          ./gradlew bundleRelease --no-daemon \
+            -PversionCode=${{ needs.version.outputs.code }} \
+            -PversionName=${{ needs.version.outputs.name }}
+          mkdir -p ../aab
+          aab="../aab/kamyoncu-${{ needs.version.outputs.name }}-release.aab"
+          cp app/build/outputs/bundle/release/app-release.aab "$aab"
+          jarsigner -verify "$aab" | tee jarsigner.txt
+          grep -q "jar verified" jarsigner.txt
+          echo "AAB: kamyoncu-${{ needs.version.outputs.name }}-release.aab (versionCode ${{ needs.version.outputs.code }})" >> "$GITHUB_STEP_SUMMARY"
+
       - name: İmzayı doğrula
         run: |
           apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n1)apksigner
@@ -151,6 +166,13 @@ jobs:
         with:
           name: kamyoncu-android
           path: apk/*.apk
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: env.ANDROID_KEYSTORE_FILE != ''
+        with:
+          name: kamyoncu-android-aab
+          path: aab/*.aab
           if-no-files-found: error
 
   deploy-itch:
@@ -294,6 +316,10 @@ jobs:
         with:
           name: kamyoncu-android
           path: apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: kamyoncu-android-aab
+          path: aab
       - run: (cd web && zip -qr "../kamyoncu-${{ needs.version.outputs.name }}-web.zip" .)
       - uses: softprops/action-gh-release@v2
         with:
@@ -301,3 +327,4 @@ jobs:
           files: |
             kamyoncu-*-web.zip
             apk/*.apk
+            aab/*.aab
