@@ -104,6 +104,10 @@ Debug imzalı derlemelerde AAB üretilmez.
   derlemenin AAB'sini kullan.
 - **Paket adı:** `io.github.theaob.kamyoncu`. Play'e ilk yüklemeden sonra
   değiştirilemez.
+- **Gizlilik politikası:** `public/privacy.html`; her dal önizlemesi yayınında
+  GitHub Pages köküne de kopyalanır: `https://theaob.github.io/kamyoncu/privacy.html`.
+- **Simge ve açılış ekranı:** `android/app/src/main/res` altındaki `mipmap-*` ve
+  `drawable*/splash.png` dosyaları `public/favicon.svg` çiziminden üretilmiştir.
 
 ## 5. Dal önizlemeleri (birleştirilmemiş dalları oynamak)
 
