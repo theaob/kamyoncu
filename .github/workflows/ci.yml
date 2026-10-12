@@ -255,6 +255,8 @@ jobs:
             (
               cd pages
               touch .nojekyll
+              # Gizlilik politikasının kalıcı adresi (Google Play): /privacy.html
+              cp ../dist/privacy.html privacy.html
               mkdir -p b
               rm -rf "b/$SLUG"
               cp -r ../dist "b/$SLUG"
