@@ -158,6 +158,8 @@ export interface Truck {
   trip: Trip | null;
   /** Bakımdaysa bitiş anı. */
   serviceUntil: number | null;
+  /** Filo müdürü bu aracı yönetsin mi (iş alma, bakım). Müdür yoksa etkisizdir. */
+  managed: boolean;
 }
 
 export interface Trailer {
@@ -179,6 +181,19 @@ export interface Driver {
   /** Aylık maaş, kuruş. Oyuncunun maaşı yoktur. */
   salary: Money;
   isPlayer: boolean;
+}
+
+/**
+ * Filo müdürü: boştaki araçlara kendiliğinden iş bulur, yıpranınca bakıma yollar.
+ * Araç alım-satımı ve şoför kararları oyuncuda kalır.
+ */
+export interface Manager {
+  /** Kişi adı; çevrilmez. */
+  name: string;
+  /** Aylık maaş, kuruş. */
+  salary: Money;
+  /** Kapalıysa müdür maaş almaya devam eder ama hiçbir şeye dokunmaz. */
+  active: boolean;
 }
 
 /** Şoför pazarındaki aday (plan 3.4: her hafta yenilenir). */
@@ -249,6 +264,7 @@ export interface GameState {
   usedListings: UsedListing[];
   jobs: Job[];
   finance: Finance;
+  manager: Manager | null;
 }
 
 /**
@@ -285,6 +301,13 @@ export type SimEvent =
   | { code: 'driver.hired'; params: { name: string } }
   | { code: 'driver.fired'; params: { name: string } }
   | { code: 'market.refreshed'; params: Record<string, never> }
+  | { code: 'manager.hired'; params: { name: string } }
+  | { code: 'manager.fired'; params: { name: string } }
+  | {
+      code: 'manager.dispatched';
+      params: { plate: string; from: string; to: string; cargo: string; profit: Money };
+    }
+  | { code: 'manager.serviced'; params: { plate: string } }
   | { code: 'command.failed'; params: { reason: CommandError } };
 
 export type SimEventCode = SimEvent['code'];
@@ -307,6 +330,10 @@ export const EVENT_CODES: readonly SimEventCode[] = [
   'driver.hired',
   'driver.fired',
   'market.refreshed',
+  'manager.hired',
+  'manager.fired',
+  'manager.dispatched',
+  'manager.serviced',
   'command.failed',
 ];
 
@@ -347,7 +374,9 @@ export type CommandError =
   | 'trailerInUse'
   | 'noRigidBody'
   | 'isPlayer'
-  | 'notNeeded';
+  | 'notNeeded'
+  | 'noManager'
+  | 'hasManager';
 export const COMMAND_ERRORS: readonly CommandError[] = [
   'notFound',
   'noMoney',
@@ -361,6 +390,8 @@ export const COMMAND_ERRORS: readonly CommandError[] = [
   'noRigidBody',
   'isPlayer',
   'notNeeded',
+  'noManager',
+  'hasManager',
 ];
 
 export type Command =
@@ -378,4 +409,8 @@ export type Command =
   | { type: 'serviceTruck'; truckId: string }
   | { type: 'hireDriver'; candidateId: string }
   | { type: 'fireDriver'; driverId: string }
-  | { type: 'assignDriver'; driverId: string; truckId: string | null };
+  | { type: 'assignDriver'; driverId: string; truckId: string | null }
+  | { type: 'hireManager' }
+  | { type: 'fireManager' }
+  | { type: 'setManagerActive'; active: boolean }
+  | { type: 'setTruckManaged'; truckId: string; managed: boolean };

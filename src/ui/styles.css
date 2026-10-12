@@ -1057,19 +1057,22 @@ select:focus-visible {
     max-width: min(320px, calc(100% - 70px));
   }
 }
-.menu-check {
+.menu-check,
+.check-row {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
 }
-.menu-check input {
+.menu-check input,
+.check-row input {
   width: 18px;
   height: 18px;
   margin: 2px 0 0;
   accent-color: var(--otoyol);
 }
-.menu-check small {
+.menu-check small,
+.check-row small {
   display: block;
   margin-top: 2px;
   color: var(--muted);
@@ -1132,4 +1135,20 @@ select:focus-visible {
 }
 .map-chooser button[aria-pressed='true'] {
   border-color: var(--otoyol);
+}
+
+.check-row {
+  margin-bottom: 12px;
+}
+.auto-badge {
+  margin-left: 6px;
+  padding: 0 4px;
+  border: 1px solid var(--otoyol);
+  border-radius: 3px;
+  color: var(--otoyol);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  vertical-align: 1px;
 }

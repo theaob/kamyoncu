@@ -5,6 +5,7 @@ import type {
   Driver,
   Finance,
   Job,
+  Manager,
   Money,
   SimEvent,
   Speed,
@@ -21,7 +22,7 @@ export interface ClockView {
 }
 
 /**
- * Oyun durumunun arayüze giden kısmı. Para ve filo (araç, dorse, şoför) her
+ * Oyun durumunun arayüze giden kısmı. Para, filo (araç, dorse, şoför) ve müdür her
  * tikte gelir; borsa, pazar ve finans yalnızca değiştiklerinde (plan 5.2: farklar).
  */
 export interface GameView {
@@ -33,10 +34,11 @@ export interface GameView {
   candidates: Candidate[];
   usedListings: UsedListing[];
   finance: Finance;
+  manager: Manager | null;
 }
 
 /** Her tikte gönderilen alanlar. */
-export type FleetView = Pick<GameView, 'money' | 'trucks' | 'trailers' | 'drivers'>;
+export type FleetView = Pick<GameView, 'money' | 'trucks' | 'trailers' | 'drivers' | 'manager'>;
 
 export type ToWorker =
   | { type: 'init'; seed: number; save?: string | null; autoPause?: boolean }

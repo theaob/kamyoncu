@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { findRoute, truckPosition } from '../core/routing';
 import { getWorld } from '../data/worlds';
+import { isManaged } from '../core/manager';
 import { useGameStore } from '../store/gameStore';
 import { modelLabel, truckStatus } from '../ui/fleetText';
 import { MapRenderer, type MapOverlay } from './MapRenderer';
@@ -183,6 +184,7 @@ function TruckChooser({
 }) {
   const { t } = useTranslation();
   const trucks = useGameStore((s) => s.trucks);
+  const manager = useGameStore((s) => s.manager);
   const selectedId = useGameStore((s) => s.selectedTruckId);
   const pick = useGameStore((s) => s.pickTruck);
   const listRef = useRef<HTMLDivElement>(null);
@@ -229,7 +231,7 @@ function TruckChooser({
           <span className="plate">{truck.plate}</span>
           <span className="fleet-item">
             <strong>{modelLabel(t, truck.modelId)}</strong>
-            <small>{truckStatus(t, worldId, truck)}</small>
+            <small>{truckStatus(t, worldId, truck, isManaged({ manager }, truck))}</small>
           </span>
         </button>
       ))}
