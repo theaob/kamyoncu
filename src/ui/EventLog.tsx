@@ -92,10 +92,24 @@ function describe(
       return [key, { kind: t(`body.${event.params.kind}`), price: money(event.params.price) }];
     case 'fleet.serviceDone':
     case 'fleet.needsService':
+    case 'manager.serviced':
       return [key, { plate: event.params.plate }];
     case 'driver.hired':
     case 'driver.fired':
+    case 'manager.hired':
+    case 'manager.fired':
       return [key, { name: event.params.name }];
+    case 'manager.dispatched':
+      return [
+        key,
+        {
+          plate: event.params.plate,
+          cargo: cargo(event.params.cargo),
+          from: city(event.params.from),
+          to: city(event.params.to),
+          profit: money(event.params.profit),
+        },
+      ];
     case 'market.refreshed':
     case 'time.autoPaused':
       return [key, {}];

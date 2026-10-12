@@ -4,11 +4,19 @@ import { getVehicleModel } from '../data/vehicles';
 import { cityName } from './names';
 
 /** Aracın tek satırlık durumu: boşta, bakımda ya da işin hangi aşamasında. */
-export function truckStatus(t: TFunction, worldId: string | null, truck: Truck): string {
+export function truckStatus(
+  t: TFunction,
+  worldId: string | null,
+  truck: Truck,
+  managed = false,
+): string {
   const city = (id: string) => cityName(worldId, id);
   if (truck.serviceUntil !== null) return t('truck.status.service', { city: city(truck.cityId) });
   const trip = truck.trip;
-  if (!trip) return t('truck.status.idle', { city: city(truck.cityId) });
+  if (!trip) {
+    const key = managed ? 'truck.status.idleManaged' : 'truck.status.idle';
+    return t(key, { city: city(truck.cityId) });
+  }
   const target =
     trip.phase === 'toPickup' || trip.phase === 'loading' ? trip.job.from : trip.job.to;
   return t(`truck.status.${trip.phase}`, { city: city(target) });

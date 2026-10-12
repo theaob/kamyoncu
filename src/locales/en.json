@@ -30,7 +30,7 @@
     "close": "Close",
     "notSavedYet": "Not saved yet",
     "autoPause": "Pause when a truck needs me",
-    "autoPauseHint": "Stops the clock when a truck finishes a delivery, needs a service or comes out of service."
+    "autoPauseHint": "Stops the clock when a truck finishes a delivery, needs a service or comes out of service. Vehicles the fleet manager runs don't stop it."
   },
   "map": {
     "label": "Map of Türkiye",
@@ -77,6 +77,12 @@
     },
     "command": {
       "failed": "Couldn't do that: {{reason}}"
+    },
+    "manager": {
+      "hired": "{{name}} joined as fleet manager",
+      "fired": "{{name}} is no longer your fleet manager",
+      "dispatched": "Manager sent {{plate}} on a job: {{cargo}}, {{from}} → {{to}} (est. profit {{profit}})",
+      "serviced": "Manager sent {{plate}} in for service"
     }
   },
   "save": {
@@ -143,7 +149,8 @@
       "loading": "Loading in {{city}}",
       "toDelivery": "Delivering to {{city}}",
       "unloading": "Unloading in {{city}}",
-      "service": "In service in {{city}}"
+      "service": "In service in {{city}}",
+      "idleManaged": "Idle in {{city}}. The manager is looking for a job."
     },
     "job": "Current job",
     "remaining": "Distance left",
@@ -255,6 +262,20 @@
     "noCandidates": "No candidates left this week.",
     "hire": "Hire"
   },
+  "manager": {
+    "title": "Fleet manager",
+    "pitch": "A fleet manager takes jobs for idle vehicles and sends worn ones to service. Buying, selling and hiring drivers stay your call.",
+    "rules": "Only takes jobs that arrive on time and earn at least {{min}}, picks the best profit per hour first, keeps {{reserve}} in the bank and services vehicles below {{below}}% condition.",
+    "hire": "Hire for {{amount}}/month",
+    "onDuty": "Manager on duty",
+    "onDutyHint": "When off, the manager is still paid but leaves every vehicle to you.",
+    "count": "Runs {{count}} of {{total}} vehicles. Untick a vehicle in the Fleet tab to drive it yourself.",
+    "fireConfirm": "Let fleet manager {{name}} go?",
+    "truckToggle": "Fleet manager runs this vehicle",
+    "truckHint": "Hire a fleet manager in the Staff tab to find jobs for vehicles automatically.",
+    "needsDriver": "The manager needs a driver on this vehicle to send it out.",
+    "badge": "Auto"
+  },
   "market": {
     "used": "Used",
     "usedHint": "Listings refresh once a week. The vehicle is handed over in the listed city.",
@@ -320,6 +341,8 @@
     "trailerInUse": "the trailer is hooked to a tractor",
     "noRigidBody": "that body can't go on a truck",
     "isPlayer": "you can't fire yourself",
-    "notNeeded": "no service needed"
+    "notNeeded": "no service needed",
+    "noManager": "you don't have a fleet manager",
+    "hasManager": "you already have a fleet manager"
   }
 }

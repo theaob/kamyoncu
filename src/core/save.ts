@@ -73,6 +73,7 @@ const MIGRATIONS: Record<number, (s: AnyState) => AnyState> = {
       builtAt: -s0.ageYears * 365 * MINUTES_PER_DAY,
       trip: t.trip ? { ...t.trip, job: withBody(t.trip.job) } : null,
       serviceUntil: null,
+      managed: true,
     }));
     state.jobs = state.jobs.map(withBody);
     state.trailers = [];
@@ -84,6 +85,13 @@ const MIGRATIONS: Record<number, (s: AnyState) => AnyState> = {
       amounts: { ...emptyAmounts(), ...d.amounts },
     }));
     withRng(state, (rng) => refreshMarket(state, getWorld(state.activeWorldId), rng));
+    return state as unknown as AnyState;
+  },
+  // Filo müdürü: müdür yok; araçlar müdür işe alınırsa yönetilecek şekilde işaretli.
+  3: (s) => {
+    const state = { ...s, version: 4 } as unknown as GameState;
+    state.manager = null;
+    state.trucks = state.trucks.map((t) => ({ ...t, managed: true }));
     return state as unknown as AnyState;
   },
 };

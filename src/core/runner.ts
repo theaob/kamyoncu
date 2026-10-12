@@ -1,15 +1,23 @@
 import { BALANCE } from './balance';
 import { applyCommand, step } from './sim';
+import { isManaged } from './manager';
 import type { Command, GameState, SimEvent } from './types';
 
-/** Oyuncunun ilgisini isteyen olaylar: boşa çıkan, bakım isteyen ya da bakımdan çıkan araç. */
-export function needsAttention(event: SimEvent): boolean {
-  return (
-    event.code === 'job.delivered' ||
-    event.code === 'job.deliveredLate' ||
-    event.code === 'fleet.needsService' ||
-    event.code === 'fleet.serviceDone'
-  );
+/**
+ * Oyuncunun ilgisini isteyen olaylar: boşa çıkan, bakım isteyen ya da bakımdan
+ * çıkan araç. Müdürün yönettiği araçlar için oyun durmaz; onlarla müdür ilgilenir.
+ */
+export function needsAttention(event: SimEvent, state?: GameState): boolean {
+  if (
+    event.code !== 'job.delivered' &&
+    event.code !== 'job.deliveredLate' &&
+    event.code !== 'fleet.needsService' &&
+    event.code !== 'fleet.serviceDone'
+  ) {
+    return false;
+  }
+  const truck = state?.trucks.find((t) => t.plate === event.params.plate);
+  return !(state && truck && isManaged(state, truck));
 }
 
 /**
@@ -34,7 +42,7 @@ export class SimRunner {
       const from = events.length;
       step(this.state, events);
       this.pending -= 1;
-      if (this.autoPause && events.slice(from).some(needsAttention)) {
+      if (this.autoPause && events.slice(from).some((e) => needsAttention(e, this.state))) {
         this.state.paused = true;
         this.pending = 0;
         events.push({ code: 'time.autoPaused', params: {} });

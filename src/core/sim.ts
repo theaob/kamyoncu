@@ -27,6 +27,7 @@ import {
   PLAYER_DRIVER_ID,
 } from './fleet';
 import { refreshJobs } from './jobs';
+import { createManager, planManager } from './manager';
 import { book, createFinance } from './ledger';
 import { withRng } from './rng';
 import { findRoute, roadBetween } from './routing';
@@ -35,13 +36,14 @@ import type {
   Command,
   CommandError,
   GameState,
+  Job,
   SimEvent,
   Truck,
   WorldDef,
 } from './types';
 
 /** Kayıt biçimi sürümü. Biçim değiştiğinde artırılır ve göç (migration) yazılır (bkz. save.ts). */
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 /** Başlangıçta yük borsasındaki boş yuvaların dolma oranı. */
 export const INITIAL_JOB_FILL = 0.6;
@@ -64,6 +66,7 @@ export function createInitialState(seed: number): GameState {
     usedListings: [],
     jobs: [],
     finance: createFinance(),
+    manager: null,
   };
   const truck = createStartingTruck(state);
   truck.driverId = PLAYER_DRIVER_ID;
@@ -97,9 +100,39 @@ export function step(
   if (state.time % BALANCE.jobSpawnIntervalMinutes === 0) {
     withRng(state, (rng) => refreshJobs(state, world, rng, BALANCE.jobSpawnChance));
   }
+  const from = events.length;
   finishServices(state, events);
   for (const truck of state.trucks) advanceTruck(state, world, truck, events);
   syncTrailerCities(state);
+  // Müdür düzenli aralıklarla, ayrıca bir araç boşa düştüğü dakikada hemen bakar.
+  const freed = events
+    .slice(from)
+    .some((e) => e.code.startsWith('job.delivered') || e.code === 'fleet.serviceDone');
+  if (state.manager?.active && (freed || state.time % BALANCE.managerIntervalMinutes === 0)) {
+    runManager(state, world, events);
+  }
+}
+
+/** Müdürün planını uygular: önce bakımlar, sonra işler. */
+export function runManager(state: GameState, world: WorldDef, events: SimEvent[]): void {
+  const plan = planManager(state, world, (jobId, truckId) =>
+    canAccept(state, world, jobId, truckId),
+  );
+  for (const truckId of plan.service) {
+    const truck = state.trucks.find((t) => t.id === truckId)!;
+    if (!serviceTruck(state, truckId)) {
+      events.push({ code: 'manager.serviced', params: { plate: truck.plate } });
+    }
+  }
+  for (const { truckId, jobId, profit } of plan.dispatch) {
+    const job = state.jobs.find((j) => j.id === jobId)!;
+    const truck = state.trucks.find((t) => t.id === truckId)!;
+    startJob(state, world, job, truck);
+    events.push({
+      code: 'manager.dispatched',
+      params: { plate: truck.plate, from: job.from, to: job.to, cargo: job.cargo, profit },
+    });
+  }
 }
 
 function advanceTruck(state: GameState, world: WorldDef, truck: Truck, events: SimEvent[]): void {
@@ -238,6 +271,15 @@ function acceptJob(
   }
   const job = state.jobs.find((j) => j.id === jobId)!;
   const truck = state.trucks.find((t) => t.id === truckId)!;
+  startJob(state, world, job, truck);
+  events.push({
+    code: 'job.accepted',
+    params: { plate: truck.plate, from: job.from, to: job.to, cargo: job.cargo },
+  });
+}
+
+/** İşi panodan alıp araca verir ve ilk yola çıkarır. Uygunluk önceden denetlenmiş olmalı. */
+function startJob(state: GameState, world: WorldDef, job: Job, truck: Truck): void {
   state.jobs = state.jobs.filter((j) => j !== job);
   truck.trip = {
     job,
@@ -248,10 +290,6 @@ function acceptJob(
     waitUntil: 0,
     costs: 0,
   };
-  events.push({
-    code: 'job.accepted',
-    params: { plate: truck.plate, from: job.from, to: job.to, cargo: job.cargo },
-  });
   beginLeg(state, world, truck);
 }
 
@@ -285,6 +323,33 @@ function fleetCommand(
       return fireDriver(state, command.driverId, events);
     case 'assignDriver':
       return assignDriver(state, command.driverId, command.truckId);
+    case 'hireManager': {
+      if (state.manager) return 'hasManager';
+      state.manager = withRng(state, createManager);
+      events.push({ code: 'manager.hired', params: { name: state.manager.name } });
+      // İşe başladığı an boştaki araçlara bakar.
+      runManager(state, world, events);
+      return null;
+    }
+    case 'fireManager': {
+      if (!state.manager) return 'noManager';
+      events.push({ code: 'manager.fired', params: { name: state.manager.name } });
+      state.manager = null;
+      return null;
+    }
+    case 'setManagerActive': {
+      if (!state.manager) return 'noManager';
+      state.manager.active = command.active;
+      if (command.active) runManager(state, world, events);
+      return null;
+    }
+    case 'setTruckManaged': {
+      const truck = state.trucks.find((t) => t.id === command.truckId);
+      if (!truck) return 'notFound';
+      truck.managed = command.managed;
+      if (command.managed && state.manager?.active) runManager(state, world, events);
+      return null;
+    }
     default:
       return null;
   }

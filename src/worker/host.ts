@@ -105,6 +105,7 @@ export class SimHost {
         candidates: state.candidates,
         usedListings: state.usedListings,
         finance: state.finance,
+        manager: state.manager,
       },
       ...(loadError ? { loadError } : {}),
     });
@@ -124,6 +125,7 @@ export class SimHost {
       trucks: s.trucks,
       trailers: s.trailers,
       drivers: s.drivers,
+      manager: s.manager,
     };
     // Yük borsası her değişiklikte yeni dizi olarak atanır; referans karşılaştırması yeterli.
     if (s.jobs !== this.sentJobs) {

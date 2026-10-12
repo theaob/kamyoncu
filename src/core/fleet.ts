@@ -123,6 +123,7 @@ function newTruck(
     driverId: null,
     trip: null,
     serviceUntil: null,
+    managed: true,
     ...fields,
   };
 }
@@ -207,10 +208,14 @@ export function isMarketDay(time: number): boolean {
   return time % (BALANCE.marketRefreshDays * MINUTES_PER_DAY) === 0;
 }
 
+/** Aylık maaş toplamı: şoförler + filo müdürü. */
+export function monthlyPayroll(state: Pick<GameState, 'drivers' | 'manager'>): Money {
+  return state.drivers.reduce((sum, d) => sum + d.salary, 0) + (state.manager?.salary ?? 0);
+}
+
 /** Günlük maaş ödemesi (aylık / 30). */
 export function paySalaries(state: GameState): void {
-  const daily = state.drivers.reduce((sum, d) => sum + d.salary, 0) / BALANCE.daysPerMonth;
-  book(state, 'salaries', -Math.round(daily));
+  book(state, 'salaries', -Math.round(monthlyPayroll(state) / BALANCE.daysPerMonth));
 }
 
 // ---------------------------------------------------------------------------

@@ -115,6 +115,19 @@ export const BALANCE = {
   driverFuelSavingPerLevel: 0.02,
   /** Maaşlar günlük ödenir: aylık / bu değer. */
   daysPerMonth: 30,
+
+  /**
+   * Filo müdürü: aylık maaş; boştaki araçlara bu aralıkla (oyun dakikası) bakar,
+   * ayrıca bir araç teslim edip ya da bakımdan çıkıp boşa düştüğü dakikada.
+   */
+  managerSalary: 95_000 * TL,
+  managerIntervalMinutes: 15,
+  /** Müdür durumu bu değerin altına inen aracı bakıma yollar (iş sınırından önce). */
+  managerServiceBelow: 40,
+  /** Müdür bir işi ancak tahmini kârı bu kadarsa ve zamanında yetişiyorsa alır. */
+  managerMinProfit: 1_000 * TL,
+  /** Müdür kasayı bu tutarın altına düşürecek iş ya da bakım almaz. */
+  managerCashReserve: 5_000 * TL,
 } as const;
 
 export const MINUTES_PER_DAY = 24 * 60;

@@ -72,6 +72,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   candidates: [],
   usedListings: [],
   finance: createFinance(),
+  manager: null,
   loadError: null,
   savedAt: null,
   saveFailed: false,

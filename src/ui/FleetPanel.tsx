@@ -10,6 +10,7 @@ import {
   truckSpec,
   truckValue,
 } from '../core/fleet';
+import { isManaged } from '../core/manager';
 import type { Truck } from '../core/types';
 import { getVehicleModel } from '../data/vehicles';
 import { getWorld } from '../data/worlds';
@@ -39,6 +40,7 @@ export function FleetPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
   const worldId = useGameStore((s) => s.worldId);
   const trucks = useGameStore((s) => s.trucks);
   const trailers = useGameStore((s) => s.trailers);
+  const manager = useGameStore((s) => s.manager);
   const selected = useSelectedTruck();
   const select = useGameStore((s) => s.selectTruck);
   const lang = currentLanguage();
@@ -63,8 +65,15 @@ export function FleetPanel({ onOpenBoard }: { onOpenBoard: () => void }) {
             >
               <span className="plate">{truck.plate}</span>
               <span className="fleet-item">
-                <strong>{modelLabel(t, truck.modelId)}</strong>
-                <small>{truckStatus(t, worldId, truck)}</small>
+                <strong>
+                  {modelLabel(t, truck.modelId)}
+                  {isManaged({ manager }, truck) && (
+                    <span className="auto-badge" title={t('manager.truckToggle')}>
+                      {t('manager.badge')}
+                    </span>
+                  )}
+                </strong>
+                <small>{truckStatus(t, worldId, truck, isManaged({ manager }, truck))}</small>
               </span>
               <ConditionBar value={truck.condition} />
             </button>
@@ -161,6 +170,7 @@ function TruckDetail({
   const trucks = useGameStore((s) => s.trucks);
   const trailers = useGameStore((s) => s.trailers);
   const drivers = useGameStore((s) => s.drivers);
+  const manager = useGameStore((s) => s.manager);
   const send = useGameStore((s) => s.send);
   const fleet = { trucks, trailers, drivers };
   const model = getVehicleModel(truck.modelId);
@@ -177,6 +187,7 @@ function TruckDetail({
   const value = truckValue(truck, now);
   const freeTrailers = trailers.filter((r) => !r.truckId && r.cityId === truck.cityId);
   const eligible = drivers.filter((d) => licenseCovers(d.license, model.license));
+  const managed = isManaged({ manager }, truck);
 
   return (
     <section className="truck" aria-label={truck.plate}>
@@ -196,7 +207,7 @@ function TruckDetail({
         </div>
       </div>
       <p className="truck-status" aria-live="polite">
-        {truckStatus(t, worldId, truck)}
+        {truckStatus(t, worldId, truck, managed)}
         {truck.serviceUntil !== null &&
           ` · ${t('fleet.serviceLeft', { duration: duration(truck.serviceUntil - now) })}`}
       </p>
@@ -268,6 +279,27 @@ function TruckDetail({
         <dt>{t('fleet.value')}</dt>
         <dd>{formatKurus(value, lang)}</dd>
       </dl>
+      {manager ? (
+        <label className="check-row">
+          <input
+            type="checkbox"
+            checked={truck.managed}
+            onChange={(e) =>
+              send({ type: 'setTruckManaged', truckId: truck.id, managed: e.target.checked })
+            }
+          />
+          <span>
+            {t('manager.truckToggle')}
+            {!manager.active ? (
+              <small>{t('manager.onDutyHint')}</small>
+            ) : truck.managed && !truck.driverId ? (
+              <small>{t('manager.needsDriver')}</small>
+            ) : null}
+          </span>
+        </label>
+      ) : (
+        <p className="muted">{t('manager.truckHint')}</p>
+      )}
       {truck.condition < BALANCE.minConditionForJobs && truck.serviceUntil === null && (
         <p className="job-warn">{t('acceptError.needsService')}</p>
       )}

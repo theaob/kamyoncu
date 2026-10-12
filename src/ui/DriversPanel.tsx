@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { BALANCE, MINUTES_PER_DAY } from '../core/balance';
 import { currentLanguage } from '../i18n';
+import { monthlyPayroll } from '../core/fleet';
 import { formatKurus } from '../i18n/format';
 import { useGameStore } from '../store/gameStore';
 import { SendButton } from './FleetPanel';
@@ -15,12 +16,14 @@ export function DriversPanel() {
   const candidates = useGameStore((s) => s.candidates);
   const trucks = useGameStore((s) => s.trucks);
   const now = useGameStore((s) => s.clock.time);
-  const payroll = drivers.reduce((sum, d) => sum + d.salary, 0);
+  const manager = useGameStore((s) => s.manager);
+  const payroll = monthlyPayroll({ drivers, manager });
   const period = BALANCE.marketRefreshDays * MINUTES_PER_DAY;
   const nextRefresh = period - (now % period);
 
   return (
     <div className="drivers">
+      <ManagerSection />
       <section className="fleet-section">
         <h3>{t('drivers.staff')}</h3>
         <ul className="rows">
@@ -81,5 +84,75 @@ export function DriversPanel() {
         )}
       </section>
     </div>
+  );
+}
+
+/** Filo müdürü: işe al, görevi aç/kapat, çıkar. */
+function ManagerSection() {
+  const { t } = useTranslation();
+  const lang = currentLanguage();
+  const manager = useGameStore((s) => s.manager);
+  const trucks = useGameStore((s) => s.trucks);
+  const send = useGameStore((s) => s.send);
+  const rules = t('manager.rules', {
+    min: formatKurus(BALANCE.managerMinProfit, lang),
+    reserve: formatKurus(BALANCE.managerCashReserve, lang),
+    below: BALANCE.managerServiceBelow,
+  });
+
+  return (
+    <section className="fleet-section">
+      <h3>{t('manager.title')}</h3>
+      {manager ? (
+        <>
+          <ul className="rows">
+            <li>
+              <span>
+                <strong>{manager.name}</strong>
+                <small>{t('drivers.salary', { amount: formatKurus(manager.salary, lang) })}</small>
+              </span>
+              <SendButton
+                confirm={t('manager.fireConfirm', { name: manager.name })}
+                command={{ type: 'fireManager' }}
+              >
+                {t('drivers.fire')}
+              </SendButton>
+            </li>
+          </ul>
+          <label className="check-row">
+            <input
+              type="checkbox"
+              checked={manager.active}
+              onChange={(e) => send({ type: 'setManagerActive', active: e.target.checked })}
+            />
+            <span>
+              {t('manager.onDuty')}
+              <small>{t('manager.onDutyHint')}</small>
+            </span>
+          </label>
+          <p className="muted">
+            {t('manager.count', {
+              count: trucks.filter((tr) => tr.managed).length,
+              total: trucks.length,
+            })}
+            <br />
+            {rules}
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="muted">
+            {t('manager.pitch')}
+            <br />
+            {rules}
+          </p>
+          <div className="actions">
+            <SendButton className="primary" command={{ type: 'hireManager' }}>
+              {t('manager.hire', { amount: formatKurus(BALANCE.managerSalary, lang) })}
+            </SendButton>
+          </div>
+        </>
+      )}
+    </section>
   );
 }
