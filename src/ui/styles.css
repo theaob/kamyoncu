@@ -866,6 +866,20 @@ select:focus-visible {
   color: var(--neg);
   cursor: pointer;
 }
+.menu-play-games-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.menu-play-games button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  padding: 0 10px;
+  cursor: pointer;
+}
 .menu-version {
   margin: 0;
   color: var(--muted);
