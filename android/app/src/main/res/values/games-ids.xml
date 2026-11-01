@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Google Play Games Services kimlikleri. Kurulum: docs/PLAY_GAMES.md
+
+  Boş bırakılan kimlik etkisizdir: app_id boşsa Play Games hiç başlatılmaz,
+  bir başarımın ya da skor tablosunun kimliği boşsa o gönderim atlanır.
+  Play Console → Play Games Services → Kurulum ve yönetim → Yapılandırma →
+  "Kaynakları al" (Get resources) çıktısındaki değerleri buraya kopyala.
+  (Çıktıdaki package_name satırını alma: strings.xml'de zaten var.)
+-->
+<resources>
+    <!-- Play Games projesinin sayısal kimliği (ör. 123456789012). -->
+    <string name="app_id" translatable="false"></string>
+
+    <!-- Başarımlar (src/platform/playProgress.ts → ACHIEVEMENTS). Kimlikler "CgkI…" ile başlar. -->
+    <string name="achievement_first_delivery" translatable="false"></string>
+    <string name="achievement_deliveries_100" translatable="false"></string>
+    <string name="achievement_first_hire" translatable="false"></string>
+    <string name="achievement_fleet_5" translatable="false"></string>
+    <string name="achievement_fleet_manager" translatable="false"></string>
+    <string name="achievement_millionaire" translatable="false"></string>
+
+    <!-- Skor tabloları (src/platform/playProgress.ts → LEADERBOARDS). -->
+    <string name="leaderboard_career_revenue" translatable="false"></string>
+    <string name="leaderboard_deliveries" translatable="false"></string>
+</resources>

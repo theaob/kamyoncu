@@ -32,6 +32,12 @@
     "autoPause": "Bir araç beni beklerken duraklat",
     "autoPauseHint": "Bir araç teslimatı bitirince, bakım isteyince ya da bakımdan çıkınca saati durdurur. Filo müdürünün yönettiği araçlar oyunu durdurmaz."
   },
+  "playGames": {
+    "title": "Google Play Games",
+    "signIn": "Oturum aç",
+    "achievements": "Başarımlar",
+    "leaderboards": "Skor tabloları"
+  },
   "map": {
     "label": "Türkiye haritası",
     "zoomIn": "Yakınlaştır",

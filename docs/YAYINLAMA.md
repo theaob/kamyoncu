@@ -148,3 +148,7 @@ cd android && ./gradlew assembleDebug
   WebView'da çalışır.
 - Yazı tipleri pakete gömülüdür (`@fontsource`); oyun çevrimdışı çalışır.
 - Android uygulama simgesi ve açılış ekranı şimdilik Capacitor varsayılanıdır.
+
+## Google Play Games
+
+Başarımlar ve skor tabloları için Play Console kurulumu: [PLAY_GAMES.md](PLAY_GAMES.md).

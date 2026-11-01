@@ -11,8 +11,10 @@ import './i18n';
 import './ui/styles.css';
 import { App } from './ui/App';
 import { ensureSimStarted } from './store/gameStore';
+import { startPlayGames } from './platform/playGames';
 
 ensureSimStarted();
+startPlayGames();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

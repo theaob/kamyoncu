@@ -5,6 +5,7 @@ import { formatGameTime } from '../i18n/format';
 import { isLang, LANGUAGES } from '../i18n/languages';
 import { useGameStore } from '../store/gameStore';
 import { APP_VERSION } from '../version';
+import { PlayGamesMenu } from './PlayGamesMenu';
 
 /** Üst bardaki ☰ düğmesi: dil, kayıt durumu ve yeni oyun burada durur. */
 export function GameMenu() {
@@ -90,6 +91,8 @@ export function GameMenu() {
               <small>{t('menu.autoPauseHint')}</small>
             </span>
           </label>
+
+          <PlayGamesMenu />
 
           <p className="menu-row save-status" aria-live="polite">
             {saveBlocked

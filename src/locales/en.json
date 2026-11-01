@@ -32,6 +32,12 @@
     "autoPause": "Pause when a truck needs me",
     "autoPauseHint": "Stops the clock when a truck finishes a delivery, needs a service or comes out of service. Vehicles the fleet manager runs don't stop it."
   },
+  "playGames": {
+    "title": "Google Play Games",
+    "signIn": "Sign in",
+    "achievements": "Achievements",
+    "leaderboards": "Leaderboards"
+  },
   "map": {
     "label": "Map of Türkiye",
     "zoomIn": "Zoom in",
