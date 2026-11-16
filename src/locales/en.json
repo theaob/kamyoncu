@@ -100,6 +100,7 @@
     "tons": "{{tons}} t",
     "duration": "{{h}} h {{m}} min",
     "durationShort": "{{m}} min",
+    "durationDays": "{{d}} d {{h}} h",
     "per100": "{{l}} L/100 km"
   },
   "panel": {

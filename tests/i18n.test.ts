@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { EVENT_CODES } from '../src/core/types';
-import { formatGameDate, formatGameTime, formatMoney, upper } from '../src/i18n/format';
+import {
+  formatGameDate,
+  formatGameTime,
+  formatMoney,
+  splitDuration,
+  upper,
+} from '../src/i18n/format';
 import { detectLanguage, LANGUAGES } from '../src/i18n/languages';
 import en from '../src/locales/en.json';
 import tr from '../src/locales/tr.json';
@@ -73,6 +79,14 @@ describe('biçimlendirme', () => {
   it('para birimi', () => {
     expect(formatMoney(1250000, 'tr')).toMatch(/1\.250\.000/);
     expect(formatMoney(1250000, 'en')).toMatch(/1,250,000/);
+    // İngilizcede de "TRY" kodu değil ₺ simgesi.
+    expect(formatMoney(1250000, 'en')).toBe('₺1,250,000');
+    expect(formatMoney(-500, 'en')).toBe('-₺500');
+  });
+
+  it('uzun süreler gün ve saate bölünür', () => {
+    expect(splitDuration(167 * 60 + 57)).toEqual({ d: 6, dh: 23, h: 167, m: 57 });
+    expect(splitDuration(-5)).toEqual({ d: 0, dh: 0, h: 0, m: 0 });
   });
 
   it('Türkçe büyük harf İ/ı kuralına uyar', () => {

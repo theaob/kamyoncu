@@ -29,6 +29,8 @@ export function formatMoney(amountTry: number, lang: Lang): string {
   return new Intl.NumberFormat(LOCALES[lang], {
     style: 'currency',
     currency: 'TRY',
+    // "TRY 25,000" yerine her dilde ₺ simgesi.
+    currencyDisplay: 'narrowSymbol',
     maximumFractionDigits: 0,
   }).format(amountTry);
 }
@@ -47,8 +49,12 @@ export function formatNumber(value: number, lang: Lang, maximumFractionDigits = 
   return new Intl.NumberFormat(LOCALES[lang], { maximumFractionDigits }).format(value);
 }
 
-/** Süreyi saat ve dakikaya böler (çeviri metni ayrıca biçimlendirir). */
-export function splitDuration(minutes: number): { h: number; m: number } {
+/** Bu süreden (saat) uzun süreler gün + saat olarak yazılır ("167 sa" yerine "6 g 23 sa"). */
+export const LONG_DURATION_HOURS = 48;
+
+/** Süreyi gün, saat ve dakikaya böler (çeviri metni ayrıca biçimlendirir); `h` toplam saattir. */
+export function splitDuration(minutes: number): { d: number; dh: number; h: number; m: number } {
   const total = Math.max(0, Math.round(minutes));
-  return { h: Math.floor(total / 60), m: total % 60 };
+  const h = Math.floor(total / 60);
+  return { d: Math.floor(h / 24), dh: h % 24, h, m: total % 60 };
 }
