@@ -41,17 +41,18 @@ export const BALANCE = {
   unloadingMinutes: 45,
 
   /** Yük borsası: her şehirde en fazla ilan = boyut × bu değer. */
-  jobsPerCitySize: 3,
+  jobsPerCitySize: 5,
   /**
-   * İlan büyüklüğü dağılımı: [en çok ton, ağırlık]. Kamyonet işleri hep bol kalsın,
-   * ağır yükler filo büyüdükçe anlam kazansın diye.
+   * İlan büyüklüğü dağılımı: [en çok ton, ağırlık]. Kamyonet işleri eskisi kadar bol
+   * (yuva sayısı arttı, payı düştü); her sınıfın kendi boyunda dolu yük bulabilmesi
+   * için ağır ilanlar da yeterince sık. Denge botuyla ayarlandı (tests/balance.test.ts).
    */
   jobSizeBuckets: [
-    [1.5, 6],
-    [4, 2],
-    [10, 1.5],
-    [17, 1.2],
-    [25, 1.5],
+    [1.5, 5],
+    [4, 4],
+    [10, 3],
+    [17, 4.5],
+    [25, 4.5],
   ] as const,
   /** Yeni ilanlar bu aralıkla (oyun dakikası) üretilir. */
   jobSpawnIntervalMinutes: 60,
@@ -61,6 +62,12 @@ export const BALANCE = {
   jobListingHours: [10, 30] as const,
   /** Ödeme formülündeki taban ücret (plan 3.6). */
   jobBasePay: 750 * TL,
+  /**
+   * Ödemedeki ağırlık payının üssü: km ücreti = km fiyatı + ton^üs × ton fiyatı.
+   * 1'den küçük: ağır yük daha çok öder ama ton başına ücret düşer; böylece her araç
+   * sınıfı bir alttakinden fazla kazanır, kazanç fiyatla aynı hızda büyür.
+   */
+  payTonExponent: 0.8,
   /**
    * Teslim süresi: tahmini sürüş süresi × [en az, en çok] pay + sabit saat.
    * Yükleme yeri uzaktaysa boş gidiş bu paydan yer; strateji buradan doğar.

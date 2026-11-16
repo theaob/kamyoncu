@@ -42,7 +42,8 @@ Kurallar:
 - `src/core` React, PixiJS veya tarayıcı API'si kullanmaz (ESLint ile denetlenir).
 - Çekirdek metin üretmez; olayları kod + parametre olarak yayınlar. Tüm metinler
   `src/locales` altındadır ve her iki dilde de bulunmalıdır (test ile denetlenir).
-- Denge değerleri `src/core/balance.ts` içindedir.
+- Denge değerleri `src/core/balance.ts` içindedir. `npm run balance` her araç tipinin
+  günlük kazancını botla ölçüp tablo olarak yazar.
 
 ## Kısayollar
 

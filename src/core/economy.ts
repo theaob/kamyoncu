@@ -35,11 +35,12 @@ export function legCost(road: Road, spec: TruckSpec, loadRatio: number) {
 }
 
 /**
- * Plan 3.6: ödeme = taban + km × (km fiyatı + ton × ton-km fiyatı) × aciliyet × talep.
- * Tam liraya yuvarlanır.
+ * Plan 3.6: ödeme = taban + km × (km fiyatı + ton^üs × ton fiyatı) × aciliyet × talep.
+ * Ağırlık payı üslüdür (`payTonExponent` < 1): ton başına ücret yük büyüdükçe düşer,
+ * ama büyük yük her zaman belirgin biçimde fazla öder. Tam liraya yuvarlanır.
  */
 export function jobPay(km: number, cargo: CargoType, tons: number, demand: number): Money {
-  const perKm = cargo.ratePerKm + tons * cargo.ratePerTonKm;
+  const perKm = cargo.ratePerKm + tons ** BALANCE.payTonExponent * cargo.ratePerTonKm;
   const raw = BALANCE.jobBasePay + km * perKm * cargo.urgency * demand;
   return Math.round(raw / 100) * 100;
 }
