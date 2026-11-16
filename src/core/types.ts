@@ -69,7 +69,7 @@ export interface CargoType {
   body: BodyKind;
   /** Ödeme formülündeki km birim fiyatı, kuruş/km. */
   ratePerKm: Money;
-  /** Ton başına ek km fiyatı, kuruş/km/t. */
+  /** Ağırlık payı: ton^`payTonExponent` başına ek km fiyatı, kuruş/km (bkz. economy.ts `jobPay`). */
   ratePerTonKm: Money;
   /** Ağırlık aralığı, ton. */
   tons: readonly [number, number];

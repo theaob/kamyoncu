@@ -196,9 +196,12 @@ seçer; karakteri, filodaki 0 numaralı şoför olarak simüle edilir.
 Örnek ödeme formülü (ayarlanabilir):
 ```
 ödeme = taban_ücret
-      + mesafe_km × km_birim_fiyatı[yük_türü]
+      + mesafe_km × (km_fiyatı[yük_türü] + ton^0,8 × ton_fiyatı[yük_türü])
       × aciliyet_katsayısı × talep_katsayısı[şehir, yük_türü]
 ```
+Ağırlık payı üslüdür (0,8): büyük yük belirgin biçimde fazla öder ama ton başına
+ücret düşer. Böylece her araç sınıfı bir alttakinden fazla kazanır; kazanç araç
+fiyatıyla yaklaşık aynı hızda büyür (bkz. Bölüm 7, araç ilerlemesi).
 Örnek yakıt formülü:
 ```
 yakıt_L = mesafe_km / 100 × tüketim × (1 + 0.35 × yük_oranı) × (1 − şoför_tasarruf)
@@ -882,11 +885,30 @@ interface GameState { time: number; seed: number; money: number; reputation: num
 | Sıfır kamyon | 4 – 6 M₺ |
 | Motorin | ~45 ₺/L (dalgalanır) |
 | Ortalama tüketim | 28–35 L/100 km |
-| Yük ödemesi | ~25–60 ₺/km (yük türüne göre) |
+| Yük ödemesi | ~15–18 ₺/km (1 t) – ~75–90 ₺/km (25 t dorse yükü) |
 | Şoför maaşı | 50.000 – 90.000 ₺/ay |
 | İlk ek kamyona ulaşma | ~1–2 saat oynanış |
 
 > Tüm değerler `balance.ts` içinde tutulacak ve oyun testleriyle ayarlanacak.
+
+**Araç ilerlemesi (denge botu, Kasım 2026).** İlk değerlerde kamyonet her şeyden
+fazla kazanıyordu (tenteli tır kamyonetin %60'ı, konteyner dorse tuzaktı). Ödeme
+formülü ağırlığa kaydırıldı, ağır ilanlar çoğaltıldı. Tek araç, filo müdürü
+kurallarıyla 60 oyun günü, standart seviye, şoför maaşı hariç günlük net:
+
+| Araç | Net/gün | Fiyat | Geri ödeme (maaş sonrası) |
+|---|---|---|---|
+| Sınıf 1 kamyonet | ~18 bin ₺ | 1,30 M₺ | ~77 gün |
+| Sınıf 2 | ~22 bin ₺ | 2,10 M₺ | ~105 gün |
+| Sınıf 3 | ~32 bin ₺ | 3,20 M₺ | ~108 gün |
+| Sınıf 4 | ~39 bin ₺ | 4,20 M₺ | ~112 gün |
+| Tır + tenteli dorse | ~48 bin ₺ | 5,65 M₺ | ~124 gün |
+| Tır + frigorifik / tanker / konteyner | ~56–64 bin ₺ | 5,55–6,10 M₺ | ~99–106 gün |
+
+Kamyonet filosu yük borsasını doyurur (30 kamyonette araç başı ~9 bin ₺/gün);
+büyük araçlar doyurmaz. Tablo `npm run balance` ile yeniden üretilir;
+`tests/balance.test.ts` sıralamayı korur. Sürüş süresi kuralları gelince yeniden
+ayarlanacak (araçlar şimdilik günde 24 saat çalışıyor).
 
 ---
 
