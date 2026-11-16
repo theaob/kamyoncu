@@ -432,6 +432,8 @@ select:focus-visible {
 .finance td {
   font-family: var(--f-mono);
   font-variant-numeric: tabular-nums;
+  /* Eksi işareti tutardan kopup alt satıra düşmesin. */
+  white-space: nowrap;
 }
 .finance tfoot th,
 .finance tfoot td {
